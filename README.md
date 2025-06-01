@@ -1,7 +1,7 @@
 # 💬 chat web App
 **chat web App** is a real-time chat application that allows users to communicate with each other and interact with an integrated AI assistant that can answer any questions. This app uses a MySQL database for user data and chat history, and leverages the ultra-fast Python web server UV for optimal performance.
 
-# 🚀 Features
+## 🚀 Features
 - 🔁 Real-time chat between users
 
 - 🤖 Integrated AI assistant for smart responses
@@ -12,57 +12,65 @@
 
 - 📱 Accessible via your local browser at localhost:5000
 
-# 🛠️ Setup Instructions
+## 🛠️ Setup Instructions
 ### 📌 Prerequisites
 - Python 3.7+
 
 - MySQL Server
 
-# 📥 Installation
-# 1. Clone the repository
+## 📥 Installation
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/prottoy-bhattacharyya/Chat-web-app.git
 cd Chat-web-app
 ```
-# 2. Install Python dependencies
+### 2. Install Python dependencies
 
-    Make sure Python is installed: [Download Python](https://www.python.org/downloads/)
+Make sure Python is installed: [Download Python](https://www.python.org/downloads/)
 ```bash
-pip install uv
+    pip install uv
 ```
-# 3. Configure MySQL Database
+### 3. Configure MySQL Database
 
 Ensure MySQL is running and accessible with the following credentials:
 ```python
-{
-    'host': 'localhost',
-    'user': 'root',
-    'password': '1234',
-    'database': 'test_chat_app'
-}
+    {
+        'host': 'localhost',
+        'user': 'root',
+        'password': '1234',
+        'database': 'test_chat_app'
+    }
 ```
 💡 You can change these settings in your config file as needed.
 
-# 4. Run the application
+### 4. Run the application
 
 ```bash
-python -m uv app.py
+    python -m uv app.py
 ```
-# 5. Open in your browser
+### 5. Open in your browser
 
 ```bash
-http://localhost:5000
+    http://localhost:5000
 ```
-# 📂 Project Structure
+### 📂 Project Structure
 ```csharp
-chat-ai-connect/
-├── app.py                # Main application file
-├── requirements.txt      # (optional) For additional dependencies
-├── templates/            # HTML templates for frontend
-├── static/               # Static files (CSS, JS)
-├── ai/                   # AI assistant logic
-└── db/                   # Database setup & queries
+|---app.py
+|---meta_llama_AI.py
+|---README.md
+|---.gitignore
+|---pyproject.toml
+|---.python-version
+|---uv.lock
+|   
+|---templates
+    |---login.html
+    |---signup.html
+    |---chat.html
+    |---aiChat.html
+    |---home.html
+    
 ```
 # 🧠 AI Assistant
 The AI assistant is integrated into the chat window and can respond to a wide range of user queries. You can customize its behavior via the ai/ directory.
