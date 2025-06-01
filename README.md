@@ -78,9 +78,6 @@ The AI assistant is integrated into the chat window and can respond to a wide ra
 # 🛡️ Security & Configuration
 Ensure your MySQL root password and any sensitive environment variables are secured in production using .env files or a secure configuration method. Avoid hardcoding credentials in production environments.
 
-# 📖 License
-This project is licensed under the MIT License. See LICENSE for more information.
-
 # 🤝 Contributing
 Contributions are welcome! Please open an issue or submit a pull request for feature suggestions, bug fixes, or improvements.
 
