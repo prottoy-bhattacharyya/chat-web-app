@@ -1,15 +1,8 @@
-from openai import OpenAI
+from openai import OpenAI, APIError
 import mysql.connector
 from mysql.connector import Error
 
 def metaLlama(prompt, user_id, username):
-    sqldb = mysql.connector.connect(
-        host="localhost",
-        port="3306",
-        user="root",
-        password="1234",
-        database="test_chat_app"
-    )
     DB_CONFIG = {
       'host': 'localhost',
       'user': 'root',
@@ -43,12 +36,22 @@ def metaLlama(prompt, user_id, username):
     )
     try:
       response = completion.choices[0].message.content
-    except openai.AuthenticationError as e:
-      response = "" + str(e)
-      return response
+    except APIError as err:
+      if err.status_code == 401:
+        return "please provide the correct api key"
+      else:
+        return f"API Error: {err}"
     
-    cursor.execute('''INSERT INTO aiChat(user_id, username, prompt, response)
-                    VALUES(%s, %s, %s, %s)''',
-                  (int(user_id), username, prompt, response))
-    sqldb.commit()
+    try:
+      cursor.execute('''INSERT INTO aiChat(user_id, username, prompt, response)
+                      VALUES(%s, %s, %s, %s)''',
+                    (int(user_id), username, prompt, response))
+      sqldb.commit()
+
+    except Error as err:
+      return f"database error: {err}"
+    finally:
+      cursor.close()
+      sqldb.close()
+      
     return response
