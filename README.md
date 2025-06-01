@@ -13,7 +13,7 @@
 - 📱 Accessible via your local browser at localhost:5000
 
 # 🛠️ Setup Instructions
-📌 Prerequisites
+##📌 Prerequisites
 Python 3.7+
 
 MySQL Server
