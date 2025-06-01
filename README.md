@@ -14,57 +14,48 @@
 
 # 🛠️ Setup Instructions
 # 📌 Prerequisites
-Python 3.7+
+- Python 3.7+
 
-MySQL Server
+- MySQL Server
 
-📥 Installation
-Clone the repository
+# 📥 Installation
+# 1. Clone the repository
 
-bash
-Copy
-Edit
-git clone https://github.com/your-username/chat-ai-connect.git
-cd chat-ai-connect
-Install Python dependencies
+```bash
+git clone https://github.com/prottoy-bhattacharyya/Chat-web-app.git
+cd Chat-web-app
+```
+# 2. Install Python dependencies
 
-Make sure Python is installed: Download Python
-
-bash
-Copy
-Edit
+    Make sure Python is installed: [Download Python](https://www.python.org/downloads/)
+```bash
 pip install uv
-Configure MySQL Database
+```
+# 3. Configure MySQL Database
 
 Ensure MySQL is running and accessible with the following credentials:
-
-python
-Copy
-Edit
+```python
 {
     'host': 'localhost',
     'user': 'root',
     'password': '1234',
     'database': 'test_chat_app'
 }
+```
 💡 You can change these settings in your config file as needed.
 
-Run the application
+# 4. Run the application
 
-bash
-Copy
-Edit
+```bash
 python -m uv app.py
-Open in your browser
+```
+# 5. Open in your browser
 
-arduino
-Copy
-Edit
+```bash
 http://localhost:5000
-📂 Project Structure
-csharp
-Copy
-Edit
+```
+# 📂 Project Structure
+```csharp
 chat-ai-connect/
 ├── app.py                # Main application file
 ├── requirements.txt      # (optional) For additional dependencies
@@ -72,19 +63,20 @@ chat-ai-connect/
 ├── static/               # Static files (CSS, JS)
 ├── ai/                   # AI assistant logic
 └── db/                   # Database setup & queries
-🧠 AI Assistant
+```
+# 🧠 AI Assistant
 The AI assistant is integrated into the chat window and can respond to a wide range of user queries. You can customize its behavior via the ai/ directory.
 
-🛡️ Security & Configuration
+# 🛡️ Security & Configuration
 Ensure your MySQL root password and any sensitive environment variables are secured in production using .env files or a secure configuration method. Avoid hardcoding credentials in production environments.
 
-📖 License
+# 📖 License
 This project is licensed under the MIT License. See LICENSE for more information.
 
-🤝 Contributing
+# 🤝 Contributing
 Contributions are welcome! Please open an issue or submit a pull request for feature suggestions, bug fixes, or improvements.
 
-🙋 Support
+# 🙋 Support
 For support or questions, please open an issue in this repository.
 
 Let me know if you'd like me to generate this as a downloadable file or add more sections like Docker support, API routes, or user authentication flow.
