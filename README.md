@@ -1,18 +1,18 @@
-💬 ChatAI Connect
-ChatAI Connect is a real-time chat application that allows users to communicate with each other and interact with an integrated AI assistant that can answer any questions. This app uses a MySQL database for user data and chat history, and leverages the ultra-fast Python web server UV for optimal performance.
+# 💬 chat web App
+**chat web App** is a real-time chat application that allows users to communicate with each other and interact with an integrated AI assistant that can answer any questions. This app uses a MySQL database for user data and chat history, and leverages the ultra-fast Python web server UV for optimal performance.
 
-🚀 Features
-🔁 Real-time chat between users
+# 🚀 Features
+- 🔁 Real-time chat between users
 
-🤖 Integrated AI assistant for smart responses
+- 🤖 Integrated AI assistant for smart responses
 
-🗂️ MySQL database support
+- 🗂️ MySQL database support
 
-⚡ High-performance with UV Python server
+- ⚡ High-performance with UV Python server
 
-📱 Accessible via your local browser at localhost:5000
+- 📱 Accessible via your local browser at localhost:5000
 
-🛠️ Setup Instructions
+# 🛠️ Setup Instructions
 📌 Prerequisites
 Python 3.7+
 
