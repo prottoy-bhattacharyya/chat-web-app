@@ -1,39 +1,56 @@
 from openai import OpenAI, APIError
 import DBconfig
+import mysql.connector
+
 def metaLlama(prompt, user_id, username):
-    DB_CONFIG = DBconfig.DBconfig()
-    sqldb = mysql.connector.connect(**DB_CONFIG)
-       
-    cursor = sqldb.cursor()
+    try:
+      DB_CONFIG = DBconfig.DBconfig()
+      sqldb = mysql.connector.connect(**DB_CONFIG)
+      cursor = sqldb.cursor()
+      print("Connected to database")
+
+      cursor.execute("""SELECT api_key FROM apiKeys
+                        WHERE id = 1;""")
+      
+      new_api_key = cursor.fetchone()[0]
+      if not new_api_key:
+        print("API key not found")
+      
+      print(f"Got API key {new_api_key}")
+    except mysql.connector.Error as err:
+      print(f"Error connecting to database: {err}")
+      return f"database error: {err}"
+      
+
+    
 
     html_text = ''' Please format your response using only HTML tags. 
                           For example, use <p> for paragraphs, <strong> for bold text, 
                           <em> for italics,  
-                          <br> for line breaks and colorful texts
+                          <br> for line breaks and colorful texts with stylish cdn tailwind css classes
+                          for a white background
                           and never mention about html tags in your answer'''
-
-    client = OpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key= "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"
-    )
-
-    completion = client.chat.completions.create(
-        # model="meta-llama/llama-4-maverick:free",
-        model = "nvidia/llama-3.1-nemotron-ultra-253b-v1:free",
-        messages=[
-            {
-              "role": "user",
-              "content": prompt + html_text
-            }
-          ]
-    )
     try:
+      client = OpenAI(
+          base_url="https://openrouter.ai/api/v1",
+          api_key = "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"
+      )
+
+      completion = client.chat.completions.create(
+          # model="meta-llama/llama-4-maverick:free",
+          model = "nvidia/llama-3.1-nemotron-ultra-253b-v1:free",
+          messages=[
+              {
+                "role": "user",
+                "content": prompt + html_text
+              }
+            ]
+      )
       response = completion.choices[0].message.content
+
     except APIError as err:
-      if err.status_code == 401:
-        return "please provide the correct api key"
-      else:
-        return f"API Error: {err}"
+      return f"API error: {err}"
+      
     
     try:
       cursor.execute('''INSERT INTO aiChat(user_id, username, prompt, response)
@@ -41,7 +58,7 @@ def metaLlama(prompt, user_id, username):
                     (int(user_id), username, prompt, response))
       sqldb.commit()
 
-    except Error as err:
+    except mysql.connector.Error as err:
       return f"database error: {err}"
     finally:
       cursor.close()

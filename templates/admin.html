@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Change API Key</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; 
+        }
+        .flash-message {
+            padding: 0.75rem 1.25rem;
+            margin-bottom: 1rem;
+            border: 1px solid transparent;
+            border-radius: 0.375rem;
+            position: absolute;
+            top: 8px;
+            left: 16px;
+        }
+        .flash-message.success {
+            color: #0f5132;
+            background-color: #d1e7dd;
+            border-color: #badbcc;
+        }
+        .flash-message.danger {
+            color: #842029;
+            background-color: #f8d7da;
+            border-color: #f5c2c7;
+        }
+        .flash-message.info {
+            color: #055160;
+            background-color: #cff4fc;
+            border-color: #b6effb;
+        }
+        .flash-message.warning {
+            color: #664d03;
+            background-color: #fff3cd;
+            border-color: #ffecb5;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-lg border border-gray-200">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Admin Panel</h2>
+        <p class="text-center text-gray-600 mb-8">Manage application settings.</p>
+
+        
+            <div class="mb-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
+                <h3 class="text-xl font-semibold text-blue-800 mb-4">Change API Key</h3>
+                <p class="text-sm text-blue-700 mb-4">
+                    Update the API key for the Meta Llama AI integration. Ensure you provide a valid key from OpenRouter.ai.
+                </p>
+                <form method="POST">
+                    <div class="space-y-4">
+                        <div>
+                            <label for="api-key-input" class="block text-sm font-medium text-gray-700 mb-1">New API Key</label>
+                            <input 
+                                name="new_api_key"
+                                type="text"
+                                placeholder="sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                                class="mt-1 block w-full px-4 py-2 border border-blue-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
+                                autocomplete="off"
+                            >
+                        </div>
+                        <button type="submit"
+                            class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out font-medium text-lg shadow-md"
+                        >Save API Key
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+        <div class="text-center mt-6">
+            <a href="/login" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out">
+                &larr; Go Back to Home
+            </a>
+        </div>
+    </div>
+
+    <div id="message-box" class="message-box"></div>
+</body>
+</html>

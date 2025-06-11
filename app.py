@@ -4,6 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import meta_llama_AI
 import DBconfig
+import mysql.connector
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'sjshgsgssggs' 
@@ -59,6 +60,14 @@ def init_db():
                     FOREIGN KEY (user_id) REFERENCES users(id)
                 );
             """)
+
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS apiKeys (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    api_key TEXT NOT NULL
+                );
+            """)
+                           
             conn.commit()
             print("Database tables created or already exist.")
         except mysql.connector.Error as err:
@@ -76,6 +85,31 @@ def index():
     if 'user_id' in session:
         return redirect(url_for('home'))
     return render_template('login.html')
+
+@app.route('/admin', methods=['GET', 'POST'])
+def admin():
+    if request.method == 'POST':
+        new_api_key = request.form['new_api_key']
+        print(new_api_key)
+        try:
+            conn = get_db_connection()
+            if conn:
+                cursor = conn.cursor()
+                cursor.execute("""UPDATE apiKeys
+                               SET api_key = %s
+                               WHERE id = 1;""",
+                               (new_api_key,)
+                            )
+                conn.commit()
+                flash("API key added successfully!", "success")
+        
+        except mysql.connector.Error as err:
+            print(f"Error inserting API key: {err}")
+            flash("Error inserting API key", "danger")
+        finally:
+            cursor.close()
+            conn.close()
+    return render_template('admin.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -321,7 +355,9 @@ def handle_request_chat_history(data):
 
 @app.route('/aiChat', methods=['POST','GET'])
 def aiChat():
-    return render_template('aiChat.html')
+    username = "rrfffd"
+    first_leter = username[0].upper()
+    return render_template('aiChat.html', first_leter=first_leter)
 
 @socketio.on('connect', namespace='/aiChat')
 def ai_connect():
