@@ -1,14 +1,7 @@
 from openai import OpenAI, APIError
-import mysql.connector
-from mysql.connector import Error
-
+import DBconfig
 def metaLlama(prompt, user_id, username):
-    DB_CONFIG = {
-      'host': 'localhost',
-      'user': 'root',
-      'password': '1234',
-      'database': 'test_chat_app'
-    }
+    DB_CONFIG = DBconfig.DBconfig()
     sqldb = mysql.connector.connect(**DB_CONFIG)
        
     cursor = sqldb.cursor()
