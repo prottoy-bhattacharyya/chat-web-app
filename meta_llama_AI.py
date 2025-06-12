@@ -33,7 +33,7 @@ def metaLlama(prompt, user_id, username):
     try:
       client = OpenAI(
           base_url="https://openrouter.ai/api/v1",
-          api_key = "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"
+          api_key = new_api_key
       )
 
       completion = client.chat.completions.create(

@@ -355,7 +355,7 @@ def handle_request_chat_history(data):
 
 @app.route('/aiChat', methods=['POST','GET'])
 def aiChat():
-    username = "rrfffd"
+    username = session['username']
     first_leter = username[0].upper()
     return render_template('aiChat.html', first_leter=first_leter)
 

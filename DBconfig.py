@@ -5,6 +5,6 @@ def DBconfig():
     'host': 'localhost',
     'user': 'root',
     'password': '1234',
-    'database': 'test_chat_app'
+    'database': 'chat_app'
   }
   return DB_CONFIG

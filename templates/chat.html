@@ -52,6 +52,44 @@
         .chat-messages-container::-webkit-scrollbar-thumb:hover {
             background: #555;
         }
+        .no-chat-selected {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .no-chat-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #9CA3AF; /* gray-400 */
+        }
+
+        .no-chat-icon {
+            width: 6rem;
+            height: 6rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .no-chat-icon svg {
+            width: 5rem;
+            height: 3rem;
+            color: rgba(43, 4, 4, 0.6);
+        }
+
+        .no-chat-title {
+            font-size: 1.5rem; /* Text-2xl */
+            font-weight: 600; /* Semibold */
+            color: #6B7280; /* gray-500 */
+        }
     </style>
 </head>
 <body class="flex flex-col h-screen bg-gray-100">
@@ -79,7 +117,16 @@
 
         <div class="flex-1 flex flex-col bg-gray-50">
             <div id="chat-header" class="bg-gray-200 p-4 border-b border-gray-300 text-center text-xl font-semibold text-gray-800 rounded-tr-lg">
-                
+                <div id="no-chat-selected" class="no-chat-selected">
+                    <div class="no-chat-content">
+                        <div class="no-chat-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="no-chat-title">Select a friend to start chatting</h3>
+                    </div>
+                </div>
             </div>
 
             <div id="chat-messages" class="flex-1 p-4 overflow-y-auto chat-messages-container">
