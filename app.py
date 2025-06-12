@@ -62,12 +62,18 @@ def init_db():
             """)
 
             cursor.execute("""
-                CREATE TABLE IF NOT EXISTS apiKeys (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    api_key TEXT NOT NULL
+                CREATE TABLE IF NOT EXISTS apikeys (
+                    id INT PRIMARY KEY,
+                    api_key VARCHAR(255)
                 );
             """)
-                           
+
+            cursor.execute("""
+                INSERT INTO apikeys (id, api_key)
+                SELECT * FROM (SELECT 1 AS id, 'abcd' AS api_key) AS temp
+                WHERE NOT EXISTS (SELECT 1 FROM apikeys LIMIT 1);
+            """)
+            
             conn.commit()
             print("Database tables created or already exist.")
         except mysql.connector.Error as err:
@@ -95,7 +101,7 @@ def admin():
             conn = get_db_connection()
             if conn:
                 cursor = conn.cursor()
-                cursor.execute("""UPDATE apiKeys
+                cursor.execute("""UPDATE apikeys
                                SET api_key = %s
                                WHERE id = 1;""",
                                (new_api_key,)
