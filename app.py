@@ -412,5 +412,10 @@ def ai_from_client(data):
         print(f"AI Chat: Missing user_id ({user_id}) or prompt ({prompt}).")
         emit('ai_from_server', {'response': 'Error: Invalid request or not connected properly.'}, room=str(user_id), namespace='/aiChat')
     
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('error.html'), 404
+
+
 if __name__ == '__main__':
     socketio.run(app, debug=True, host='0.0.0.0', port=5000)
