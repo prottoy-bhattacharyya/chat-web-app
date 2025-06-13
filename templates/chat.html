@@ -65,7 +65,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            color: #9CA3AF; /* gray-400 */
+            color: #9CA3AF;
         }
 
         .no-chat-icon {
@@ -86,9 +86,9 @@
         }
 
         .no-chat-title {
-            font-size: 1.5rem; /* Text-2xl */
-            font-weight: 600; /* Semibold */
-            color: #6B7280; /* gray-500 */
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #6B7280;
         }
     </style>
 </head>
@@ -129,15 +129,14 @@
                 </div>
             </div>
 
-            <div id="chat-messages" class="flex-1 p-4 overflow-y-auto chat-messages-container">
-                </div>
-
+            <div id="chat-messages" class="flex-1 p-4 overflow-y-auto chat-messages-container"></div>
+                
             <div id="chat-input-area" class="bg-white p-4 border-t border-gray-200 flex items-center space-x-4 rounded-br-lg hidden">
                 <input type="text" id="message-input" placeholder="Type your message..."
-                       class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                 <button id="send-button"
-                        class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out">
-                    Send
+                class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out">
+                Send
                 </button>
             </div>
         </div>
@@ -226,10 +225,10 @@
                 messageDiv.classList.add('bg-gray-300', 'text-gray-800', 'mr-auto');
             }
 
-            const senderSpan = document.createElement('span');
-            senderSpan.classList.add('font-semibold', 'text-sm');
-            senderSpan.textContent = isCurrentUser ? 'You' : senderUsername;
-            messageDiv.appendChild(senderSpan);
+            // const senderSpan = document.createElement('span');
+            // senderSpan.classList.add('font-semibold', 'text-sm');
+            // senderSpan.textContent = isCurrentUser ? 'You' : senderUsername;
+            // messageDiv.appendChild(senderSpan);
 
             const messageP = document.createElement('p');
             messageP.classList.add('text-base', 'mt-1');
@@ -237,7 +236,7 @@
             messageDiv.appendChild(messageP);
 
             const timestampSpan = document.createElement('span');
-            timestampSpan.classList.add('block', 'text-xs', 'mt-1', isCurrentUser ? 'text-blue-100' : 'text-gray-600');
+            timestampSpan.classList.add('block', 'text-gray-500', 'mt-1', 'text-right', isCurrentUser ? 'text-blue-100' : 'text-gray-600');
             timestampSpan.textContent = timestamp;
             messageDiv.appendChild(timestampSpan);
 

@@ -28,7 +28,7 @@ def metaLlama(prompt, user_id, username):
                           For example, use <p> for paragraphs, <strong> for bold text, 
                           <em> for italics,  
                           <br> for line breaks and colorful texts with stylish cdn tailwind css classes
-                          for a white background
+                          in a white background
                           and never mention about html tags in your answer'''
     try:
       client = OpenAI(

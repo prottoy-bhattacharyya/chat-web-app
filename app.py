@@ -92,8 +92,13 @@ def index():
         return redirect(url_for('home'))
     return render_template('login.html')
 
+is_admin = False
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
+    if not is_admin:
+        flash("You are not authorized to access this page.", "danger")
+        return redirect(url_for('login'))
+    
     if request.method == 'POST':
         new_api_key = request.form['new_api_key']
         print(new_api_key)
@@ -125,7 +130,10 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-
+        if (username == "admin" and password == "admin"):
+            global is_admin
+            is_admin = True
+            return redirect(url_for('admin'))
         conn = get_db_connection()
         if conn:
             cursor = conn.cursor(dictionary=True)
@@ -201,6 +209,9 @@ def logout():
 
 @app.route('/home')
 def home():
+    if 'user_id' not in session:
+        flash('Please log in to access the Home page.', 'warning')
+        return redirect(url_for('login'))
     id = session['user_id']
     if not id:
         return redirect(url_for('login'))
@@ -293,8 +304,16 @@ def handle_send_message(data):
             conn.commit()
 
             cursor.execute("SELECT timestamp FROM messages WHERE id = LAST_INSERT_ID()")
-            timestamp = cursor.fetchone()[0].strftime('%Y-%m-%d %I:%M:%S %p')
+            timestamp = cursor.fetchone()[0]
 
+            today = datetime.today().strftime("%Y-%m-%d")
+            date = timestamp.date().strftime("%Y-%m-%d")
+
+            if today == date:
+                timestamp = timestamp.strftime("%I:%M %p")
+            else:
+                timestamp = timestamp.strftime("%d-%m-%Y %I:%M %p")
+            
             emit('receive_message', {
                 'sender_id': sender_id,
                 'receiver_id': receiver_id,
@@ -361,6 +380,9 @@ def handle_request_chat_history(data):
 
 @app.route('/aiChat', methods=['POST','GET'])
 def aiChat():
+    if 'user_id' not in session:
+        flash('Please log in to access the Ask AI.', 'warning')
+        return redirect(url_for('login'))
     username = session['username']
     first_leter = username[0].upper()
     return render_template('aiChat.html', first_leter=first_leter)
