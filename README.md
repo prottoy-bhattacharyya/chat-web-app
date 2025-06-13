@@ -10,7 +10,7 @@
 
 - ⚡ High-performance with UV Python server
 
-- 📱 Accessible in any devices connected in the same network to pot 5000
+- 📱 Accessible in any devices connected in the same network to port 5000
 
 ## 🛠️ Setup Instructions
 ### 📌 Prerequisites
