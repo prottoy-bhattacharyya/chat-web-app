@@ -39,7 +39,7 @@ Ensure MySQL is running and accessible with the following credentials:
         'host': 'localhost',
         'user': 'root',
         'password': '1234',
-        'database': 'test_chat_app'
+        'database': 'chat_app'
     }
 ```
 💡 You can change these settings in your config file as needed.
