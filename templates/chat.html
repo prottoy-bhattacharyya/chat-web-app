@@ -97,7 +97,7 @@
         <h1 class="text-2xl font-bold">Chat App</h1>
         <div class="flex items-center space-x-4">
             <span class="text-lg">Welcome, {{ current_full_name }}!</span>
-            <a href="/logout" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition duration-150 ease-in-out">Logout</a>
+            <a href="/logout" class="bg-red-500 hover:bg-red-900 text-white px-4 py-2 rounded-md transition duration-150 ease-in-out">Logout</a>
         </div>
     </header>
 
@@ -109,7 +109,8 @@
                     <li class="p-3 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150 ease-in-out flex items-center justify-between"
                         data-user-id="{{ user.id }}" data-username="{{ user.username }}" data-full-name="{{ user.full_name }}">
                         <span class="font-medium text-gray-700">{{ user.full_name }}</span>
-                        <span id="status-{{ user.id }}" class="text-gray-500 text-sm">Offline</span>
+                        <!-- <span id="status-{{ user.id }}" class="text-gray-500 text-sm">Offline</span> -->
+                        <div id="status-{{ user.id }}" class="-bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
                     </li>
                 {% endfor %}
             </ul>
@@ -132,7 +133,7 @@
             <div id="chat-messages" class="flex-1 p-4 overflow-y-auto chat-messages-container"></div>
                 
             <div id="chat-input-area" class="bg-white p-4 border-t border-gray-200 flex items-center space-x-4 rounded-br-lg hidden">
-                <input type="text" id="message-input" placeholder="Type your message..."
+                <input type="text" id="message-input" autocomplete="off" placeholder="Type your message..."
                 class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                 <button id="send-button"
                 class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out">
@@ -175,7 +176,7 @@
                 const currentActive = document.querySelector('#friends-list li.bg-blue-100');
                 if (currentActive) {
                     currentActive.classList.remove('bg-blue-100');
-                    currentActive.classList.add('hover:bg-gray-100');
+                    currentActive.classList.add('hover:bg-gray-300');
                 }
 
                 targetLi.classList.add('bg-blue-100');
@@ -220,7 +221,7 @@
             const isCurrentUser = (senderId == currentUserId);
 
             if (isCurrentUser) {
-                messageDiv.classList.add('bg-blue-500', 'text-white', 'ml-auto');
+                messageDiv.classList.add('bg-blue-700', 'text-white', 'ml-auto');
             } else {
                 messageDiv.classList.add('bg-gray-300', 'text-gray-800', 'mr-auto');
             }
@@ -236,7 +237,7 @@
             messageDiv.appendChild(messageP);
 
             const timestampSpan = document.createElement('span');
-            timestampSpan.classList.add('block', 'text-gray-500', 'mt-1', 'text-right', isCurrentUser ? 'text-blue-100' : 'text-gray-600');
+            timestampSpan.classList.add('block', 'text-gray-300', 'text-xs', 'mt-1', 'text-right', isCurrentUser ? 'text-blue-100' : 'text-gray-600');
             timestampSpan.textContent = timestamp;
             messageDiv.appendChild(timestampSpan);
 
@@ -273,10 +274,20 @@
 
         socket.on('user_status', (data) => {
             const statusElement = document.getElementById(`status-${data.user_id}`);
-            if (statusElement) {
-                statusElement.textContent = data.status === 'online' ? 'Online' : 'Offline';
-                statusElement.classList.remove('text-gray-500', 'text-green-500');
-                statusElement.classList.add(data.status === 'online' ? 'text-green-500' : 'text-gray-500');
+            // if (statusElement) {
+            //     statusElement.textContent = data.status === 'online' ? 'Online' : 'Offline';
+            //     statusElement.classList.remove('text-gray-500', 'text-green-500');
+            //     statusElement.classList.add(data.status === 'online' ? 'text-green-500' : 'text-gray-500');
+            // }
+            if (statusElement){
+                if(data.status === 'online'){
+                    statusElement.classList.remove('bg-gray-400');
+                    statusElement.classList.add('bg-green-400');
+                }
+                else{
+                    statusElement.classList.remove('bg-green-400');
+                    statusElement.classList.add('bg-gray-400');
+                }
             }
         });
 
@@ -284,9 +295,11 @@
             const userId = friendLi.dataset.userId;
             const statusElement = document.getElementById(`status-${userId}`);
             if (statusElement) {
-                statusElement.textContent = 'Offline';
-                statusElement.classList.remove('text-green-500');
-                statusElement.classList.add('text-gray-500');
+                // statusElement.textContent = 'Offline';
+                // statusElement.classList.remove('text-green-500');
+                // statusElement.classList.add('text-gray-500');
+                statusElement.classList.remove('bg-green-400');
+                statusElement.classList.add('bg-gray-400');
             }
         });
 
