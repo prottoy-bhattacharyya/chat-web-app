@@ -6,9 +6,7 @@
 
 - 🤖 Integrated AI assistant for smart responses
 
-- 🗂️ MySQL database support
-
-- ⚡ High-performance with UV Python server
+- 🗂️ Chat history is saved in MySQL database
 
 - 📱 Accessible in any devices connected in the same network on `port:5000`
 
