@@ -1,5 +1,5 @@
 # 💬 chat web App
-**chat web App** is a real-time chat application that allows users to communicate with each other and interact with an integrated AI assistant that can answer any questions. This app uses a MySQL database for user data and chat history, and leverages the ultra-fast Python web server UV for optimal performance.
+**chat web App** is a real-time chat application that allows users to communicate with each other and interact with an integrated AI assistant that can answer any questions. This app uses a MySQL database for user data and chat history.
 
 ## 🚀 Features
 - 🔁 Real-time chat between users
@@ -10,7 +10,7 @@
 
 - ⚡ High-performance with UV Python server
 
-- 📱 Accessible via your local browser at localhost:5000
+- 📱 Accessible in any devices connected in the same network to pot 5000
 
 ## 🛠️ Setup Instructions
 ### 📌 Prerequisites
@@ -73,10 +73,10 @@ Ensure MySQL is running and accessible with the following credentials:
     
 ```
 # 🧠 AI Assistant
-The AI assistant is integrated into the chat window and can respond to a wide range of user queries. You can customize its behavior via the ai/ directory.
+The AI assistant is integrated into the chat window and can respond to a wide range of user queries.
 
 # 🛡️ Security & Configuration
-Ensure your MySQL root password and any sensitive environment variables are secured in production using .env files or a secure configuration method. Avoid hardcoding credentials in production environments.
+Ensure your MySQL root password and any sensitive environment variables are secured in production in the database. Avoid hardcoding credentials in production environments.
 
 # 🤝 Contributing
 Contributions are welcome! Please open an issue or submit a pull request for feature suggestions, bug fixes, or improvements.

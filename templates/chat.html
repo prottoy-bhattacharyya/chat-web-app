@@ -109,7 +109,6 @@
                     <li class="p-3 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150 ease-in-out flex items-center justify-between"
                         data-user-id="{{ user.id }}" data-username="{{ user.username }}" data-full-name="{{ user.full_name }}">
                         <span class="font-medium text-gray-700">{{ user.full_name }}</span>
-                        <!-- <span id="status-{{ user.id }}" class="text-gray-500 text-sm">Offline</span> -->
                         <div id="status-{{ user.id }}" class="-bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
                     </li>
                 {% endfor %}
