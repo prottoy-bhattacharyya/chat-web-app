@@ -226,11 +226,6 @@
                 messageDiv.classList.add('bg-gray-300', 'text-gray-800', 'mr-auto');
             }
 
-            // const senderSpan = document.createElement('span');
-            // senderSpan.classList.add('font-semibold', 'text-sm');
-            // senderSpan.textContent = isCurrentUser ? 'You' : senderUsername;
-            // messageDiv.appendChild(senderSpan);
-
             const messageP = document.createElement('p');
             messageP.classList.add('text-base', 'mt-1');
             messageP.textContent = messageText;
@@ -274,11 +269,6 @@
 
         socket.on('user_status', (data) => {
             const statusElement = document.getElementById(`status-${data.user_id}`);
-            // if (statusElement) {
-            //     statusElement.textContent = data.status === 'online' ? 'Online' : 'Offline';
-            //     statusElement.classList.remove('text-gray-500', 'text-green-500');
-            //     statusElement.classList.add(data.status === 'online' ? 'text-green-500' : 'text-gray-500');
-            // }
             if (statusElement){
                 if(data.status === 'online'){
                     statusElement.classList.remove('bg-gray-400');
@@ -295,9 +285,6 @@
             const userId = friendLi.dataset.userId;
             const statusElement = document.getElementById(`status-${userId}`);
             if (statusElement) {
-                // statusElement.textContent = 'Offline';
-                // statusElement.classList.remove('text-green-500');
-                // statusElement.classList.add('text-gray-500');
                 statusElement.classList.remove('bg-green-400');
                 statusElement.classList.add('bg-gray-400');
             }
