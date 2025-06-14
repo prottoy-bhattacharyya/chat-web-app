@@ -31,6 +31,11 @@ Make sure Python is installed: [Download Python](https://www.python.org/download
 ```
 ### 3. Configure MySQL Database
 
+First create a data base 
+```bash
+    CREATE DATABASE chat_app
+```
+
 Ensure MySQL is running and accessible with the following credentials:
 ```python
     {
