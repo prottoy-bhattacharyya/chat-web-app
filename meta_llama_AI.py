@@ -1,4 +1,4 @@
-from openai import OpenAI, APIError
+from openai import OpenAI, APIError, RateLimitError, APIConnectionError
 import DBconfig
 import mysql.connector
 
@@ -29,7 +29,8 @@ def metaLlama(prompt, user_id, username):
                           <em> for italics,  
                           <br> for line breaks and colorful texts with stylish cdn tailwind css classes
                           in a white background
-                          and never mention about html tags in your answer'''
+                          and never mention about html tags in your answer I repeat DO NOT
+                          mention about html tags in your answer I repeat DO NOT'''
     try:
       client = OpenAI(
           base_url="https://openrouter.ai/api/v1",
@@ -39,6 +40,8 @@ def metaLlama(prompt, user_id, username):
       completion = client.chat.completions.create(
           # model="meta-llama/llama-4-maverick:free",
           model = "nvidia/llama-3.1-nemotron-ultra-253b-v1:free",
+          # model = "deepseek/deepseek-r1-0528-qwen3-8b:free",
+          # model="google/gemini-2.0-flash-exp:free",
           messages=[
               {
                 "role": "user",
@@ -49,9 +52,12 @@ def metaLlama(prompt, user_id, username):
       response = completion.choices[0].message.content
 
     except APIError as err:
-      return f"API error: {err}"
+      return f"inside API error: {err}"
+    except RateLimitError as err:
+      return f"Rate limit error: {err}"
+    except APIConnectionError as err:
+      return f"API connection error: {err}"
       
-    
     try:
       cursor.execute('''INSERT INTO aiChat(user_id, username, prompt, response)
                       VALUES(%s, %s, %s, %s)''',

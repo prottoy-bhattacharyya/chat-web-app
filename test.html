@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
+
+<body>
+    <form id="form">
+        <input type="text" name="name">
+        <button type="submit">Submit</button>
+        <video id="load" width="100" autoplay loop muted src="./static/loading.mp4" class='hidden'>
+        </video>
+        <button id="cancel">Cancel</button>
+    </form>
+</body>
+<script>
+    const form = document.getElementById('form');
+    const load = document.getElementById('load');
+    const cancel = document.getElementById('cancel');
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        load.classList.remove('hidden');
+    });
+
+    cancel.addEventListener('click', (event) => {
+        event.preventDefault();
+        load.classList.add('hidden');
+    });
+</script>
+
+</html>

@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f0f2f5;
+            background-color: #4f8ff0;
         }
         .flash-message {
             padding: 0.75rem 1.25rem;
@@ -50,7 +50,7 @@
             border-radius: 10px;
         }
         .chat-messages-container::-webkit-scrollbar-thumb:hover {
-            background: #555;
+            background: #4050e0;
         }
         .no-chat-selected {
             flex: 1;
@@ -65,7 +65,7 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            color: #9CA3AF;
+            color: #4079db;
         }
 
         .no-chat-icon {
@@ -93,11 +93,15 @@
     </style>
 </head>
 <body class="flex flex-col h-screen bg-gray-100">
-    <header class="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center">
+    <header class="bg-blue-700 text-white p-4 shadow-md flex justify-between items-center">
         <h1 class="text-2xl font-bold">Chat App</h1>
         <div class="flex items-center space-x-4">
             <span class="text-lg">Welcome, {{ current_full_name }}!</span>
-            <a href="/logout" class="bg-red-500 hover:bg-red-900 text-white px-4 py-2 rounded-md transition duration-150 ease-in-out">Logout</a>
+            <div class="flex space-x-4 bg-red-500 hover:bg-red-900 text-white px-4 py-2 rounded-md transition duration-150 ease-in-out">    
+                <img id="logout" src="{{url_for('static', filename='logout.png')}}"
+                             alt="" class="w-5">
+                <a href="/logout">Logout</a>
+            </div>
         </div>
     </header>
 
@@ -215,7 +219,7 @@
 
         function displayMessage(senderId, senderUsername, messageText, timestamp) {
             const messageDiv = document.createElement('div');
-            messageDiv.classList.add('mb-2', 'p-3', 'rounded-lg', 'max-w-xs', 'break-words');
+            messageDiv.classList.add( 'mb-5', 'p-3', 'rounded-lg', 'max-w-xs', 'break-words');
 
             const isCurrentUser = (senderId == currentUserId);
 

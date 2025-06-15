@@ -51,11 +51,15 @@
             {% endif %}
         {% endwith %}
     <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-lg border border-gray-200">
+        <img id="settings" src="{{url_for('static', filename='settings.png')}}"
+                             alt="" class="w-20 mx-auto">
         <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Admin Panel</h2>
         <p class="text-center text-gray-600 mb-8">Manage application settings.</p>
 
         
             <div class="mb-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
+                <img id="logout" src="{{url_for('static', filename='gold-key.png')}}"
+                             alt="" class="w-20 mx-auto">
                 <h3 class="text-xl font-semibold text-blue-800 mb-4">Change API Key</h3>
                 <p class="text-sm text-blue-700 mb-4">
                     Update the API key for the Meta Llama AI integration. Ensure you provide a valid key from OpenRouter.ai.
@@ -81,6 +85,8 @@
             </div>
 
         <div class="text-center mt-6">
+            <img src="{{url_for('static', filename='home-page.png')}}"
+                             alt="" class="flex w-10 mx-auto">
             <a href="/login" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out">
                 &larr; Go Back to Home
             </a>

@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, abort
 from flask_socketio import SocketIO, emit, join_room, leave_room
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.exceptions import HTTPException
 from datetime import datetime
 import meta_llama_AI
 import DBconfig
@@ -82,10 +83,9 @@ def init_db():
             cursor.close()
             conn.close()
 
-
 with app.app_context():
     init_db()
-
+ 
 @app.route('/')
 def index():
     if 'user_id' in session:
@@ -95,9 +95,12 @@ def index():
 is_admin = False
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
+    global is_admin
     if not is_admin:
         flash("You are not authorized to access this page.", "danger")
         return redirect(url_for('login'))
+    
+    is_admin = False
     
     if request.method == 'POST':
         new_api_key = request.form['new_api_key']
@@ -358,16 +361,21 @@ def handle_request_chat_history(data):
         cursor = conn.cursor(dictionary=True)
         try:
             cursor.execute("""
-                SELECT m.sender_id, m.receiver_id, m.message_text, m.timestamp, u.username as sender_username
-                FROM messages m
-                JOIN users u ON m.sender_id = u.id
+                SELECT sender_id, receiver_id, message_text, timestamp, username as sender_username
+                FROM messages JOIN users 
+                ON messages.sender_id = users.id
                 WHERE (sender_id = %s AND receiver_id = %s) OR (sender_id = %s AND receiver_id = %s)
                 ORDER BY timestamp ASC
             """, (user1_id, user2_id, user2_id, user1_id))
 
             history = cursor.fetchall()
             for msg in history:
-                msg['timestamp'] = msg['timestamp'].strftime('%Y-%m-%d %I:%M:%S %p')
+                today = datetime.today().strftime("%Y-%m-%d")
+                date = msg['timestamp'].date().strftime("%Y-%m-%d")
+                if today == date:
+                    msg['timestamp'] = msg['timestamp'].strftime('%I:%M %p')
+                else:    
+                    msg['timestamp'] = msg['timestamp'].strftime('%d-%m-%Y %I:%M:%S %p')
 
             emit('chat_history', {'other_user_id': user2_id, 'history': history}, room=str(user1_id))
             print(f"Sent chat history for user {user2_id} to {session['username']} (ID: {user1_id}).")
@@ -412,9 +420,9 @@ def ai_from_client(data):
         print(f"AI Chat: Missing user_id ({user_id}) or prompt ({prompt}).")
         emit('ai_from_server', {'response': 'Error: Invalid request or not connected properly.'}, room=str(user_id), namespace='/aiChat')
     
-@app.errorhandler(404)
+@app.errorhandler(HTTPException)
 def page_not_found(e):
-    return render_template('error.html'), 404
+    return render_template('error.html'), HTTPException.code
 
 
 if __name__ == '__main__':
