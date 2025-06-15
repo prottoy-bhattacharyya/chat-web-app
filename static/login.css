@@ -1,15 +1,34 @@
-body{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* body{
+    
     min-height: 100vh;
     background-image: url(bg17.avif);
     background-repeat: no-repeat;
     background-position: center;
     background-attachment: fixed;
     background-size: cover;
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 
+} */
+body{
+    margin: 0;
+    min-height: 100vh;   
+    background: linear-gradient(-45deg, #0c0216, #30585e, #08172c, #121311);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+@keyframes gradientBG {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
 .flash-message {
     padding: 0.75rem 1.25rem;

@@ -71,7 +71,7 @@ def init_db():
 
             cursor.execute("""
                 INSERT INTO apikeys (id, api_key)
-                SELECT * FROM (SELECT 1 AS id, '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' AS api_key) AS temp
+                SELECT * FROM (SELECT 1 AS id, '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' AS api_key) AS temp
                 WHERE NOT EXISTS (SELECT 1 FROM apikeys LIMIT 1);
             """)
             
@@ -90,7 +90,7 @@ with app.app_context():
 def index():
     if 'user_id' in session:
         return redirect(url_for('home'))
-    return render_template('login.html')
+    return render_template('front_page.html')
 
 is_admin = False
 @app.route('/admin', methods=['GET', 'POST'])
@@ -209,7 +209,7 @@ def logout():
     session.pop('username', None)
     session.pop('full_name', None)
     flash('You have been logged out.', 'info')
-    return redirect(url_for('login'))
+    return redirect('/')
 
 @app.route('/home')
 def home():
