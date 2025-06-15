@@ -115,6 +115,7 @@ def admin():
                                (new_api_key,)
                             )
                 conn.commit()
+                print(f"API key updated successfully!  {new_api_key}")
                 flash("API key added successfully!", "success")
         
         except mysql.connector.Error as err:
