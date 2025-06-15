@@ -235,7 +235,7 @@ def home():
         finally:
             cursor.close()
             conn.close()
-
+    
     return render_template('home.html', full_name=full_name, username=username, dob=dob, email=email)
 @app.route('/chat')
 def chat():
