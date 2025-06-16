@@ -94,12 +94,12 @@ display: flex;
     word-spacing: 5px;
 }
 .container .bd-image{
-   margin-left: 65%;
+   margin-left: 62%;
    margin-top: -250px;
    /* position: absolute; */
    display: flex;
 }
 .container .bd-image img{
-  height: 300px;
-  width: 300px;
-}
+  height: 400px;
+  width: 500px;
+}   
