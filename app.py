@@ -100,9 +100,10 @@ def admin():
         flash("You are not authorized to access this page.", "danger")
         return redirect(url_for('login'))
     
-    is_admin = False
+    
     
     if request.method == 'POST':
+        is_admin = False
         new_api_key = request.form['new_api_key']
         print(new_api_key)
         try:
@@ -214,7 +215,7 @@ def logout():
 @app.route('/home')
 def home():
     if 'user_id' not in session:
-        flash('Please log in to access the Home page.', 'warning')
+        flash('Please log in first', 'warning')
         return redirect(url_for('login'))
     id = session['user_id']
     if not id:
@@ -238,11 +239,35 @@ def home():
             conn.close()
     
     return render_template('home.html', full_name=full_name, username=username, dob=dob, email=email)
+
+@app.route('/add_friend')
+def add_friend():
+    if 'user_id' not in session:
+        flash('Please log in first', 'warning')
+        return redirect(url_for('login'))
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("SELECT id, full_name, username FROM users WHERE id != %s", (session['user_id'],))
+            users = cursor.fetchall()
+        except mysql.connector.Error as err:
+            print(f"Error fetching users: {err}")
+        finally:
+            cursor.close()
+            conn.close()
+    return render_template('add_friend.html', users=users)
+
+@app.route('/friend_request')
+def friend_request():
+    if 'user_id' not in session:
+        flash('Please log in first', 'warning')
+        return redirect(url_for('login'))
+    return render_template('friend_request.html')
 @app.route('/chat')
 def chat():
-
     if 'user_id' not in session:
-        flash('Please log in to access the chat.', 'warning')
+        flash('Please log in first', 'warning')
         return redirect(url_for('login'))
 
     conn = get_db_connection()
