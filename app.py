@@ -71,7 +71,7 @@ def init_db():
 
             cursor.execute("""
                 INSERT INTO apikeys (id, api_key)
-                SELECT * FROM (SELECT 1 AS id, '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' AS api_key) AS temp
+                SELECT * FROM (SELECT 1 AS id, 'test_api_key' AS api_key) AS temp
                 WHERE NOT EXISTS (SELECT 1 FROM apikeys LIMIT 1);
             """)
             
