@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    #list{
+        border: 2px solid rgb(1, 10, 19);
+        cursor: pointer;
+    }
+
+    #test_data{
+        text-align: center;
+        padding: 10px;
+    }
+
+    #test_data:hover{
+        background-color: rgba(1, 10, 19, 0.253);
+        color: rgb(66, 12, 12);
+    }
+
+    #show{
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+        text-align: center;
+        padding: 10px;
+        background-color: rgba(34, 115, 196, 0.253);
+        color: rgb(66, 12, 12); 
+        
+    }
+</style>
+<body>
+    <div id="list">
+        <div id="test_data" data-test="test 1">click 1</div>
+        <div id="test_data" data-test="test 2">click 2</div>
+        <div id="test_data" data-test="test 3">click 3</div>
+    </div>
+    <div id="show"></div>
+</body>
+<script>
+    const list = document.getElementById('list');
+    const show = document.getElementById('show');
+    list.addEventListener('click', (event) => {
+        const test_data = event.target.closest('#test_data');
+        if(test_data){
+            const p = document.createElement('p');
+            p.style.padding = '10px';
+            p.style.border = '1px solid black';
+            p.textContent = test_data.dataset.test;
+            show.appendChild(p);
+        }
+    });
+</script>
+</html>

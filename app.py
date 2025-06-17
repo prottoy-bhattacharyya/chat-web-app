@@ -33,8 +33,19 @@ def init_db():
                     full_name VARCHAR(255) NOT NULL,
                     username VARCHAR(255) UNIQUE NOT NULL,
                     dob DATE NOT NULL,
-                    email VARCHAR(255) UNIQUE NOT NULL,
+                    email VARCHAR(255) NOT NULL,
                     password_hash VARCHAR(255) NOT NULL
+                );
+            """)
+
+            cursor.execute("""
+                CREATE TABLE IF NOT EXISTS friends (
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    user_id INT NOT NULL,
+                    friend_id INT NOT NULL,
+                    status ENUM('accepted', 'pending', 'rejected') DEFAULT 'pending',
+                    FOREIGN KEY (user_id) REFERENCES users(id),
+                    FOREIGN KEY (friend_id) REFERENCES users(id)
                 );
             """)
 
@@ -249,7 +260,7 @@ def add_friend():
     if conn:
         cursor = conn.cursor(dictionary=True)
         try:
-            cursor.execute("SELECT id, full_name, username FROM users WHERE id != %s", (session['user_id'],))
+            cursor.execute("SELECT id, full_name, username FROM users WHERE id != %s ", (session['user_id'],))
             users = cursor.fetchall()
         except mysql.connector.Error as err:
             print(f"Error fetching users: {err}")
