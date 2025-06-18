@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Chat Cyan - Add Friend</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
 <style>
     * {
@@ -237,18 +238,18 @@
         </div>
 
         <!-- People Grid -->
-        <div class="people-grid">
-            <!-- Person Card 1 -->
+        <div class="people-grid" id="people-grid">
+            <!-- Person Card-->
             {% for user in users %}
             <div class="person-card">
                 <div class="person-image-container">
-                    <img src="{{url_for('static', filename='/image/user.png')}}" alt="Mir Nahin Rahman"
+                    <img src="{{url_for('static', filename='/image/user.png')}}" alt="{{url_for('static', filename='/image/user.png')}}"
                         class="person-image">
                 </div>
                 <div class="person-content">
                     <h3 class="person-name">{{user.full_name}}</h3>
                     <div class="action-buttons">
-                        <button class="add-friend-btn">Add friend</button>
+                        <button class="add-friend-btn" data-user-id="{{user.id}}">Add friend</button>
                         <button class="remove-btn">Remove</button>
                     </div>
                 </div>
@@ -257,5 +258,20 @@
         </div>
     </div>
 </body>
+<script>
+    var socketio = io('/add_friend');
+    people_grid = document.getElementById('people-grid');
+    socketio.on('connect', () => {
+        console.log('Connected to add_friend namespace');  
+    });
 
+    people_grid.addEventListener('click', (event)=>{
+        const friend_request_btn = event.target.closest('.add-friend-btn');
+        const friend_request_id = friend_request_btn.dataset.userId;
+        socketio.emit('add_friend_request', {'friend_request_id': friend_request_id});
+        friend_request_btn.innerText = 'Request sent';
+    });
+
+
+</script>
 </html>

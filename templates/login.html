@@ -13,14 +13,14 @@
 </head>
 <body>
     <!-- {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="mb-4">
-                    {% for category, message in messages %}
-                        <div class="flash-message {{ category }}">{{ message }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %} -->
+        {% if messages %}
+            <div class="mb-4">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %} -->
   <div class="logo"><a href=""><img src="{{url_for('static', filename='image/logo2.png')}}" alt=""></a></div>
    <div class="container">
        <form class="form" action="/login" method="POST">
@@ -47,14 +47,14 @@
         </form>
     </div>
     {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                <div class="mb-4">
-                    {% for category, message in messages %}
-                        <div class="flash-message {{ category }}">{{ message }}</div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
+        {% if messages %}
+            <div class="mb-4">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
 </body>
 <script src="{{url_for('static', filename='showpass.js')}}"></script>
 </html>

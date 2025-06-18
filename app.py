@@ -41,11 +41,11 @@ def init_db():
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS friends (
                     id INT AUTO_INCREMENT PRIMARY KEY,
-                    user_id INT NOT NULL,
-                    friend_id INT NOT NULL,
+                    sender_id INT NOT NULL,
+                    receiver_id INT NOT NULL,
                     status ENUM('accepted', 'pending', 'rejected') DEFAULT 'pending',
-                    FOREIGN KEY (user_id) REFERENCES users(id),
-                    FOREIGN KEY (friend_id) REFERENCES users(id)
+                    FOREIGN KEY (sender_id) REFERENCES users(id),
+                    FOREIGN KEY (receiver_id) REFERENCES users(id)
                 );
             """)
 
@@ -233,7 +233,7 @@ def home():
         return redirect(url_for('login'))
     
     conn = get_db_connection()
-    if conn:
+    if conn: 
         cursor = conn.cursor(dictionary=True)
         try:
             cursor.execute("SELECT full_name, username, dob, email FROM users WHERE id = %s", (id,))
@@ -268,6 +268,25 @@ def add_friend():
             cursor.close()
             conn.close()
     return render_template('add_friend.html', users=users)
+
+@socketio.on('add_friend_request', namespace='/add_friend')
+def add_friend_request(data):
+    user_id = session['user_id']
+    friend_request_id = data['friend_request_id']
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        try:
+            cursor.execute("""INSERT INTO friends (sender_id, receiver_id) 
+                           VALUES (%s, %s)""", 
+                           (user_id, friend_request_id))
+            conn.commit()
+            print(f"Friend request sent successfully! {user_id} sent {friend_request_id}")
+        except mysql.connector.Error as err:
+            print(f"Error sending friend request: {err}")
+        finally:
+            cursor.close()
+            conn.close()
 
 @app.route('/friend_request')
 def friend_request():
