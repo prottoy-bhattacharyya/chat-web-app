@@ -45,7 +45,8 @@ def init_db():
                     receiver_id INT NOT NULL,
                     status ENUM('accepted', 'pending', 'rejected') DEFAULT 'pending',
                     FOREIGN KEY (sender_id) REFERENCES users(id),
-                    FOREIGN KEY (receiver_id) REFERENCES users(id)
+                    FOREIGN KEY (receiver_id) REFERENCES users(id),
+                    UNIQUE(sender_id, receiver_id)
                 );
             """)
 
@@ -260,7 +261,14 @@ def add_friend():
     if conn:
         cursor = conn.cursor(dictionary=True)
         try:
-            cursor.execute("SELECT id, full_name, username FROM users WHERE id != %s ", (session['user_id'],))
+            cursor.execute("""SELECT users.id, full_name, username, sender_id, receiver_id, status
+                            FROM users LEFT JOIN friends ON (sender_id = users.id AND receiver_id = %s) 
+                            OR (sender_id = %s AND receiver_id = users.id)
+                            WHERE users.id != %s
+                            AND (friends.status IS NULL OR friends.status = 'rejected');""", 
+                            (session['user_id'],session['user_id'],session['user_id'])
+                        )
+            
             users = cursor.fetchall()
         except mysql.connector.Error as err:
             print(f"Error fetching users: {err}")
