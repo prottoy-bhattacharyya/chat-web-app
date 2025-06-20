@@ -257,11 +257,12 @@ def add_friend():
     if 'user_id' not in session:
         flash('Please log in first', 'warning')
         return redirect(url_for('login'))
+    
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor(dictionary=True)
         try:
-            cursor.execute("""SELECT users.id, full_name, username, sender_id, receiver_id, status
+            cursor.execute("""SELECT users.id, full_name, username, dob, email, sender_id, receiver_id, status
                             FROM users LEFT JOIN friends ON (sender_id = users.id AND receiver_id = %s) 
                             OR (sender_id = %s AND receiver_id = users.id)
                             WHERE users.id != %s
@@ -301,7 +302,28 @@ def friend_request():
     if 'user_id' not in session:
         flash('Please log in first', 'warning')
         return redirect(url_for('login'))
-    return render_template('friend_request.html')
+    
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor(dictionary = True)
+        try:
+            cursor.execute("""select * from users
+                            where id in (select sender_id from friends
+                            where receiver_id = %s);""",
+                            (session['user_id'],)
+                        )
+
+            requests = cursor.fetchall()
+        except mysql.connector.Error as err:
+            print(f"Error fetching friend requests: {err}")
+        finally:
+            cursor.close()
+            conn.close()
+        
+    return render_template('friend_request.html', requests=requests)
+
+
+
 @app.route('/chat')
 def chat():
     if 'user_id' not in session:

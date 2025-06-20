@@ -98,6 +98,7 @@
         border: 1px solid #e5e7eb;
         overflow: hidden;
         transition: box-shadow 0.2s;
+        cursor: pointer; /* Add cursor pointer to indicate clickability */
     }
 
     .person-card:hover {
@@ -111,6 +112,7 @@
     }
 
     .person-image {
+        scale: 0.9;
         width: 100%;
         height: 100%;
         object-fit: cover;
@@ -118,7 +120,7 @@
     }
 
     .person-card:hover .person-image {
-        transform: scale(0.9);
+        transform: scale(1.1);
     }
 
     .person-content {
@@ -179,6 +181,70 @@
         background-color: #7d95ad;
     }
 
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.733);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0s, opacity 0.3s;
+    }
+
+    .popup-overlay.show {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .popup-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        padding: 24px;
+        width: 90%;
+        max-width: 400px;
+        position: relative;
+        text-align: center;
+    }
+
+    .popup-close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #6b7280;
+    }
+
+    .popup-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 16px;
+        border: 2px solid #e5e7eb;
+    }
+
+    .popup-name {
+        font-size: 22px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 8px;
+    }
+
+    .popup-info {
+        font-size: 16px;
+        color: #4b5563;
+        margin-bottom: 20px;
+    }
     /* Responsive Design */
     @media (min-width: 640px) {
         .people-grid {
@@ -212,7 +278,6 @@
 </style>
 
 <body>
-    <!-- Header -->
     <div class="header">
         <div class="header-container">
             <div class="header-content">
@@ -230,53 +295,103 @@
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="main-container">
         <div class="content-header">
             <h2 class="content-title">People you may know</h2>
             <p class="content-subtitle">Connect with friends and discover new people</p>
         </div>
 
-        <!-- People Grid -->
         <div class="people-grid" id="people-grid">
-            <!-- Person Card-->
-             {%  if not users %}
-                <div class="no-friends">
-                    <p>No People to add </p>
-                </div>
-             {% endif %}
+            {% if not users %}
+            <div class="no-friends">
+                <strong>No People to add </strong>
+            </div>
+            {% endif %}
             {% for user in users %}
-            <div class="person-card">
+            <div class="person-card" 
+                data-user-id="{{user.id}}" 
+                data-user-fullname="{{user.full_name}}"
+                data-user-image="{{url_for('static', filename='/image/user.png')}}"
+                data-user-username = "{{user.username}}"
+                data-user-email = "{{user.email}}"
+                data-user-dob = "{{user.dob}}"    
+            >
                 <div class="person-image-container">
-                    <img src="{{url_for('static', filename='/image/user.png')}}" alt="{{url_for('static', filename='/image/user.png')}}"
-                        class="person-image">
+                    <img src="{{url_for('static', filename='/image/user.png')}}" alt="" class="person-image">
                 </div>
                 <div class="person-content">
                     <h3 class="person-name">{{user.full_name}}</h3>
                     <div class="action-buttons">
                         <button class="add-friend-btn" data-user-id="{{user.id}}">Add friend</button>
-                        <button class="remove-btn" >Remove</button>
+                        <button class="remove-btn">Remove</button>
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
     </div>
+
+    <div class="popup-overlay" id="popup-overlay">
+        <div class="popup-card">
+            <button class="popup-close-btn" id="popup-close-btn">&times;</button>
+            <img src="{{url_for('static', filename='/image/user.png')}}" alt="User Profile" class="popup-image" id="popup-image">
+            <h3 class="popup-name" id="popup-name"></h3>
+            <p class="popup-info" id="popup-id"></p>
+            </div>
+    </div>
+
 </body>
 <script>
     var socketio = io('/add_friend');
-    people_grid = document.getElementById('people-grid');
+
+    const peopleGrid = document.getElementById('people-grid');
+    const popupOverlay = document.getElementById('popup-overlay');
+    const popupCloseBtn = document.getElementById('popup-close-btn');
+    const popupImage = document.getElementById('popup-image');
+    const popupName = document.getElementById('popup-name');
+    const popupId = document.getElementById('popup-id');
+
     socketio.on('connect', () => {
-        console.log('Connected to add_friend namespace');  
+        console.log('Connected to add_friend namespace');
     });
 
-    people_grid.addEventListener('click', (event)=>{
-        const friend_request_btn = event.target.closest('.add-friend-btn');
-        const friend_request_id = friend_request_btn.dataset.userId;
-        socketio.emit('add_friend_request', {'friend_request_id': friend_request_id});
-        friend_request_btn.innerText = 'Request sent';
+    peopleGrid.addEventListener('click', (event) => {
+        const friendRequestBtn = event.target.closest('.add-friend-btn');
+        const personCard = event.target.closest('.person-card');
+
+        // Sent request when add friend button is clicked
+        if (friendRequestBtn) {
+            event.stopPropagation(); // Prevent person-card click from firing
+            const friendRequestId = friendRequestBtn.dataset.userId;
+            socketio.emit('add_friend_request', { 'friend_request_id': friendRequestId });
+            friendRequestBtn.innerText = 'Request sent';
+        } 
+        
+        else if (personCard) {
+            // Show popup when person-card is clicked
+            const userFullname = personCard.dataset.userFullname;
+            const userName = personCard.dataset.userUsername;
+            const userEmail = personCard.dataset.userEmail;
+            const userDob = personCard.dataset.userDob;
+
+            popupName.textContent = userFullname;
+            popupId.innerHTML = `${userName}<br> <br> Email: ${userEmail}<br>Date of Birth: ${userDob}`;
+            // Set popup image if you have a dynamic image source for each user
+            // popupImage.src = personCard.querySelector('.person-image').src;
+
+            popupOverlay.classList.add('show');
+        }
     });
 
+    popupCloseBtn.addEventListener('click', () => {
+        popupOverlay.classList.remove('show');
+    });
 
+    // Close popup if clicked outside the card
+    popupOverlay.addEventListener('click', (event) => {
+        if (event.target === popupOverlay) {
+            popupOverlay.classList.remove('show');
+        }
+    });
 </script>
 </html>

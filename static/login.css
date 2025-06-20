@@ -83,7 +83,6 @@ body{
     border-radius: 20px;
     color: white;  
     position: relative;
-    right: 90px;
 }
 @property --angle{
     syntax: "<angle>";

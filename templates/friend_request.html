@@ -1,265 +1,410 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Facebook - People you may know</title>
     <meta name="description" content="Facebook People you may know page" />
     <link rel="stylesheet" href="styles.css">
-  </head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
 <style>
     * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background-color: #f8f9fa;
-  min-height: 100vh;
-}
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background-color: #f8f9fa;
+        min-height: 100vh;
+    }
 
-/* Header Styles */
-.header {
-  background-color: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid #e5e7eb;
-}
+    /* Header Styles */
+    .header {
+        background-color: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid #e5e7eb;
+    }
 
-.header-container {
-  max-width: 1152px;
-  margin: 0 auto;
-  padding: 0 16px;
-}
+    .header-container {
+        max-width: 1152px;
+        margin: 0 auto;
+        padding: 0 16px;
+    }
 
-.header-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 0;
-}
+    .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 0;
+    }
 
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
-.header-icon {
-  width: 32px;
-  height: 32px;
-  color: #2563eb;
-}
+    .header-icon {
+        width: 32px;
+        height: 32px;
+        color: #2563eb;
+    }
 
-.header-title {
-  font-size: 24px;
-  font-weight: bold;
-  color: #111827;
-}
+    .header-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #111827;
+    }
 
-/* Main Content Styles */
-.main-container {
-  max-width: 1152px;
-  margin: 0 auto;
-  padding: 0 16px;
-  padding-top: 24px;
-}
+    /* Main Content Styles */
+    .main-container {
+        max-width: 1152px;
+        margin: 0 auto;
+        padding: 0 16px;
+        padding-top: 24px;
+    }
 
-.content-header {
-  margin-bottom: 24px;
-}
+    .content-header {
+        margin-bottom: 24px;
+    }
 
-.content-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #111827;
-  margin-bottom: 8px;
-}
+    .content-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 8px;
+    }
 
-.content-subtitle {
-  color: #6b7280;
-  font-size: 14px;
-}
+    .content-subtitle {
+        color: #6b7280;
+        font-size: 14px;
+    }
 
-/* People Grid Styles */
-.people-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
-}
+    /* People Grid Styles */
+    .people-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+    }
 
-/* Person Card Styles */
-.person-card {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-  overflow: hidden;
-  transition: box-shadow 0.2s;
-}
+    /* Person Card Styles */
+    .person-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        transition: box-shadow 0.2s;
+    }
 
-.person-card:hover {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
+    .person-card:hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
 
-.person-image-container {
-  aspect-ratio: 1;
-  position: relative;
-  overflow: hidden;
-}
+    .person-image-container {
+        aspect-ratio: 1;
+        position: relative;
+        overflow: hidden;
+        cursor: pointer; /* Added cursor pointer */
+    }
 
-.person-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s;
-}
+    .person-image {
+        scale: 0.9;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
 
-.person-card:hover .person-image {
-  transform: scale(1.05);
-}
+    .person-card:hover .person-image {
+        transform: scale(1.05);
+    }
 
-.person-content {
-  padding: 12px;
-}
+    .person-content {
+        padding: 12px;
+    }
 
-.person-name {
-  font-weight: 600;
-  color: #111827;
-  font-size: 14px;
-  margin-bottom: 4px;
-  line-height: 1.2;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
+    .person-name {
+        text-align: center;
+        font-weight: 600;
+        color: #111827;
+        font-size: 14px;
+        margin-bottom: 4px;
+        line-height: 1.2;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
 
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
 
-.action-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+    .accept-request-btn {
+        width: 100%;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 8px 0;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        height: 32px;
+    }
 
-.accept-request-btn {
-  width: 100%;
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 8px 0;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  height: 32px;
-}
+    .accept-request-btn:hover {
+        background-color: #08236d;
+    }
 
-.accept-request-btn:hover {
-  background-color: #1d4ed8;
-}
+    .remove-btn {
+        width: 100%;
+        background-color: white;
+        color: #374151;
+        border: 1px solid #d1d5db;
+        border-radius: 20px;
+        padding: 8px 0;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        height: 32px;
+    }
 
-.remove-btn {
-  width: 100%;
-  background-color: white;
-  color: #374151;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  padding: 8px 0;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  height: 32px;
-}
+    .remove-btn:hover {
+        background-color: #6ba1d6;
+    }
 
-.remove-btn:hover {
-  background-color: #f9fafb;
-}
+    /* Popup Styles */
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0s, opacity 0.3s;
+    }
 
-/* Responsive Design */
-@media (min-width: 640px) {
-  .people-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
+    .popup-overlay.show {
+        visibility: visible;
+        opacity: 1;
+    }
 
-@media (min-width: 768px) {
-  .people-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
+    .popup-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        padding: 24px;
+        width: 90%;
+        max-width: 400px;
+        position: relative;
+        text-align: center;
+    }
 
-@media (min-width: 1024px) {
-  .people-grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
+    .popup-close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #6b7280;
+    }
 
-@media (min-width: 1280px) {
-  .people-grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
+    .popup-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 16px;
+        border: 2px solid #e5e7eb;
+    }
 
-@media (min-width: 1536px) {
-  .people-grid {
-    grid-template-columns: repeat(7, 1fr);
-  }
-}
+    .popup-name {
+        font-size: 22px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 8px;
+    }
 
+    .popup-info {
+        font-size: 16px;
+        color: #4b5563;
+        margin-bottom: 20px;
+    }
+
+    /* Responsive Design */
+    @media (min-width: 640px) {
+        .people-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 768px) {
+        .people-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .people-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    @media (min-width: 1280px) {
+        .people-grid {
+            grid-template-columns: repeat(5, 1fr);
+        }
+    }
+
+    @media (min-width: 1536px) {
+        .people-grid {
+            grid-template-columns: repeat(7, 1fr);
+        }
+    }
 </style>
-  <body>
-    <!-- Header -->
+
+<body>
     <div class="header">
-      <div class="header-container">
-        <div class="header-content">
-          <div class="header-left">
-            <svg class="header-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-              <circle cx="9" cy="7" r="4"/>
-              <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-            <h1 class="header-title">Chat Cyan</h1>
-          </div>    
+        <div class="header-container">
+            <div class="header-content">
+                <div class="header-left">
+                    <svg class="header-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                    <h1 class="header-title">Chat Cyan</h1>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 
-    <!-- Main Content -->
     <div class="main-container">
-      <div class="content-header">
-        <h2 class="content-title">Friend Requests</h2>
-        <p class="content-subtitle">Connect with friends</p>
-      </div>
-      
-      <!-- People Grid -->
-      <div class="people-grid">
-        <!-- Person Card -->
-         {%if users%}
-          {% for user in users %}
-              <div class="person-card">
-              <div class="person-image-container">
-                  <img src="{{url_for('static', filename='/image/user.png')}}" alt="Mir Nahin Rahman" class="person-image">
-              </div>
-              <div class="person-content">
-                  <h3 class="person-name">{{user.full_name}}</h3>
-                  <div class="action-buttons">
-                  <button class="accept-request-btn">Accept Request</button>
-                  <button class="remove-btn">Delete</button>
-                  </div>
-              </div>
-              </div>
-          {% endfor %}
+        <div class="content-header">
+            <h2 class="content-title">Friend Requests</h2>
+            <p class="content-subtitle">Connect with friends</p>
+        </div>
 
-          {%else%}
-          <div class="no-friends">
-            <p >No friend requests</p>
-          </div>
-        {%endif%}
-      </div>
+        <div class="people-grid" id="people-grid">
+            {% if requests %}
+            {% for user in requests %}
+            <div class="person-card">
+                <div class="person-image-container" 
+                    data-user-id="{{user.id}}" 
+                    data-user-fullname="{{user.full_name}}" 
+                    data-user-image="{{url_for('static', filename='/image/user.png')}}"
+                    data-user-username = "{{user.username}}"
+                    data-user-email = "{{user.email}}"
+                    data-user-dob = "{{user.dob}}"
+                >
+
+                    <img src="{{url_for('static', filename='/image/user.png')}}" alt="{{user.full_name}}" class="person-image">
+                </div>
+                <div class="person-content">
+                    <h3 class="person-name">{{user.full_name}}</h3>
+                    <div class="action-buttons">
+                        <button class="accept-request-btn" data-user-id="{{user.id}}">Accept Request</button>
+                        <button class="remove-btn" data-user-id="{{user.id}}">Delete</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            {%else%}
+            <div class="no-friends">
+                <p>No friend requests</p>
+            </div>
+            {%endif%}
+        </div>
     </div>
-  </body>
+
+    <div class="popup-overlay" id="profilePopup">
+        <div class="popup-card">
+            <button class="popup-close-btn" id="closePopupBtn">&times;</button>
+            <img src="" alt="User Profile" class="popup-image" id="popupImage">
+            <h3 class="popup-name" id="popupName"></h3>
+            <p class="popup-info" id="popupInfo">Additional information about the user can go here.</p>
+            </div>
+    </div>
+
+</body>
+<script>
+    const socketio = io('/friend_request');
+    socketio.on('connect', () => {
+        console.log('Connected to friend_request namespace');
+    });
+
+    const people_grid = document.getElementById('people-grid');
+    const profilePopup = document.getElementById('profilePopup');
+    const closePopupBtn = document.getElementById('closePopupBtn');
+    const popupImage = document.getElementById('popupImage');
+    const popupName = document.getElementById('popupName');
+    const popupInfo = document.getElementById('popupInfo');
+
+
+    people_grid.addEventListener('click', (event) => {
+        const accept_request_btn = event.target.closest('.accept-request-btn');
+        const reject_request_btn = event.target.closest('.remove-btn');
+        const person_image_container = event.target.closest('.person-image-container');
+
+        if (accept_request_btn) {
+            console.log("request accepted");
+            accept_request_btn.innerHTML = "Request Accepted";
+            reject_request_btn.style.display = 'none';
+            const user_id = accept_request_btn.dataset.userId;
+            socketio.emit('accept_friend_request', { 'user_id': user_id });
+        } 
+        
+        else if (reject_request_btn) {
+            console.log("request rejected");
+            const user_id = reject_request_btn.dataset.userId;
+            const card = event.target.closest('.person-card');
+            card.style.display = 'none';
+            socketio.emit('reject_friend_request', { 'user_id': user_id });
+        } 
+        
+        else if (person_image_container) {
+            const userFullname = person_image_container.dataset.userFullname;
+            const userImage = person_image_container.dataset.userImage;
+            const userName = person_image_container.dataset.userUsername;
+            const userEmail = person_image_container.dataset.userEmail;
+            const userDob = person_image_container.dataset.userDob;
+
+            popupImage.src = userImage;
+            popupName.textContent = userFullname;
+            popupInfo.innerHTML = `${userName}<br> <br> Email: ${userEmail}<br>Date of Birth: ${userDob}`; // Example dynamic info
+            profilePopup.classList.add('show');
+        }
+    });
+
+    closePopupBtn.addEventListener('click', () => {
+        profilePopup.classList.remove('show');
+    });
+
+
+    profilePopup.addEventListener('click', (event) => {
+        if (event.target === profilePopup) {
+            profilePopup.classList.remove('show');
+        }
+    });
+</script>
 </html>
