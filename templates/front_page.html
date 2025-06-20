@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -32,7 +32,8 @@
      <div class="foot"></div>
     </div>
 </body>
-</html>
+</html> -->
+
 
 <!-- <!DOCTYPE html>
 <html lang="en">
@@ -128,3 +129,169 @@
     </main>
 </body>
 </html> -->
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Cyan</title>
+</head>
+<style>
+    /* Reset + base styles */
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(-45deg, #0c0216, #30585e, #08172c, #121311);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+}
+
+@keyframes gradientBG {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 0;
+    }
+
+    .logo img {
+        width: 140px;
+        border: 1px solid #b0dede;
+        border-radius: 10px;
+        margin-left: 10px;
+    }
+
+    nav a {
+        color: #b0dede;
+        margin-left: 20px;
+        margin-right: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        border: 1px solid #b0dede;
+        padding: 5px 10px;
+        border-radius: 5px;
+        transition: background 0.3s;
+    }
+
+    nav a:hover {
+        background: #b0dede;
+        color: #12353d;
+    }
+
+    .hero-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 40px;
+    }
+
+    .text-section {
+        color: white;
+        flex: 1 1 500px;
+        max-width: 100%;
+        max-height: 100%;
+        padding: 20px;
+    }
+
+    .text-section h1 {
+        font-size: 2.5rem;
+    }
+
+    .text-section span {
+        color: #2399e8;
+    }
+
+    .image-section {
+        flex: 1 1 300px;
+        text-align: center;
+    }
+
+    .image-section img {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+        .hero-section {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        header {
+            flex-direction: row;
+            align-items: flex-start;
+        }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        .text-section h1 {
+            font-size: 2rem;
+        }
+
+        .text-section p {
+            font-size: 0.95rem;
+        }
+    }
+</style>
+
+<body>
+    <header>
+        <div class="logo"><img src="{{url_for('static', filename='image/logo4.png')}}" alt="Chat Cyan Logo" /></div>
+        <nav>
+            <a href="/login">Login</a>
+            <a href="/signup">Register</a>
+        </nav>
+    </header>
+
+    <main class="hero-section">
+        <section class="text-section">
+            <h1>Welcome To <br /><span>Chat-Cyan</span></h1>
+            <br>
+            <p>
+                In today’s world, communication is everything. With that in mind, we built Chat Cyan to offer a clean,
+                user-friendly interface where people can connect instantly — whether for personal conversations, team
+                collaboration, or community engagement.
+                Our application includes key features like real-time messaging, message notifications, responsive
+                design, and a focus on privacy and data protection. We wanted to create a platform that feels simple yet
+                powerful — something users can trust and enjoy using every day.
+                Thank you for your time, and we look forward to showing you how Chat Cyan makes conversations smarter,
+                faster, and more enjoyable.
+            </p>
+        </section>
+
+        <section class="image-section">
+            <img src="{{url_for('static', filename='image/body.webp')}}" alt="Chat Cyan Graphic" />
+        </section>
+    </main>
+</body>
+
+</html>

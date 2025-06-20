@@ -278,19 +278,19 @@ def add_friend():
             conn.close()
     return render_template('add_friend.html', users=users)
 
-@socketio.on('add_friend_request', namespace='/add_friend')
-def add_friend_request(data):
-    user_id = session['user_id']
-    friend_request_id = data['friend_request_id']
+@socketio.on('add_friend', namespace='/add_friend')
+def add_friend(data):
+    sender_id = session['user_id']
+    receiver_id = data['receiver_id']
     conn = get_db_connection()
     if conn:
         cursor = conn.cursor()
         try:
             cursor.execute("""INSERT INTO friends (sender_id, receiver_id) 
                            VALUES (%s, %s)""", 
-                           (user_id, friend_request_id))
+                           (sender_id, receiver_id))
             conn.commit()
-            print(f"Friend request sent successfully! {user_id} sent {friend_request_id}")
+            print(f"Friend request sent successfully! {sender_id} sent {receiver_id}")
         except mysql.connector.Error as err:
             print(f"Error sending friend request: {err}")
         finally:
@@ -309,7 +309,7 @@ def friend_request():
         try:
             cursor.execute("""select * from users
                             where id in (select sender_id from friends
-                            where receiver_id = %s);""",
+                            where receiver_id = %s and status = 'pending');""",
                             (session['user_id'],)
                         )
 
@@ -322,6 +322,48 @@ def friend_request():
         
     return render_template('friend_request.html', requests=requests)
 
+@socketio.on('accept_friend_request', namespace='/friend_request')
+def accept_friend_request(data):
+    receiver_id = session['user_id']
+    sender_id = data['sender_id']
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        try:
+            cursor.execute("""UPDATE friends 
+                           SET status = 'accepted'
+                           WHERE receiver_id = %s AND sender_id = %s;""", 
+                           (receiver_id, sender_id)
+                        )
+            conn.commit()
+            print(f"Friend request accepted successfully! {receiver_id} accepted {sender_id}")
+        except mysql.connector.Error as err:
+            print(f"Error accepting friend request: {err}")
+        finally:
+            cursor.close()
+            conn.close()
+
+
+@socketio.on('reject_friend_request', namespace='/friend_request')
+def reject_friend_request(data):
+    receiver_id = session['user_id']
+    sender_id = data['sender_id']
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor()
+        try:
+            cursor.execute("""UPDATE friends 
+                           SET status = 'rejected'
+                           WHERE receiver_id = %s AND sender_id = %s;""", 
+                           (receiver_id, sender_id)
+                        )
+            conn.commit()
+            print(f"Friend request rejected successfully! {receiver_id} rejected {sender_id}")
+        except mysql.connector.Error as err:
+            print(f"Error rejecting friend request: {err}")
+        finally:
+            cursor.close()
+            conn.close()
 
 
 @app.route('/chat')
@@ -461,7 +503,7 @@ def handle_request_chat_history(data):
                 if today == date:
                     msg['timestamp'] = msg['timestamp'].strftime('%I:%M %p')
                 else:    
-                    msg['timestamp'] = msg['timestamp'].strftime('%d-%m-%Y %I:%M:%S %p')
+                    msg['timestamp'] = msg['timestamp'].strftime('%d-%m-%Y %I:%M %p')
 
             emit('chat_history', {'other_user_id': user2_id, 'history': history}, room=str(user1_id))
             print(f"Sent chat history for user {user2_id} to {session['username']} (ID: {user1_id}).")

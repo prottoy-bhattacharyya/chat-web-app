@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Facebook - People you may know</title>
-    <meta name="description" content="Facebook People you may know page" />
+    <title>chat Cyan- People you may know</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
 </head>
 <style>
@@ -189,7 +189,8 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
+         background-color: rgba(84, 82, 223, 0.226);
+        backdrop-filter: blur(2px);
         display: flex;
         justify-content: center;
         align-items: center;
@@ -205,8 +206,9 @@
     }
 
     .popup-card {
-        background-color: white;
-        border-radius: 8px;
+        background-color: rgba(255, 255, 255, 0.753);
+        backdrop-filter: blur(20px);
+        border-radius: 15px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         padding: 24px;
         width: 90%;
@@ -367,19 +369,21 @@
         const person_image_container = event.target.closest('.person-image-container');
 
         if (accept_request_btn) {
+            const sender_id = accept_request_btn.dataset.userId;
+            socketio.emit('accept_friend_request', { 'sender_id': sender_id });
+
             console.log("request accepted");
             accept_request_btn.innerHTML = "Request Accepted";
             reject_request_btn.style.display = 'none';
-            const user_id = accept_request_btn.dataset.userId;
-            socketio.emit('accept_friend_request', { 'user_id': user_id });
         } 
         
         else if (reject_request_btn) {
+            const sender_id = reject_request_btn.dataset.userId;
+            socketio.emit('reject_friend_request', { 'sender_id': sender_id });
+
             console.log("request rejected");
-            const user_id = reject_request_btn.dataset.userId;
             const card = event.target.closest('.person-card');
             card.style.display = 'none';
-            socketio.emit('reject_friend_request', { 'user_id': user_id });
         } 
         
         else if (person_image_container) {
