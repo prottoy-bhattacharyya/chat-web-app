@@ -27,8 +27,7 @@ def metaLlama(prompt, user_id, username):
     html_text = ''' Please format your response using only HTML tags. 
                           For example, use <p> for paragraphs, <strong> for bold text, 
                           <em> for italics,  
-                          <br> for line breaks and colorful texts with stylish cdn tailwind css classes
-                          in a white background
+                          <br> for line breaks and colorful texts
                           and never mention about html tags in your answer I repeat DO NOT
                           mention about html tags in your answer I repeat DO NOT'''
     try:

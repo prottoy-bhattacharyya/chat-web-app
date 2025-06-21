@@ -21,7 +21,6 @@
         min-height: 100vh;
     }
 
-    /* Header Styles */
     .header {
         background-color: white;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -60,7 +59,6 @@
     }
 
 
-    /* Main Content Styles */
     .main-container {
         max-width: 1152px;
         margin: 0 auto;
@@ -84,14 +82,12 @@
         font-size: 14px;
     }
 
-    /* People Grid Styles */
     .people-grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
         gap: 16px;
     }
 
-    /* Person Card Styles */
     .person-card {
         background-color: white;
         border-radius: 8px;
@@ -99,7 +95,7 @@
         border: 1px solid #e5e7eb;
         overflow: hidden;
         transition: box-shadow 0.2s;
-        cursor: pointer; /* Add cursor pointer to indicate clickability */
+        cursor: pointer;
     }
 
     .person-card:hover {
@@ -303,8 +299,17 @@
             <h2 class="content-title">People you may know</h2>
             <p class="content-subtitle">Connect with friends and discover new people</p>
         </div>
-
+        <div style="margin-bottom: 20px;">
+            <input type="text" id="searchInput" placeholder="Search for friends..." style="
+                width: 100%;
+                padding: 10px 15px;
+                border: 1px solid #d1d5db;
+                border-radius: 8px;
+                font-size: 16px;
+            ">
+        </div>
         <div class="people-grid" id="people-grid">
+            
             {% if not users %}
             <div class="no-friends">
                 <strong>No People to add </strong>
@@ -394,6 +399,22 @@
         if (event.target === popupOverlay) {
             popupOverlay.classList.remove('show');
         }
+    });
+
+    const searchInput = document.getElementById('searchInput');
+
+    searchInput.addEventListener('input', function () {
+        const searchValue = this.value.toLowerCase();
+        const personCards = document.querySelectorAll('.person-card');
+
+        personCards.forEach(card => {
+            const name = card.dataset.userFullname.toLowerCase();
+            if (name.includes(searchValue)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
     });
 </script>
 </html>

@@ -48,7 +48,7 @@
                          name="password"
                          class="mt-1 p-2 w-full border rounded-md pr-10 border-blue-300 focus:ring-blue-500 focus:border-blue-500">
                  <button type="button" id="togglePassword" class="focus:outline-none -ml-8">
-                     <img id="eye" src="{{url_for('static', filename='eye.png')}}"
+                     <img id="eye" src="{{url_for('static', filename='/image/eye.png')}}"
                              alt="" class="w-5">
                  </button>
              </div>
@@ -73,9 +73,9 @@
              passIn.setAttribute('type', type);
              passIn.focus();
              if (type === 'password') {
-                 eye.src = "{{url_for('static', filename='eye.png')}}";
+                 eye.src = "{{url_for('static', filename='/image/eye.png')}}";
              } else {
-                 eye.src = "{{url_for('static', filename='hide.png')}}";
+                 eye.src = "{{url_for('static', filename='/image/hide.png')}}";
              }
          });
      });

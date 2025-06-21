@@ -377,7 +377,14 @@ def chat():
     if conn:
         cursor = conn.cursor(dictionary=True)
         try:
-            cursor.execute("SELECT id, full_name, username FROM users WHERE id != %s", (session['user_id'],))
+            cursor.execute("""SELECT * FROM users JOIN friends 
+                            ON(
+                                (users.id = friends.sender_id AND friends.receiver_id = %s) OR
+                                (users.id = friends.receiver_id AND friends.sender_id = %s)
+                            )
+                            WHERE friends.status = 'accepted' AND users.id != %s;""", 
+                            (session['user_id'],session['user_id'],session['user_id'])
+                        )
             users = cursor.fetchall()
         except mysql.connector.Error as err:
             print(f"Error fetching users: {err}")

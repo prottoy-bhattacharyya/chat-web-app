@@ -164,8 +164,69 @@
             height: 24px;
         }
 
-        .hidden {
-            display: none;
+        .loader {
+            width: 60px;
+            aspect-ratio: 4;
+            --_g: no-repeat radial-gradient(circle closest-side, #250303 90%, #0000);
+            background:
+                var(--_g) 0% 50%,
+                var(--_g) 50% 50%,
+                var(--_g) 100% 50%;
+            background-size: calc(100%/3) 100%;
+            animation: l7 1s infinite linear;
+        }
+
+        @keyframes l7 {
+            33% {
+                background-size: calc(100%/3) 0%, calc(100%/3) 100%, calc(100%/3) 100%
+            }
+
+            50% {
+                background-size: calc(100%/3) 100%, calc(100%/3) 0%, calc(100%/3) 100%
+            }
+
+            66% {
+                background-size: calc(100%/3) 100%, calc(100%/3) 100%, calc(100%/3) 0%
+            }
+        }
+
+        .dots-loader {
+            display: flex;
+            gap: 0.8vw;
+        }
+
+        .dot {
+            width: 3vw;
+            height: 3vw;
+            min-width: 15px;
+            min-height: 15px;
+            border-radius: 50%;
+            background-color: #4f46e5;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .dot:nth-child(1) {
+            background-color: #6366f1; 
+            animation-delay: -0.32s;
+        }
+
+        .dot:nth-child(2) {
+            background-color: #818cf8; 
+            animation-delay: -0.16s;
+        }
+
+        .dot:nth-child(3) {
+            background-color: #a78bfa;
+            animation-delay: 0s;
+        }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1.0);
+            }
         }
 
         .error {
@@ -191,8 +252,8 @@
                 </div>
             </div>
 
-            <video autoplay loop muted src="{{url_for('static', filename='loading.mp4')}}" class='hidden' id="loading"></video>
         </div>
+
 
         <form id="chat-form" autocomplete="off">
             <div class="input-area">
@@ -211,11 +272,34 @@
 
     <script>
         const ai_socketio = io('/aiChat');
-        const loadingVideo = document.getElementById('loading'); // Renamed for clarity
+        const loadingVideo = document.getElementById('loading');
         const chat_input_element = document.getElementById('chat-input');
         const messages_area = document.getElementById('messages-area-content');
         const send_button = document.getElementById('send-button');
         const chat_form = document.getElementById('chat-form');
+        const load = `
+                <div class="ai-thinking">
+                    <div class="message-container ai-message">
+                        <div class="avatar ai-avatar">AI</div>
+                        <div class="message-bubble ai-bubble">
+                            <div class="dots-loader">
+                                <div class="dot rounded-full shadow-lg"></div>
+                                <div class="dot rounded-full shadow-lg"></div>
+                                <div class="dot rounded-full shadow-lg"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+
+        // const load = `
+        //         <div class="ai-thinking">
+        //             <div class="message-container ai-message">
+        //                 <div class="avatar ai-avatar">AI</div>
+        //                 <video width="50" autoplay muted>
+        //                     <source src="{{url_for('static', filename='loading2.mp4')}}" type="video/mp4">
+        //                 </video>
+        //             </div>
+        //         </div>`;
 
         const userFirstLetter = "{{ first_leter | default('Y') }}";
 
@@ -228,23 +312,15 @@
                 console.log("Client: Sending prompt:", user_prompt_text);
 
                 const userMsgHtml = `
-                    <div class="message-container user-message">
-                        <div class="message-bubble user-bubble">
-                            ${user_prompt_text}
-                        </div>
-                        <div class="avatar user-avatar">${userFirstLetter}</div>
-                    </div>`;
+                <div class="message-container user-message">
+                    <div class="message-bubble user-bubble">
+                        ${user_prompt_text}
+                    </div>
+                    <div class="avatar user-avatar">${userFirstLetter}</div>
+                </div>`;
                 messages_area.innerHTML += userMsgHtml;
 
-                // Show the loading video
-                loadingVideo.classList.remove('hidden');
-                // *** IMPORTANT: Explicitly play the video ***
-                loadingVideo.play().catch(error => {
-                    // This catch block will help you debug if autoplay is still blocked
-                    console.error("Video autoplay prevented:", error);
-                    // You might need to add a message like "Click here to play loading animation"
-                    // or use an animated GIF as a fallback for strict browsers.
-                });
+                messages_area.innerHTML += load;
 
                 messages_area.scrollTop = messages_area.scrollHeight;
 
@@ -256,11 +332,10 @@
 
         ai_socketio.on("ai_from_server", function (data) {
             console.log("Client: Received AI response:", data);
-
-            // Hide the loading video and pause it
-            loadingVideo.classList.add('hidden');
-            loadingVideo.pause(); // Pause the video
-            loadingVideo.currentTime = 0; // Reset to start for next time
+            const loadingElement = document.querySelector('.ai-thinking');
+            if (loadingElement) {
+                loadingElement.remove();
+            }
 
             if (data && data.response) {
                 const aiMsgHtml = `
@@ -271,8 +346,9 @@
                     </div>
                 </div>`;
                 messages_area.innerHTML += aiMsgHtml;
-            } else {
-                console.error("Client: Received malformed AI response data:", data);
+            }
+
+            else {
                 const errorMsgHtml = `
                 <div class="message-container ai-message">
                     <div class="avatar ai-avatar">AI</div>
@@ -282,6 +358,7 @@
                 </div>`;
                 messages_area.innerHTML += errorMsgHtml;
             }
+
             messages_area.scrollTop = messages_area.scrollHeight;
         });
 
