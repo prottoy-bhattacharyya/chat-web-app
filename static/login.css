@@ -83,29 +83,61 @@ body{
     height: 500px; 
     border-radius: 20px;
     color: white;  
-    position: relative;
+    /* position: relative; */
     bottom: 400px;
-
 }
+
 @property --angle{
     syntax: "<angle>";
     initial-value: 0deg;
     inherits: false;
 }
-.container::after, .container::before{
+/* .container::after, .container::before{
     content: '';
     position: absolute;
     top: 50%;
     left: 50%;
     width: 435px;
     height: 505px;
-    /* background-image: conic-gradient(from var(--angle),transparent 70%,rgb(255, 0, 0)); */
-    /* background-image: conic-gradient(from var(--angle),transparent 50%,rgb(255, 0, 0)); */
+    
+    background-image: conic-gradient(from var(--angle),transparent 70%,rgba(236, 9, 9, 0.733));
+
+    translate: -50% -50%;
+    z-index: -1;
+    border-radius: 20px;
+    animation: 3s spin linear infinite;
+} */
+
+.container-wrapper {
+    position: relative;
+    /* display: flex; */
+    /* justify-content: center; */
+    /* align-items: center; */
+    /* min-height: 100vh; */
+    bottom: 450px;
+
+
+}
+
+.container-wrapper::before, .container-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 435px;
+    height: 505px;
+    background-image: conic-gradient(from var(--angle), transparent 50%, rgb(236, 9, 9));
     translate: -50% -50%;
     z-index: -1;
     border-radius: 20px;
     animation: 3s spin linear infinite;
 }
+
+.container-wrapper::before {
+    filter: blur(1.3rem);
+    opacity: 3;
+}
+
 @keyframes spin{
     form{
     --angle: 0deg ;
