@@ -68,11 +68,9 @@ Ensure MySQL is running and accessible with the following credentials:
 |---uv.lock
 |   
 |---templates
-    |---login.html
-    |---signup.html
-    |---chat.html
-    |---aiChat.html
-    |---home.html
+|    |---all html pages
+|--- static
+    |--- all static files like images .css .js or any other
     
 ```
 # 🧠 AI Assistant
