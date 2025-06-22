@@ -35,7 +35,7 @@ def metaLlama(prompt, user_id, username):
           base_url="https://openrouter.ai/api/v1",
           api_key = new_api_key
       )
-
+      
       completion = client.chat.completions.create(
           model="meta-llama/llama-4-maverick:free",
           # model = "nvidia/llama-3.1-nemotron-ultra-253b-v1:free",

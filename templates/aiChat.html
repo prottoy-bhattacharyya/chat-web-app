@@ -305,18 +305,28 @@
 
         chat_form.addEventListener("submit", function (event) {
             event.preventDefault();
-
+            const previous_msg_element = document.querySelectorAll('.previous_msg');
+            let previous_msg = "";
+            if (previous_msg_element) {
+                previous_msg_element.forEach(element => {
+                    previous_msg += "my previous message was : " + element.textContent;
+                });
+                console.log("previous_msg_element:"+ previous_msg_element);
+            }
+            
             const user_prompt_text = chat_input_element.value.trim();
 
             if (user_prompt_text !== "") {
                 console.log("Client: Sending prompt:", user_prompt_text);
 
                 const userMsgHtml = `
-                <div class="message-container user-message">
-                    <div class="message-bubble user-bubble">
-                        ${user_prompt_text}
+                <div class = "previous_msg">
+                    <div class="message-container user-message">
+                        <div class="message-bubble user-bubble">
+                            ${user_prompt_text}
+                        </div>
+                        <div class="avatar user-avatar">${userFirstLetter}</div>
                     </div>
-                    <div class="avatar user-avatar">${userFirstLetter}</div>
                 </div>`;
                 messages_area.innerHTML += userMsgHtml;
 
@@ -324,7 +334,7 @@
 
                 messages_area.scrollTop = messages_area.scrollHeight;
 
-                ai_socketio.emit("ai_from_client", { prompt: user_prompt_text });
+                ai_socketio.emit("ai_from_client", { prompt: previous_msg + "now i am asking you: " + user_prompt_text  });
                 chat_input_element.value = "";
                 chat_input_element.focus();
             }
@@ -346,6 +356,7 @@
                     </div>
                 </div>`;
                 messages_area.innerHTML += aiMsgHtml;
+                previous_msg = "your previous reply: " + data.response;
             }
 
             else {
@@ -367,5 +378,4 @@
         };
     </script>
 </body>
-
 </html>

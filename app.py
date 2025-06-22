@@ -46,7 +46,7 @@ def init_db():
                     status ENUM('accepted', 'pending', 'rejected') DEFAULT 'pending',
                     FOREIGN KEY (sender_id) REFERENCES users(id),
                     FOREIGN KEY (receiver_id) REFERENCES users(id),
-                    UNIQUE(sender_id, receiver_id)
+                    UNIQUE (sender_id, receiver_id, status)
                 );
             """)
 
@@ -117,6 +117,9 @@ def admin():
     if request.method == 'POST':
         is_admin = False
         new_api_key = request.form['new_api_key']
+        if new_api_key == "":
+            flash("API key cannot be empty", "danger")
+            return redirect(url_for('admin'))
         print(new_api_key)
         try:
             conn = get_db_connection()
@@ -263,7 +266,8 @@ def add_friend():
         cursor = conn.cursor(dictionary=True)
         try:
             cursor.execute("""SELECT users.id, full_name, username, dob, email, sender_id, receiver_id, status
-                            FROM users LEFT JOIN friends ON (sender_id = users.id AND receiver_id = %s) 
+                            FROM users LEFT JOIN friends ON 
+                           (sender_id = users.id AND receiver_id = %s) 
                             OR (sender_id = %s AND receiver_id = users.id)
                             WHERE users.id != %s
                             AND (friends.status IS NULL OR friends.status = 'rejected');""", 
@@ -377,12 +381,12 @@ def chat():
     if conn:
         cursor = conn.cursor(dictionary=True)
         try:
-            cursor.execute("""SELECT * FROM users JOIN friends 
-                            ON(
-                                (users.id = friends.sender_id AND friends.receiver_id = %s) OR
-                                (users.id = friends.receiver_id AND friends.sender_id = %s)
-                            )
-                            WHERE friends.status = 'accepted' AND users.id != %s;""", 
+            cursor.execute("""SELECT * FROM users 
+                            WHERE id != %s and 
+                            id in (select sender_id from friends
+                                where status = 'accepted' and receiver_id = %s) or
+                            id in (select receiver_id from friends 
+                                where status = 'accepted' and sender_id = %s);""", 
                             (session['user_id'],session['user_id'],session['user_id'])
                         )
             users = cursor.fetchall()
@@ -496,7 +500,7 @@ def handle_request_chat_history(data):
         cursor = conn.cursor(dictionary=True)
         try:
             cursor.execute("""
-                SELECT sender_id, receiver_id, message_text, timestamp, username as sender_username
+                SELECT sender_id, receiver_id, message_text, timestamp
                 FROM messages JOIN users 
                 ON messages.sender_id = users.id
                 WHERE (sender_id = %s AND receiver_id = %s) OR (sender_id = %s AND receiver_id = %s)

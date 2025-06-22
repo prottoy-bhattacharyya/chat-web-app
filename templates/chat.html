@@ -111,7 +111,9 @@
             <ul id="friends-list" class="space-y-2">
                 {% for user in users %}
                     <li class="p-3 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150 ease-in-out flex items-center justify-between"
-                        data-user-id="{{ user.id }}" data-username="{{ user.username }}" data-full-name="{{ user.full_name }}">
+                        data-user-id="{{ user.id }}" 
+                        data-username="{{ user.username }}" 
+                        data-full-name="{{ user.full_name }}">
                         <span class="font-medium text-gray-700">{{ user.full_name }}</span>
                         <div id="status-{{ user.id }}" class="-bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
                     </li>
@@ -243,13 +245,6 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        socket.on('connect', () => {
-            console.log('Connected to Socket.IO server');
-        });
-
-        socket.on('disconnect', () => {
-            console.log('Disconnected from Socket.IO server');
-        });
 
         socket.on('receive_message', (data) => {
             const isMessageForSelectedChat =
@@ -291,6 +286,14 @@
                 statusElement.classList.remove('bg-green-400');
                 statusElement.classList.add('bg-gray-400');
             }
+        });
+
+        socket.on('connect', () => {
+            console.log('Connected to Socket.IO server');
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from Socket.IO server');
         });
 
     </script>
