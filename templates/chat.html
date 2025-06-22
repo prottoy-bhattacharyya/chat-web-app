@@ -9,120 +9,113 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #4f8ff0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f3f4f6; 
         }
-        .flash-message {
-            padding: 0.75rem 1.25rem;
-            margin-bottom: 1rem;
-            border: 1px solid transparent;
-            border-radius: 0.375rem;
-        }
-        .flash-message.success {
-            color: #0f5132;
-            background-color: #d1e7dd;
-            border-color: #badbcc;
-        }
-        .flash-message.danger {
-            color: #842029;
-            background-color: #f8d7da;
-            border-color: #f5c2c7;
-        }
-        .flash-message.info {
-            color: #055160;
-            background-color: #cff4fc;
-            border-color: #b6effb;
-        }
-        .flash-message.warning {
-            color: #664d03;
-            background-color: #fff3cd;
-            border-color: #ffecb5;
-        }
+        
         .chat-messages-container::-webkit-scrollbar {
             width: 8px;
         }
         .chat-messages-container::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: #e5e7eb;
             border-radius: 10px;
         }
         .chat-messages-container::-webkit-scrollbar-thumb {
-            background: #888;
+            background: #9ca3af;
             border-radius: 10px;
         }
         .chat-messages-container::-webkit-scrollbar-thumb:hover {
-            background: #4050e0;
+            background: #6b7280;
         }
+
+
         .no-chat-selected {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
+            height: 100%;
         }
-
         .no-chat-content {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            color: #4079db;
+            color: #6b7280;
         }
-
         .no-chat-icon {
             width: 6rem;
             height: 6rem;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(107, 114, 128, 0.1); 
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 1rem;
         }
-
         .no-chat-icon svg {
-            width: 5rem;
-            height: 3rem;
-            color: rgba(43, 4, 4, 0.6);
+            width: 50px; 
+            color: #4b5563; 
         }
-
         .no-chat-title {
             font-size: 1.5rem;
             font-weight: 600;
-            color: #6B7280;
+            color: #4b5563;
+        }
+
+        .chat-message-sent {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        }
+
+        .chat-message-received {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        }
+
+        .chat-message-visible {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
 <body class="flex flex-col h-screen bg-gray-100">
-    <header class="bg-blue-700 text-white p-4 shadow-md flex justify-between items-center">
-        <h1 class="text-2xl font-bold">Chat App</h1>
+    <header class="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center">
+        <h1 class="text-2xl font-bold">ChatApp</h1>
         <div class="flex items-center space-x-4">
             <span class="text-lg">Welcome, {{ current_full_name }}!</span>
-            <div class="flex space-x-4 bg-red-500 hover:bg-red-900 text-white px-4 py-2 rounded-md transition duration-150 ease-in-out">    
-                <img id="logout" src="{{url_for('static', filename='image/logout.png')}}"
-                             alt="" class="w-5">
-                <a href="/logout">Logout</a>
+            <div class="flex items-center space-x-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition duration-150 ease-in-out cursor-pointer" onclick="window.location.href='/logout'">
+                <img src="{{url_for('static', filename='image/logout.png')}}" alt="Logout" class="w-5 h-5">
+                <span>Logout</span>
             </div>
         </div>
     </header>
 
-    <main class="flex flex-1 overflow-hidden">
-        <div class="w-1/4 bg-white border-r border-gray-200 p-4 overflow-y-auto shadow-md">
+    <main class="flex flex-1 overflow-hidden bg-gray-100">
+        <div class="w-1/4 bg-white border-r border-gray-200 p-4 flex flex-col shadow-lg">
             <h3 class="text-xl font-semibold text-gray-800 mb-4">Friends</h3>
-            <ul id="friends-list" class="space-y-2">
+            <div class="mb-4">
+                <input type="text" id="friend-search" placeholder="Search friends..."
+                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <ul id="friends-list" class="flex-1 overflow-y-auto space-y-2">
                 {% for user in users %}
-                    <li class="p-3 rounded-md cursor-pointer hover:bg-gray-100 transition duration-150 ease-in-out flex items-center justify-between"
-                        data-user-id="{{ user.id }}" 
-                        data-username="{{ user.username }}" 
+                    <li class="p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition duration-150 ease-in-out flex items-center justify-between"
+                        data-user-id="{{ user.id }}"
+                        data-username="{{ user.username }}"
                         data-full-name="{{ user.full_name }}">
                         <span class="font-medium text-gray-700">{{ user.full_name }}</span>
-                        <div id="status-{{ user.id }}" class="-bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white"></div>
+                        <div id="status-{{ user.id }}" class="w-3 h-3 bg-gray-400 rounded-full border border-white"></div>
                     </li>
                 {% endfor %}
             </ul>
         </div>
 
-        <div class="flex-1 flex flex-col bg-gray-50">
-            <div id="chat-header" class="bg-gray-200 p-4 border-b border-gray-300 text-center text-xl font-semibold text-gray-800 rounded-tr-lg">
+        <div class="flex-1 flex flex-col bg-white rounded-lg shadow-lg m-4">
+            <div id="chat-header" class="bg-gray-200 p-4 border-b border-gray-300 text-center text-xl font-semibold text-gray-800 rounded-t-lg">
                 <div id="no-chat-selected" class="no-chat-selected">
                     <div class="no-chat-content">
                         <div class="no-chat-icon">
@@ -136,13 +129,13 @@
             </div>
 
             <div id="chat-messages" class="flex-1 p-4 overflow-y-auto chat-messages-container"></div>
-                
-            <div id="chat-input-area" class="bg-white p-4 border-t border-gray-200 flex items-center space-x-4 rounded-br-lg hidden">
+
+            <div id="chat-input-area" class="bg-gray-100 p-4 border-t border-gray-200 flex items-center space-x-4 rounded-b-lg hidden">
                 <input type="text" id="message-input" autocomplete="off" placeholder="Type your message..."
-                class="flex-1 px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                       class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm">
                 <button id="send-button"
-                class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out">
-                Send
+                        class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out">
+                    Send
                 </button>
             </div>
         </div>
@@ -158,30 +151,23 @@
         let selectedFriendFullName = null;
 
         const friendsList = document.getElementById('friends-list');
+        const friendSearchInput = document.getElementById('friend-search');
         const chatHeader = document.getElementById('chat-header');
         const chatMessages = document.getElementById('chat-messages');
         const chatInputArea = document.getElementById('chat-input-area');
         const messageInput = document.getElementById('message-input');
         const sendButton = document.getElementById('send-button');
+        const noChatSelectedDiv = document.getElementById('no-chat-selected');
 
-        const flashMessages = document.querySelectorAll('.flash-message');
-        flashMessages.forEach(msg => {
-            setTimeout(() => {
-                msg.style.opacity = '0';
-                msg.style.transition = 'opacity 0.5s ease-out';
-                setTimeout(() => msg.remove(), 500);
-            }, 3000);
-        });
 
-       
+
         friendsList.addEventListener('click', (event) => {
             let targetLi = event.target.closest('li');
             if (targetLi) {
-                
                 const currentActive = document.querySelector('#friends-list li.bg-blue-100');
                 if (currentActive) {
                     currentActive.classList.remove('bg-blue-100');
-                    currentActive.classList.add('hover:bg-gray-300');
+                    currentActive.classList.add('hover:bg-gray-100');
                 }
 
                 targetLi.classList.add('bg-blue-100');
@@ -191,9 +177,10 @@
                 selectedFriendUsername = targetLi.dataset.username;
                 selectedFriendFullName = targetLi.dataset.fullName;
 
-                chatHeader.textContent = ` ${selectedFriendFullName}`;
-                chatInputArea.classList.remove('hidden');
-                chatMessages.innerHTML = ''; 
+                chatHeader.innerHTML = `<h2 class="text-xl font-semibold text-gray-800">${selectedFriendFullName}</h2>`;
+                noChatSelectedDiv.classList.add('hidden'); 
+                chatInputArea.classList.remove('hidden'); 
+                chatMessages.innerHTML = '';
                 messageInput.focus();
 
                 socket.emit('request_chat_history', { 'other_user_id': selectedFriendId });
@@ -214,37 +201,41 @@
                     'receiver_id': selectedFriendId,
                     'message': message
                 });
-                messageInput.value = ''; 
+                messageInput.value = '';
                 messageInput.focus();
             }
         }
 
         function displayMessage(senderId, senderUsername, messageText, timestamp) {
             const messageDiv = document.createElement('div');
-            messageDiv.classList.add( 'mb-5', 'p-3', 'rounded-lg', 'max-w-xs', 'break-words');
+            messageDiv.classList.add('mb-3', 'p-3', 'rounded-xl', 'max-w-xs', 'break-words', 'shadow-sm');
 
             const isCurrentUser = (senderId == currentUserId);
 
             if (isCurrentUser) {
-                messageDiv.classList.add('bg-blue-700', 'text-white', 'ml-auto');
+                messageDiv.classList.add('bg-blue-600', 'text-white', 'ml-auto', 'rounded-br-none', 'chat-message-sent');
             } else {
-                messageDiv.classList.add('bg-gray-300', 'text-gray-800', 'mr-auto');
+                messageDiv.classList.add('bg-gray-200', 'text-gray-800', 'mr-auto', 'rounded-bl-none', 'chat-message-received');
             }
 
             const messageP = document.createElement('p');
-            messageP.classList.add('text-base', 'mt-1');
+            messageP.classList.add('text-base');
             messageP.textContent = messageText;
             messageDiv.appendChild(messageP);
 
             const timestampSpan = document.createElement('span');
-            timestampSpan.classList.add('block', 'text-gray-300', 'text-xs', 'mt-1', 'text-right', isCurrentUser ? 'text-blue-100' : 'text-gray-600');
+            timestampSpan.classList.add('block', 'text-xs', 'mt-1', isCurrentUser ? 'text-blue-100' : 'text-gray-500', 'text-right');
             timestampSpan.textContent = timestamp;
             messageDiv.appendChild(timestampSpan);
 
             chatMessages.appendChild(messageDiv);
+
+            requestAnimationFrame(() => {
+                messageDiv.classList.add('chat-message-visible');
+            });
+
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
-
 
         socket.on('receive_message', (data) => {
             const isMessageForSelectedChat =
@@ -260,19 +251,41 @@
             if (data.other_user_id == selectedFriendId) {
                 chatMessages.innerHTML = '';
                 data.history.forEach(msg => {
-                    displayMessage(msg.sender_id, msg.sender_username, msg.message_text, msg.timestamp);
+                    const messageDiv = document.createElement('div');
+                    messageDiv.classList.add('mb-3', 'p-3', 'rounded-xl', 'max-w-xs', 'break-words', 'shadow-sm');
+
+                    const isCurrentUser = (msg.sender_id == currentUserId);
+
+                    if (isCurrentUser) {
+                        messageDiv.classList.add('bg-blue-600', 'text-white', 'ml-auto', 'rounded-br-none');
+                    } else {
+                        messageDiv.classList.add('bg-gray-200', 'text-gray-800', 'mr-auto', 'rounded-bl-none');
+                    }
+
+                    const messageP = document.createElement('p');
+                    messageP.classList.add('text-base');
+                    messageP.textContent = msg.message_text;
+                    messageDiv.appendChild(messageP);
+
+                    const timestampSpan = document.createElement('span');
+                    timestampSpan.classList.add('block', 'text-xs', 'mt-1', isCurrentUser ? 'text-blue-100' : 'text-gray-500', 'text-right');
+                    timestampSpan.textContent = msg.timestamp;
+                    messageDiv.appendChild(timestampSpan);
+
+                    chatMessages.appendChild(messageDiv);
+                    messageDiv.classList.add('chat-message-visible');
                 });
+                chatMessages.scrollTop = chatMessages.scrollHeight;
             }
         });
 
         socket.on('user_status', (data) => {
             const statusElement = document.getElementById(`status-${data.user_id}`);
-            if (statusElement){
-                if(data.status === 'online'){
+            if (statusElement) {
+                if (data.status === 'online') {
                     statusElement.classList.remove('bg-gray-400');
                     statusElement.classList.add('bg-green-400');
-                }
-                else{
+                } else {
                     statusElement.classList.remove('bg-green-400');
                     statusElement.classList.add('bg-gray-400');
                 }
@@ -294,6 +307,20 @@
 
         socket.on('disconnect', () => {
             console.log('Disconnected from Socket.IO server');
+        });
+
+        friendSearchInput.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const friendItems = friendsList.querySelectorAll('li');
+
+            friendItems.forEach(item => {
+                const fullName = item.dataset.fullName.toLowerCase();
+                if (fullName.includes(searchTerm)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
         });
 
     </script>
