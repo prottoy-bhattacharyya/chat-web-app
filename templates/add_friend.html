@@ -325,7 +325,7 @@
                 data-user-dob = "{{user.dob}}"    
             >
                 <div class="person-image-container">
-                    <img src="{{url_for('static', filename='/image/user.png')}}" alt="" class="person-image">
+                    <img src="{{url_for('static', filename='/profile_photos/id' + user.id + '.jpg')}}" alt="" class="person-image" id="person-image">
                 </div>
                 <div class="person-content">
                     <h3 class="person-name">{{user.full_name}}</h3>
@@ -351,13 +351,20 @@
 </body>
 <script>
     var socketio = io('/add_friend');
-
+    
+    const personImage = document.querySelectorAll('.person-image');
     const peopleGrid = document.getElementById('people-grid');
     const popupOverlay = document.getElementById('popup-overlay');
     const popupCloseBtn = document.getElementById('popup-close-btn');
     const popupImage = document.getElementById('popup-image');
     const popupName = document.getElementById('popup-name');
     const popupId = document.getElementById('popup-id');
+
+    personImage.forEach((image) => {
+        image.addEventListener('error', () => {
+            image.src = "{{url_for('static', filename='/image/user.png')}}";
+        });
+    });
 
     socketio.on('connect', () => {
         console.log('Connected to add_friend namespace');
@@ -379,11 +386,17 @@
         }
         else if (personCard) {
             // Show popup when person-card is clicked
+            const userId = personCard.dataset.userId;
             const userFullname = personCard.dataset.userFullname;
             const userName = personCard.dataset.userUsername;
             const userEmail = personCard.dataset.userEmail;
             const userDob = personCard.dataset.userDob;
-
+            
+            popupImage.src = `/static/profile_photos/id${userId}.jpg`;
+            popupImage.addEventListener('error', () => {
+                popupImage.src = "{{url_for('static', filename='/image/user.png')}}";
+            });
+            
             popupName.textContent = userFullname;
             popupId.innerHTML = `${userName}<br> <br> Email: ${userEmail}<br>Date of Birth: ${userDob}`;
             // popupImage.src = personCard.querySelector('.person-image').src;

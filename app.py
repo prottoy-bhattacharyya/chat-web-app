@@ -227,7 +227,7 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect('/')
 
-@app.route('/home')
+@app.route('/home', methods=['GET', 'POST'])
 def home():
     if 'user_id' not in session:
         flash('Please log in first', 'warning')
@@ -252,8 +252,17 @@ def home():
         finally:
             cursor.close()
             conn.close()
-    
-    return render_template('home.html', full_name=full_name, username=username, dob=dob, email=email)
+        
+
+        if request.method == 'POST':
+            profile_image = request.files['profile_photo']
+            upload_folder = "static/profile_photos/"
+            profile_image_name = f"id{id}.jpg"
+
+            if profile_image:
+                profile_image.save(upload_folder + profile_image_name)
+
+    return render_template('home.html', id=str(id), full_name=full_name, username=username, dob=dob, email=email)
 
 @app.route('/add_friend')
 def add_friend():
@@ -265,16 +274,26 @@ def add_friend():
     if conn:
         cursor = conn.cursor(dictionary=True)
         try:
-            cursor.execute("""SELECT users.id, full_name, username, dob, email, sender_id, receiver_id, status
-                            FROM users LEFT JOIN friends ON 
-                           (sender_id = users.id AND receiver_id = %s) 
-                            OR (sender_id = %s AND receiver_id = users.id)
-                            WHERE users.id != %s
-                            AND (friends.status IS NULL OR friends.status = 'rejected');""", 
-                            (session['user_id'],session['user_id'],session['user_id'])
+            cursor.execute("""select * from users
+                            where id != %s and id not in 
+                            ( select sender_id from friends
+                            where receiver_id = %s and status = 'pending')
+                            and id not in 
+                            ( select receiver_id from friends
+                            where sender_id = %s and status = 'pending')
+                            and id not in 
+                            ( select sender_id from friends
+                            where receiver_id = %s and status = 'accepted')
+                            and id not in
+                            ( select receiver_id from friends
+                            where sender_id = %s and status = 'accepted');""", 
+                            (session['user_id'],session['user_id'],session['user_id'], session['user_id'], session['user_id'])
                         )
             
             users = cursor.fetchall()
+            for user in users:
+                user['id'] = str(user['id'])
+
         except mysql.connector.Error as err:
             print(f"Error fetching users: {err}")
         finally:
@@ -318,6 +337,9 @@ def friend_request():
                         )
 
             requests = cursor.fetchall()
+            for request in requests:
+                request['id'] = str(request['id'])
+
         except mysql.connector.Error as err:
             print(f"Error fetching friend requests: {err}")
         finally:
@@ -454,7 +476,7 @@ def handle_send_message(data):
             if today == date:
                 timestamp = timestamp.strftime("%I:%M %p")
             else:
-                timestamp = timestamp.strftime("%d-%m-%Y %I:%M %p")
+                timestamp = timestamp.strftime("%d/%m/%Y  %I:%M %p")
             
             emit('receive_message', {
                 'sender_id': sender_id,
@@ -514,7 +536,7 @@ def handle_request_chat_history(data):
                 if today == date:
                     msg['timestamp'] = msg['timestamp'].strftime('%I:%M %p')
                 else:    
-                    msg['timestamp'] = msg['timestamp'].strftime('%d-%m-%Y %I:%M %p')
+                    msg['timestamp'] = msg['timestamp'].strftime('%d/%m/%Y  %I:%M %p')
 
             emit('chat_history', {'other_user_id': user2_id, 'history': history}, room=str(user1_id))
             print(f"Sent chat history for user {user2_id} to {session['username']} (ID: {user1_id}).")

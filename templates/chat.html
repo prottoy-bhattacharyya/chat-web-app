@@ -180,7 +180,6 @@
                 chatHeader.innerHTML = `<h2 class="text-xl font-semibold text-gray-800">${selectedFriendFullName}</h2>`;
                 noChatSelectedDiv.classList.add('hidden'); 
                 chatInputArea.classList.remove('hidden'); 
-                chatMessages.innerHTML = '';
                 messageInput.focus();
 
                 socket.emit('request_chat_history', { 'other_user_id': selectedFriendId });

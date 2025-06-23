@@ -313,13 +313,12 @@
                 <div class="person-image-container" 
                     data-user-id="{{user.id}}" 
                     data-user-fullname="{{user.full_name}}" 
-                    data-user-image="{{url_for('static', filename='/image/user.png')}}"
                     data-user-username = "{{user.username}}"
                     data-user-email = "{{user.email}}"
                     data-user-dob = "{{user.dob}}"
                 >
 
-                    <img src="{{url_for('static', filename='/image/user.png')}}" alt="{{user.full_name}}" class="person-image">
+                    <img src="{{url_for('static', filename='/profile_photos/id' + user.id + '.jpg')}}" alt="{{user.full_name}}" class="person-image" id="person-image">
                 </div>
                 <div class="person-content">
                     <h3 class="person-name">{{user.full_name}}</h3>
@@ -363,6 +362,13 @@
     const popupInfo = document.getElementById('popupInfo');
 
 
+    const personImage = document.querySelectorAll('.person-image');
+    personImage.forEach((image) => {
+        image.addEventListener('error', () => {
+            image.src = "{{url_for('static', filename='/image/user.png')}}";
+        });
+    });
+
     people_grid.addEventListener('click', (event) => {
         const accept_request_btn = event.target.closest('.accept-request-btn');
         const reject_request_btn = event.target.closest('.remove-btn');
@@ -387,13 +393,16 @@
         } 
         
         else if (person_image_container) {
+            const userId = person_image_container.dataset.userId;
             const userFullname = person_image_container.dataset.userFullname;
-            const userImage = person_image_container.dataset.userImage;
             const userName = person_image_container.dataset.userUsername;
             const userEmail = person_image_container.dataset.userEmail;
             const userDob = person_image_container.dataset.userDob;
 
-            popupImage.src = userImage;
+            popupImage.src = "/static/profile_photos/id" + userId + ".jpg";
+            popupImage.addEventListener('error', () => {
+                popupImage.src = "{{url_for('static', filename='/image/user.png')}}";
+            })
             popupName.textContent = userFullname;
             popupInfo.innerHTML = `${userName}<br> <br> Email: ${userEmail}<br>Date of Birth: ${userDob}`; // Example dynamic info
             profilePopup.classList.add('show');
