@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chat Cyan - Add Friend</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        background-color: #f8f9fa;
+        min-height: 100vh;
+    }
+
+    .header {
+        background-color: white;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .header-container {
+        max-width: 1152px;
+        margin: 0 auto;
+        padding: 0 16px;
+    }
+
+    .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 0;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .header-icon {
+        width: 32px;
+        height: 32px;
+        color: #2563eb;
+    }
+
+    .header-title {
+        font-size: 24px;
+        font-weight: bold;
+        color: #111827;
+    }
+
+
+    .main-container {
+        max-width: 1152px;
+        margin: 0 auto;
+        padding: 0 16px;
+        padding-top: 24px;
+    }
+
+    .content-header {
+        margin-bottom: 24px;
+    }
+
+    .content-title {
+        font-size: 20px;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 8px;
+    }
+
+    .content-subtitle {
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+    .people-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+    }
+
+    .person-card {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        transition: box-shadow 0.2s;
+        cursor: pointer;
+    }
+
+    .person-card:hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .person-image-container {
+        aspect-ratio: 1;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .person-image {
+        scale: 0.9;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.3s;
+    }
+
+    .person-card:hover .person-image {
+        transform: scale(1.1);
+    }
+
+    .person-content {
+        padding: 12px;
+    }
+
+    .person-name {
+        text-align: center;
+        font-weight: 600;
+        color: #111827;
+        font-size: 16px;
+        margin-bottom: 4px;
+        line-height: 1.2;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .add-friend-btn {
+        width: 100%;
+        background-color: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 8px 0;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        height: 32px;
+    }
+
+    .add-friend-btn:hover {
+        background-color: #0937b4;
+    }
+
+    .remove-btn {
+        width: 100%;
+        background-color: white;
+        color: #374151;
+        border: 1px solid #d1d5db;
+        border-radius: 15px;
+        padding: 8px 0;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        height: 32px;
+    }
+
+    .remove-btn:hover {
+        background-color: #7d95ad;
+    }
+
+    .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(84, 82, 223, 0.226);
+        backdrop-filter: blur(2px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0s, opacity 0.3s;
+    }
+
+    .popup-overlay.show {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .popup-card {
+        background-color: rgba(255, 255, 255, 0.753);
+        backdrop-filter: blur(20px);
+        border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.781);
+        padding: 24px;
+        width: 90%;
+        max-width: 400px;
+        position: relative;
+        text-align: center;
+    }
+
+    .popup-close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #6b7280;
+    }
+
+    .popup-image {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-bottom: 16px;
+        border: 2px solid #e5e7eb;
+    }
+
+    .popup-name {
+        font-size: 22px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 8px;
+    }
+
+    .popup-info {
+        font-size: 16px;
+        color: #4b5563;
+        margin-bottom: 20px;
+    }
+    /* Responsive Design */
+    @media (min-width: 640px) {
+        .people-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (min-width: 768px) {
+        .people-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .people-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    @media (min-width: 1280px) {
+        .people-grid {
+            grid-template-columns: repeat(5, 1fr);
+        }
+    }
+
+    @media (min-width: 1536px) {
+        .people-grid {
+            grid-template-columns: repeat(7, 1fr);
+        }
+    }
+</style>
+
+<body>
+    <div class="header">
+        <div class="header-container">
+            <div class="header-content">
+                <div class="header-left">
+                    <svg class="header-icon" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                    <h1 class="header-title">Chat Cyan</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="content-header">
+            <h2 class="content-title">People you may know</h2>
+            <p class="content-subtitle">Connect with friends and discover new people</p>
+        </div>
+        <div style="margin-bottom: 20px;">
+            <input type="text" id="searchInput" placeholder="Search for friends..." style="
+                width: 100%;
+                padding: 10px 15px;
+                border: 1px solid #d1d5db;
+                border-radius: 8px;
+                font-size: 16px;
+            ">
+        </div>
+        <div class="people-grid" id="people-grid">
+            
+            {% if not users %}
+            <div class="no-friends">
+                <strong>No People to add </strong>
+            </div>
+            {% endif %}
+            {% for user in users %}
+            <div class="person-card" 
+                data-user-id="{{user.id}}" 
+                data-user-fullname="{{user.full_name}}"
+                data-user-image="{{url_for('static', filename='/image/user.png')}}"
+                data-user-username = "{{user.username}}"
+                data-user-email = "{{user.email}}"
+                data-user-dob = "{{user.dob}}"    
+            >
+                <div class="person-image-container">
+                    <img src="{{url_for('static', filename='/profile_photos/id' + user.id + '.jpg')}}" alt="" class="person-image" id="person-image">
+                </div>
+                <div class="person-content">
+                    <h3 class="person-name">{{user.full_name}}</h3>
+                    <div class="action-buttons">
+                        <button class="add-friend-btn" data-user-id="{{user.id}}">Add friend</button>
+                        <button class="remove-btn">Remove</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="popup-overlay" id="popup-overlay">
+        <div class="popup-card">
+            <button class="popup-close-btn" id="popup-close-btn">&times;</button>
+            <img src="{{url_for('static', filename='/image/user.png')}}" alt="User Profile" class="popup-image" id="popup-image">
+            <h3 class="popup-name" id="popup-name"></h3>
+            <p class="popup-info" id="popup-id"></p>
+            </div>
+    </div>
+
+</body>
+<script>
+    var socketio = io('/add_friend');
+    
+    const personImage = document.querySelectorAll('.person-image');
+    const peopleGrid = document.getElementById('people-grid');
+    const popupOverlay = document.getElementById('popup-overlay');
+    const popupCloseBtn = document.getElementById('popup-close-btn');
+    const popupImage = document.getElementById('popup-image');
+    const popupName = document.getElementById('popup-name');
+    const popupId = document.getElementById('popup-id');
+
+    personImage.forEach((image) => {
+        image.addEventListener('error', () => {
+            image.src = "{{url_for('static', filename='/image/user.png')}}";
+        });
+    });
+
+    socketio.on('connect', () => {
+        console.log('Connected to add_friend namespace');
+    });
+
+    peopleGrid.addEventListener('click', (event) => {
+        const add_friend_btn = event.target.closest('.add-friend-btn');
+        const personCard = event.target.closest('.person-card');
+
+        if (add_friend_btn) {
+            event.stopPropagation();
+            const receiver_id = add_friend_btn.dataset.userId;
+            socketio.emit('add_friend', { 'receiver_id': receiver_id });
+            add_friend_btn.innerText = 'Request sent';
+        } 
+        else if (event.target.closest('.remove-btn')) {
+            const card = event.target.closest('.person-card');
+            card.style.display = 'none';
+        }
+        else if (personCard) {
+            // Show popup when person-card is clicked
+            const userId = personCard.dataset.userId;
+            const userFullname = personCard.dataset.userFullname;
+            const userName = personCard.dataset.userUsername;
+            const userEmail = personCard.dataset.userEmail;
+            const userDob = personCard.dataset.userDob;
+            
+            popupImage.src = `/static/profile_photos/id${userId}.jpg`;
+            popupImage.addEventListener('error', () => {
+                popupImage.src = "{{url_for('static', filename='/image/user.png')}}";
+            });
+            
+            popupName.textContent = userFullname;
+            popupId.innerHTML = `${userName}<br> <br> Email: ${userEmail}<br>Date of Birth: ${userDob}`;
+            // popupImage.src = personCard.querySelector('.person-image').src;
+            popupOverlay.classList.add('show');
+        }
+    });
+
+    popupCloseBtn.addEventListener('click', () => {
+        popupOverlay.classList.remove('show');
+    });
+
+    popupOverlay.addEventListener('click', (event) => {
+        if (event.target === popupOverlay) {
+            popupOverlay.classList.remove('show');
+        }
+    });
+
+    const searchInput = document.getElementById('searchInput');
+
+    searchInput.addEventListener('input', function () {
+        const searchValue = this.value.toLowerCase();
+        const personCards = document.querySelectorAll('.person-card');
+
+        personCards.forEach(card => {
+            const name = card.dataset.userFullname.toLowerCase();
+            if (name.includes(searchValue)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+</script>
+</html>

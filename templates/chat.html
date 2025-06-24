@@ -149,6 +149,7 @@
         let selectedFriendId = null;
         let selectedFriendUsername = null;
         let selectedFriendFullName = null;
+        let selectedFriendProfilePic = null;
 
         const friendsList = document.getElementById('friends-list');
         const friendSearchInput = document.getElementById('friend-search');
@@ -177,7 +178,10 @@
                 selectedFriendUsername = targetLi.dataset.username;
                 selectedFriendFullName = targetLi.dataset.fullName;
 
-                chatHeader.innerHTML = `<h2 class="text-xl font-semibold text-gray-800">${selectedFriendFullName}</h2>`;
+                chatHeader.innerHTML = `<div class="flex items-center space-x-4">
+                                        <img src="static/profile_photos/id${selectedFriendId}.jpg" alt="Profile" class="w-12 h-12 rounded-full object-cover" />
+                                        <h2 class="text-xl font-semibold text-gray-800">${selectedFriendFullName}</h2>
+                                        </div>`;
                 noChatSelectedDiv.classList.add('hidden'); 
                 chatInputArea.classList.remove('hidden'); 
                 messageInput.focus();

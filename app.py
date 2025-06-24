@@ -45,8 +45,8 @@ def init_db():
                     receiver_id INT NOT NULL,
                     status ENUM('accepted', 'pending', 'rejected') DEFAULT 'pending',
                     FOREIGN KEY (sender_id) REFERENCES users(id),
-                    FOREIGN KEY (receiver_id) REFERENCES users(id),
-                    UNIQUE (sender_id, receiver_id, status)
+                    FOREIGN KEY (receiver_id) REFERENCES users(id)
+                   
                 );
             """)
 

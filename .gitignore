@@ -1,3 +1,5 @@
 .venv/
 __pycache__/
 api_key.txt
+test/
+static/profile_photos/*.jpg

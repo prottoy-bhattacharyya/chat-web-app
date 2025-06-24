@@ -37,8 +37,8 @@ def metaLlama(prompt, user_id, username):
       )
       
       completion = client.chat.completions.create(
-          #model="meta-llama/llama-4-maverick:free",
-           model = "nvidia/llama-3.1-nemotron-ultra-253b-v1:free",
+          model="meta-llama/llama-4-maverick:free",
+          #  model = "nvidia/llama-3.1-nemotron-ultra-253b-v1:free",
           # model = "deepseek/deepseek-r1-0528-qwen3-8b:free",
           # model="google/gemini-2.0-flash-exp:free",
           messages=[

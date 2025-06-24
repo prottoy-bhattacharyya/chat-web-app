@@ -4,285 +4,429 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chat Cyan - Add Friend</title>
+    <title>Chat Cyan - Friend Requests</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #a7b7ed, #e0c3fc);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative; 
+            overflow-x: hidden; 
+        }
+
+      
+        .background-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .background-animation::before,
+        .background-animation::after {
+            content: '';
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: moveBackground 20s infinite alternate;
+        }
+
+        .background-animation::before {
+            width: 300px;
+            height: 300px;
+            top: -50px;
+            left: -50px;
+            animation-duration: 25s;
+            filter: blur(80px);
+        }
+
+        .background-animation::after {
+            width: 400px;
+            height: 400px;
+            bottom: -100px;
+            right: -100px;
+            animation-duration: 30s;
+            filter: blur(100px);
+        }
+
+        @keyframes moveBackground {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(100px, 50px) scale(1.1); }
+            100% { transform: translate(0, 0) scale(1); }
+        }
+
+
+       
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .header-container {
+            max-width: 1152px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-icon {
+            width: 36px; 
+            height: 36px;
+            color: #2563eb;
+            transition: transform 0.3s ease;
+        }
+
+        .header-left:hover .header-icon {
+            transform: rotate(10deg) scale(1.1);
+        }
+
+        .header-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: #111827;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+       
+        .main-container {
+            max-width: 1152px;
+            margin: 0 auto;
+            padding: 0 20px;
+            padding-top: 40px; 
+            flex-grow: 1; 
+        }
+
+        .content-header {
+            margin-bottom: 30px; 
+            text-align: center; 
+            animation: slideInDown 0.6s ease-out;
+        }
+
+        .content-title {
+            font-size: 28px; 
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 10px;
+        }
+
+        .content-subtitle {
+            color: #4b5563;
+            font-size: 16px;
+        }
+
+        
+        .people-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+            gap: 25px; 
+            padding-bottom: 40px; 
+        }
+
+      
+        .person-card {
+            background: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(5px); 
+            border-radius: 15px; 
+            border: 1px solid rgba(255, 255, 255, 0.3); 
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1); 
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            animation: fadeIn 0.5s ease-out forwards; 
+            opacity: 0; 
+        }
+
+        .person-card:nth-child(even) { animation-delay: 0.1s; }
+        .person-card:nth-child(odd) { animation-delay: 0.2s; }
+
+
+        .person-card:hover {
+            transform: translateY(-8px) scale(1.02); 
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.15);
+        }
+
+        .person-image-container {
+            aspect-ratio: 1;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .person-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+            filter: grayscale(20%);
+        }
+
+        .person-card:hover .person-image {
+            transform: scale(1.1);
+            filter: grayscale(0%); 
+        }
+
+        .person-content {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex-grow: 1;
+        }
+
+        .person-name {
+            text-align: center;
+            font-weight: 600;
+            color: #111827;
+            font-size: 16px;
+            margin-bottom: 12px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .add-friend-btn,
+        .remove-btn {
+            width: 100%;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 0;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            height: 40px; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px; 
+        }
+
+        .add-friend-btn {
+            background-color: #2563eb;
+            color: white;
+            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+        }
+
+        .add-friend-btn:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        .remove-btn {
+            background-color: rgba(255, 255, 255, 0.4); 
+            color: #374151;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .remove-btn:hover {
+            background-color: rgba(255, 255, 255, 0.6);
+            color: #1f2937;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .no-friends {
+            grid-column: 1 / -1; 
+            text-align: center;
+            padding: 50px 20px;
+            font-size: 18px;
+            color: #6b7280;
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0.4s ease, opacity 0.4s ease;
+        }
+
+        .popup-overlay.show {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .popup-card {
+            background-color: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(25px); 
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25); 
+            padding: 30px; 
+            width: 90%;
+            max-width: 450px; 
+            position: relative;
+            text-align: center;
+            transform: scale(0.9);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease; /* Bounce effect */
+        }
+
+        .popup-overlay.show .popup-card {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .popup-close-btn {
+            position: absolute;
+            top: 15px; 
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 30px;
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+
+        .popup-close-btn:hover {
+            color: #ef4444; 
+            transform: rotate(90deg);
+        }
+
+        .popup-image {
+            width: 140px; 
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px; 
+            border: 4px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .popup-card:hover .popup-image {
+            transform: scale(1.05) rotate(-3deg);
+        }
+
+        .popup-name {
+            font-size: 26px; 
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 12px;
+        }
+
+        .popup-info {
+            font-size: 17px; 
+            color: #4b5563;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (min-width: 640px) {
+            .people-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 768px) {
+            .people-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .people-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (min-width: 1280px) {
+            .people-grid {
+                grid-template-columns: repeat(5, 1fr);
+            }
+        }
+
+        @media (min-width: 1536px) {
+            .people-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+    </style>
 </head>
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    body {
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-        background-color: #f8f9fa;
-        min-height: 100vh;
-    }
-
-    .header {
-        background-color: white;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        border-bottom: 1px solid #e5e7eb;
-    }
-
-    .header-container {
-        max-width: 1152px;
-        margin: 0 auto;
-        padding: 0 16px;
-    }
-
-    .header-content {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 16px 0;
-    }
-
-    .header-left {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .header-icon {
-        width: 32px;
-        height: 32px;
-        color: #2563eb;
-    }
-
-    .header-title {
-        font-size: 24px;
-        font-weight: bold;
-        color: #111827;
-    }
-
-
-    .main-container {
-        max-width: 1152px;
-        margin: 0 auto;
-        padding: 0 16px;
-        padding-top: 24px;
-    }
-
-    .content-header {
-        margin-bottom: 24px;
-    }
-
-    .content-title {
-        font-size: 20px;
-        font-weight: 600;
-        color: #111827;
-        margin-bottom: 8px;
-    }
-
-    .content-subtitle {
-        color: #6b7280;
-        font-size: 14px;
-    }
-
-    .people-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        gap: 16px;
-    }
-
-    .person-card {
-        background-color: white;
-        border-radius: 8px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        border: 1px solid #e5e7eb;
-        overflow: hidden;
-        transition: box-shadow 0.2s;
-        cursor: pointer;
-    }
-
-    .person-card:hover {
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    .person-image-container {
-        aspect-ratio: 1;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .person-image {
-        scale: 0.9;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.3s;
-    }
-
-    .person-card:hover .person-image {
-        transform: scale(1.1);
-    }
-
-    .person-content {
-        padding: 12px;
-    }
-
-    .person-name {
-        text-align: center;
-        font-weight: 600;
-        color: #111827;
-        font-size: 16px;
-        margin-bottom: 4px;
-        line-height: 1.2;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-
-    .action-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .add-friend-btn {
-        width: 100%;
-        background-color: #2563eb;
-        color: white;
-        border: none;
-        border-radius: 15px;
-        padding: 8px 0;
-        font-size: 14px;
-        font-weight: 500;
-        cursor: pointer;
-        transition: background-color 0.2s;
-        height: 32px;
-    }
-
-    .add-friend-btn:hover {
-        background-color: #0937b4;
-    }
-
-    .remove-btn {
-        width: 100%;
-        background-color: white;
-        color: #374151;
-        border: 1px solid #d1d5db;
-        border-radius: 15px;
-        padding: 8px 0;
-        font-size: 14px;
-        cursor: pointer;
-        transition: background-color 0.2s;
-        height: 32px;
-    }
-
-    .remove-btn:hover {
-        background-color: #7d95ad;
-    }
-
-    .popup-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(84, 82, 223, 0.226);
-        backdrop-filter: blur(2px);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-        visibility: hidden;
-        opacity: 0;
-        transition: visibility 0s, opacity 0.3s;
-    }
-
-    .popup-overlay.show {
-        visibility: visible;
-        opacity: 1;
-    }
-
-    .popup-card {
-        background-color: rgba(255, 255, 255, 0.753);
-        backdrop-filter: blur(20px);
-        border-radius: 15px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.781);
-        padding: 24px;
-        width: 90%;
-        max-width: 400px;
-        position: relative;
-        text-align: center;
-    }
-
-    .popup-close-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: none;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-        color: #6b7280;
-    }
-
-    .popup-image {
-        width: 120px;
-        height: 120px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin-bottom: 16px;
-        border: 2px solid #e5e7eb;
-    }
-
-    .popup-name {
-        font-size: 22px;
-        font-weight: 700;
-        color: #111827;
-        margin-bottom: 8px;
-    }
-
-    .popup-info {
-        font-size: 16px;
-        color: #4b5563;
-        margin-bottom: 20px;
-    }
-    /* Responsive Design */
-    @media (min-width: 640px) {
-        .people-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-
-    @media (min-width: 768px) {
-        .people-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
-
-    @media (min-width: 1024px) {
-        .people-grid {
-            grid-template-columns: repeat(4, 1fr);
-        }
-    }
-
-    @media (min-width: 1280px) {
-        .people-grid {
-            grid-template-columns: repeat(5, 1fr);
-        }
-    }
-
-    @media (min-width: 1536px) {
-        .people-grid {
-            grid-template-columns: repeat(7, 1fr);
-        }
-    }
-</style>
 
 <body>
-    <div class="header">
+    <div class="background-animation"></div> <div class="header">
         <div class="header-container">
             <div class="header-content">
                 <div class="header-left">
-                    <svg class="header-icon" width="32" height="32" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="header-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                         <circle cx="9" cy="7" r="4" />
                         <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
@@ -296,138 +440,155 @@
 
     <div class="main-container">
         <div class="content-header">
-            <h2 class="content-title">People you may know</h2>
-            <p class="content-subtitle">Connect with friends and discover new people</p>
+            <h2 class="content-title">Add Friends</h2>
+            <p class="content-subtitle">Connect with your community</p>
         </div>
-        <div style="margin-bottom: 20px;">
-            <input type="text" id="searchInput" placeholder="Search for friends..." style="
-                width: 100%;
-                padding: 10px 15px;
-                border: 1px solid #d1d5db;
-                border-radius: 8px;
-                font-size: 16px;
-            ">
-        </div>
+
         <div class="people-grid" id="people-grid">
-            
-            {% if not users %}
-            <div class="no-friends">
-                <strong>No People to add </strong>
-            </div>
-            {% endif %}
+            {% if users %}
             {% for user in users %}
-            <div class="person-card" 
-                data-user-id="{{user.id}}" 
-                data-user-fullname="{{user.full_name}}"
-                data-user-image="{{url_for('static', filename='/image/user.png')}}"
-                data-user-username = "{{user.username}}"
-                data-user-email = "{{user.email}}"
-                data-user-dob = "{{user.dob}}"    
-            >
-                <div class="person-image-container">
-                    <img src="{{url_for('static', filename='/profile_photos/id' + user.id + '.jpg')}}" alt="" class="person-image" id="person-image">
+            <div class="person-card" data-user-id="{{user.id}}">
+                <div class="person-image-container"
+                    data-user-id="{{user.id}}"
+                    data-user-fullname="{{user.full_name}}"
+                    data-user-username = "{{user.username}}"
+                    data-user-email = "{{user.email}}"
+                    data-user-dob = "{{user.dob}}"
+                >
+                    <img src="{{url_for('static', filename='/profile_photos/id' + user.id + '.jpg')}}" alt="{{user.full_name}}" class="person-image">
                 </div>
                 <div class="person-content">
                     <h3 class="person-name">{{user.full_name}}</h3>
                     <div class="action-buttons">
-                        <button class="add-friend-btn" data-user-id="{{user.id}}">Add friend</button>
-                        <button class="remove-btn">Remove</button>
+                        <button class="add-friend-btn" data-user-id="{{user.id}}">
+                            <i class="fas fa-user-plus"></i> Add Friend
+                        </button>
+                        <button class="remove-btn" data-user-id="{{user.id}}">
+                            <i class="fas fa-times"></i> Remove
+                        </button>
                     </div>
                 </div>
             </div>
             {% endfor %}
+            {%else%}
+            <div class="no-friends">
+                <p>No One to Add</p>
+            </div>
+            {%endif%}
         </div>
     </div>
 
-    <div class="popup-overlay" id="popup-overlay">
+    <div class="popup-overlay" id="profilePopup">
         <div class="popup-card">
-            <button class="popup-close-btn" id="popup-close-btn">&times;</button>
-            <img src="{{url_for('static', filename='/image/user.png')}}" alt="User Profile" class="popup-image" id="popup-image">
-            <h3 class="popup-name" id="popup-name"></h3>
-            <p class="popup-info" id="popup-id"></p>
-            </div>
+            <button class="popup-close-btn" id="closePopupBtn">&times;</button>
+            <img src="" alt="User Profile" class="popup-image" id="popupImage">
+            <h3 class="popup-name" id="popupName"></h3>
+            <p class="popup-info" id="popupInfo"></p>
+        </div>
     </div>
 
-</body>
-<script>
-    var socketio = io('/add_friend');
-    
-    const personImage = document.querySelectorAll('.person-image');
-    const peopleGrid = document.getElementById('people-grid');
-    const popupOverlay = document.getElementById('popup-overlay');
-    const popupCloseBtn = document.getElementById('popup-close-btn');
-    const popupImage = document.getElementById('popup-image');
-    const popupName = document.getElementById('popup-name');
-    const popupId = document.getElementById('popup-id');
+    <script>
+    const socketio = io('/add_friend');
+    socketio.on('connect', () => {
+        console.log('Connected to add_friend namespace');
+    });
 
-    personImage.forEach((image) => {
+    const people_grid = document.getElementById('people-grid');
+    const profilePopup = document.getElementById('profilePopup');
+    const closePopupBtn = document.getElementById('closePopupBtn');
+    const popupImage = document.getElementById('popupImage');
+    const popupName = document.getElementById('popupName');
+    const popupInfo = document.getElementById('popupInfo');
+
+    const personImages = document.querySelectorAll('.person-image');
+    personImages.forEach((image) => {
         image.addEventListener('error', () => {
             image.src = "{{url_for('static', filename='/image/user.png')}}";
         });
     });
 
-    socketio.on('connect', () => {
-        console.log('Connected to add_friend namespace');
-    });
-
-    peopleGrid.addEventListener('click', (event) => {
+    people_grid.addEventListener('click', (event) => {
         const add_friend_btn = event.target.closest('.add-friend-btn');
-        const personCard = event.target.closest('.person-card');
+        const remove_btn = event.target.closest('.remove-btn');
+        const person_image_container = event.target.closest('.person-image-container');
 
         if (add_friend_btn) {
-            event.stopPropagation();
             const receiver_id = add_friend_btn.dataset.userId;
             socketio.emit('add_friend', { 'receiver_id': receiver_id });
-            add_friend_btn.innerText = 'Request sent';
-        } 
-        else if (event.target.closest('.remove-btn')) {
-            const card = event.target.closest('.person-card');
-            card.style.display = 'none';
+
+            console.log("request sent");
+
+            add_friend_btn.innerHTML = '<i class="fas fa-send-o"></i> Request Sent';
+            add_friend_btn.disabled = true; 
+            const card = add_friend_btn.closest('.person-card');
+            const removeBtn = card.querySelector('.remove-btn');
+            if (removeBtn) {
+                removeBtn.style.display = 'none'; 
+            }
+            card.style.opacity = '0.5';
+            card.style.pointerEvents = 'none'; 
         }
-        else if (personCard) {
-            // Show popup when person-card is clicked
-            const userId = personCard.dataset.userId;
-            const userFullname = personCard.dataset.userFullname;
-            const userName = personCard.dataset.userUsername;
-            const userEmail = personCard.dataset.userEmail;
-            const userDob = personCard.dataset.userDob;
-            
-            popupImage.src = `/static/profile_photos/id${userId}.jpg`;
+
+        else if (remove_btn) {
+            const card = remove_btn.closest('.person-card');
+            card.classList.add('fade-out');
+            card.addEventListener('animationend', () => {
+                card.remove(); 
+
+                if (people_grid.children.length === 0) {
+                    const noFriendsMessage = document.createElement('div');
+                    noFriendsMessage.classList.add('no-friends');
+                    noFriendsMessage.innerHTML = '<p>No People to Add</p>';
+                    people_grid.appendChild(noFriendsMessage);
+                }
+            }, { once: true });
+        }
+
+        else if (person_image_container) {
+            const userId = person_image_container.dataset.userId;
+            const userFullname = person_image_container.dataset.userFullname;
+            const userName = person_image_container.dataset.userUsername;
+            const userEmail = person_image_container.dataset.userEmail;
+            const userDob = person_image_container.dataset.userDob;
+
+            popupImage.src = "/static/profile_photos/id" + userId + ".jpg";
             popupImage.addEventListener('error', () => {
                 popupImage.src = "{{url_for('static', filename='/image/user.png')}}";
-            });
-            
+            }, { once: true });
+
             popupName.textContent = userFullname;
-            popupId.innerHTML = `${userName}<br> <br> Email: ${userEmail}<br>Date of Birth: ${userDob}`;
-            // popupImage.src = personCard.querySelector('.person-image').src;
-            popupOverlay.classList.add('show');
+            popupInfo.innerHTML = `<strong>Username:</strong> ${userName}<br>
+                                    <strong>Email:</strong> ${userEmail}<br>
+                                    <strong>Date of Birth:</strong> ${userDob || 'N/A'}`;
+            profilePopup.classList.add('show');
         }
     });
 
-    popupCloseBtn.addEventListener('click', () => {
-        popupOverlay.classList.remove('show');
+    closePopupBtn.addEventListener('click', () => {
+        profilePopup.classList.remove('show');
     });
 
-    popupOverlay.addEventListener('click', (event) => {
-        if (event.target === popupOverlay) {
-            popupOverlay.classList.remove('show');
+    profilePopup.addEventListener('click', (event) => {
+        if (event.target === profilePopup) {
+            profilePopup.classList.remove('show');
         }
     });
 
-    const searchInput = document.getElementById('searchInput');
+  
+    const styleSheet = document.createElement("style");
+    styleSheet.type = "text/css";
+    styleSheet.innerText = `
+        .fade-out {
+            animation: fadeOutAndShrink 0.5s ease-out forwards;
+        }
 
-    searchInput.addEventListener('input', function () {
-        const searchValue = this.value.toLowerCase();
-        const personCards = document.querySelectorAll('.person-card');
+        @keyframes fadeOutAndShrink {
+            from { opacity: 1; transform: scale(1) translateY(0); }
+            to { opacity: 0; transform: scale(0.8) translateY(20px); height: 0; padding: 0; margin: 0;}
+        }
+    `;
+    document.head.appendChild(styleSheet);
 
-        personCards.forEach(card => {
-            const name = card.dataset.userFullname.toLowerCase();
-            if (name.includes(searchValue)) {
-                card.style.display = '';
-            } else {
-                card.style.display = 'none';
-            }
-        });
-    });
-</script>
+    </script>
+</body>
 </html>
