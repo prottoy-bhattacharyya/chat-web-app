@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Elevate</title>
+    <title>Home - Chat Cyan</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
@@ -90,9 +91,40 @@
         .button-hover-effect:hover::before {
             left: 0;
         }
+
+        @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .animate-fadeIn {
+      animation: fadeIn 0.2s ease-out;
+    }
+
     </style>
 </head>
 <body>
+
+    <div class="fixed top-5 right-5 z-50">
+    <!-- Bell Icon Button -->
+    <button id="notifBtn" class="relative p-3 bg-white rounded-full shadow-md hover:bg-gray-100 transition">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C8.67 6.165 8 7.388 8 9v5.159c0 .538-.214 1.055-.595 1.436L6 17h9z" />
+      </svg>
+      
+    </button>
+
+    <div id="notifPanel" class="hidden mt-2 w-80 bg-white rounded-lg shadow-lg animate-fadeIn">
+      <div class="p-4 border-b font-semibold text-gray-700">Notifications</div>
+      <ul class="max-h-60 overflow-y-auto" id="notifList">
+        <!-- loop through notifications -->
+        
+        <!-- end loop -->
+      </ul>
+    </div>
+  </div>
+
     <div class="animated-background"></div>
     <div class="min-h-screen relative flex items-center justify-center p-4 z-10">
         <div class="w-full max-w-lg mx-auto card-animation">
@@ -165,9 +197,57 @@
     </div>
 </body>
 <script>
+    const socketio = io('/home');
     const profile_image = document.getElementById('profile-image');
+    const notification_btn = document.getElementById('notifBtn');
+    const notification_panel = document.getElementById('notifPanel');
+    const notification_list = document.getElementById('notifList');
+
     profile_image.addEventListener('error', () => {
         profile_image.src = "{{url_for('static', filename='/image/user.png')}}";
     });
+
+
+    notification_btn.addEventListener('click', () => {
+      notification_panel.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!notification_btn.contains(e.target) && !notification_panel.contains(e.target)) {
+        notification_panel.classList.add('hidden');
+      }
+    });
+
+    socketio.on('request_received', (data) => {
+        notification_btn.innerHTML += `<span class="absolute top-2 right-2 bg-red-500 h-2 w-2 rounded-full"></span>`;
+        const new_notofication= `
+                                <li class="px-4 py-3 hover:bg-gray-50 border-b">
+                                    <p class="text-sm text-gray-700">New friend request from ${data['sender_full_name']}</p>
+                                </li>`;
+
+        notification_list.innerHTML += new_notofication;
+        
+    });
+
+    socketio.on('request_accepted', (data) => {
+        notification_btn.innerHTML += `<span class="absolute top-2 right-2 bg-red-500 h-2 w-2 rounded-full"></span>`;
+        const new_notofication= `
+                                <li class="px-4 py-3 hover:bg-gray-50 border-b">
+                                    <p class="text-sm text-gray-700">${data['receiver_full_name']} accepted your friend request</p>
+                                </li>`;
+
+        notification_list.innerHTML += new_notofication;
+    });
+
+    socketio.on('request_rejected', (data) => {
+        notification_btn.innerHTML += `<span class="absolute top-2 right-2 bg-red-500 h-2 w-2 rounded-full"></span>`;
+        const new_notofication= `
+                                <li class="px-4 py-3 hover:bg-gray-50 border-b">
+                                    <p class="text-sm text-gray-700">${data['receiver_full_name']} Rejected your friend request</p>
+                                </li>`;
+
+        notification_list.innerHTML += new_notofication;
+    });
+
 </script>
 </html>

@@ -193,6 +193,7 @@ def signup():
 
         try:
             dob = datetime.strptime(dob_str, '%Y-%m-%d').date()
+
         except ValueError:
             flash('Invalid date of birth format. Please use YYYY-MM-DD.', 'danger')
             return render_template('signup.html')
@@ -224,7 +225,6 @@ def logout():
     session.pop('user_id', None)
     session.pop('username', None)
     session.pop('full_name', None)
-    flash('You have been logged out.', 'info')
     return redirect('/')
 
 @app.route('/home', methods=['GET', 'POST'])
@@ -245,7 +245,7 @@ def home():
             if user:
                 full_name = user['full_name']
                 username = user['username']
-                dob = user['dob'].strftime("%Y-%m-%d")
+                dob = user['dob'].strftime("%d-%m-%Y")
                 email = user['email']
         except mysql.connector.Error as err:
             print(f"Error fetching user data: {err}")
@@ -263,6 +263,14 @@ def home():
                 profile_image.save(upload_folder + profile_image_name)
 
     return render_template('home.html', id=str(id), full_name=full_name, username=username, dob=dob, email=email)
+
+
+@socketio.on('connect', namespace='/home')  
+def home_connect():
+    user_id = session['user_id']
+    if user_id:
+        join_room(str(user_id), namespace='/home')
+        print(f"Home: User '{user_id}' connected.")
 
 @app.route('/add_friend')
 def add_friend():
@@ -293,6 +301,7 @@ def add_friend():
             users = cursor.fetchall()
             for user in users:
                 user['id'] = str(user['id'])
+                user['dob'] = user['dob'].strftime("%d-%m-%Y")
 
         except mysql.connector.Error as err:
             print(f"Error fetching users: {err}")
@@ -302,6 +311,7 @@ def add_friend():
     return render_template('add_friend.html', users=users)
 
 @socketio.on('add_friend', namespace='/add_friend')
+# @socketio.on('request_received', namespace='/home')
 def add_friend(data):
     sender_id = session['user_id']
     receiver_id = data['receiver_id']
@@ -313,13 +323,21 @@ def add_friend(data):
                            VALUES (%s, %s)""", 
                            (sender_id, receiver_id))
             conn.commit()
+
+            cursor.execute("select full_name from users where id = %s", (sender_id,))
+            sender_full_name = cursor.fetchone()[0]
+
             print(f"Friend request sent successfully! {sender_id} sent {receiver_id}")
         except mysql.connector.Error as err:
             print(f"Error sending friend request: {err}")
         finally:
             cursor.close()
             conn.close()
+    
+    
+    emit('request_received', {'sender_full_name': sender_full_name}, room=str(receiver_id), namespace='/home')
 
+    
 @app.route('/friend_request')
 def friend_request():
     if 'user_id' not in session:
@@ -338,6 +356,7 @@ def friend_request():
 
             requests = cursor.fetchall()
             for request in requests:
+                request['dob'] = request['dob'].strftime("%d-%m-%Y")
                 request['id'] = str(request['id'])
 
         except mysql.connector.Error as err:
@@ -345,7 +364,7 @@ def friend_request():
         finally:
             cursor.close()
             conn.close()
-        
+    
     return render_template('friend_request.html', requests=requests)
 
 @socketio.on('accept_friend_request', namespace='/friend_request')
@@ -362,6 +381,10 @@ def accept_friend_request(data):
                            (receiver_id, sender_id)
                         )
             conn.commit()
+
+            cursor.execute("select full_name from users where id = %s", (receiver_id,))
+            receiver_full_name = cursor.fetchone()[0]
+
             print(f"Friend request accepted successfully! {receiver_id} accepted {sender_id}")
         except mysql.connector.Error as err:
             print(f"Error accepting friend request: {err}")
@@ -369,6 +392,7 @@ def accept_friend_request(data):
             cursor.close()
             conn.close()
 
+    emit('request_accepted', {'receiver_full_name': receiver_full_name}, room=str(sender_id), namespace='/home')
 
 @socketio.on('reject_friend_request', namespace='/friend_request')
 def reject_friend_request(data):
@@ -384,6 +408,10 @@ def reject_friend_request(data):
                            (receiver_id, sender_id)
                         )
             conn.commit()
+
+            cursor.execute("select full_name from users where id = %s", (receiver_id,))
+            receiver_full_name = cursor.fetchone()[0]
+
             print(f"Friend request rejected successfully! {receiver_id} rejected {sender_id}")
         except mysql.connector.Error as err:
             print(f"Error rejecting friend request: {err}")
@@ -391,6 +419,7 @@ def reject_friend_request(data):
             cursor.close()
             conn.close()
 
+    emit('request_rejected', {'receiver_full_name': receiver_full_name}, room=str(sender_id), namespace='/home')
 
 @app.route('/chat')
 def chat():
