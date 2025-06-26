@@ -3,32 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat App</title>
+    <title>Chatify</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
     <style>
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f3f4f6; 
+        :root {
+            --primary-blue: #3B82F6;
+            --secondary-blue: #60A5FA;
+            --accent-green: #34D399;
+            --text-dark: #1F2937;
+            --text-light: #F9FAFB;
+            --bg-light: #F9FAFB;
+            --bg-dark: #E5E7EB;
+            --border-color: #D1D5DB;
         }
-        
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-light);
+            overflow: hidden; /* Prevent body scroll and manage scroll within chat */
+        }
+
+        /* Custom Scrollbar for chat messages */
         .chat-messages-container::-webkit-scrollbar {
             width: 8px;
         }
         .chat-messages-container::-webkit-scrollbar-track {
-            background: #e5e7eb;
+            background: var(--bg-dark);
             border-radius: 10px;
         }
         .chat-messages-container::-webkit-scrollbar-thumb {
-            background: #9ca3af;
+            background: var(--secondary-blue);
             border-radius: 10px;
         }
         .chat-messages-container::-webkit-scrollbar-thumb:hover {
-            background: #6b7280;
+            background: var(--primary-blue);
         }
 
-
+        /* No Chat Selected State */
         .no-chat-selected {
             flex: 1;
             display: flex;
@@ -42,99 +55,258 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            color: #6b7280;
+            color: #6B7280;
         }
         .no-chat-icon {
-            width: 6rem;
-            height: 6rem;
-            background: rgba(107, 114, 128, 0.1); 
+            width: 8rem; /* Larger icon */
+            height: 8rem;
+            background: rgba(59, 130, 246, 0.1); /* Using hardcoded RGB for primary-blue */
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 1rem;
+            margin: 0 auto 1.5rem;
+            animation: pulse 2s infinite ease-in-out; /* Subtle pulse animation */
         }
         .no-chat-icon svg {
-            width: 50px; 
-            color: #4b5563; 
+            width: 60px; /* Larger SVG */
+            height: 60px;
+            color: var(--primary-blue);
         }
         .no-chat-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #4b5563;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem; /* Larger title */
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .no-chat-description {
+            font-size: 1rem;
+            color: #9CA3AF;
+            margin-top: 0.5rem;
         }
 
-        .chat-message-sent {
+        /* Message Animations */
+        .chat-message-sent, .chat-message-received {
             opacity: 0;
             transform: translateY(20px);
-            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+            transition: opacity 0.4s ease-out, transform 0.4s ease-out;
         }
-
-        .chat-message-received {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-        }
-
         .chat-message-visible {
             opacity: 1;
             transform: translateY(0);
         }
+
+        /* Friend List Item Animations */
+        .friend-list-item {
+            transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .friend-list-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        .friend-list-item.active-chat {
+            background-color: var(--primary-blue) !important;
+            color: var(--text-light) !important;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            transform: scale(1.02);
+            position: relative; /* For the active indicator */
+            z-index: 1;
+        }
+        .friend-list-item.active-chat span {
+            color: var(--text-light); /* Ensure text is white */
+        }
+        .friend-list-item.active-chat .status-indicator {
+            border-color: var(--primary-blue); /* Adjust border for active state */
+        }
+
+        /* Header Animation */
+        header {
+            animation: slideInTop 0.5s ease-out;
+        }
+
+        /* Main content fade in */
+        main {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        /* Responsive adjustments for mobile */
+        /* Default for mobile: friends list visible, chat hidden */
+        .friends-sidebar {
+            width: 100%; /* Full width on mobile */
+            border-right: none;
+            border-bottom: 1px solid var(--border-color);
+            max-height: 100%; /* Allow full height */
+            /* Ensure it's displayed by default on mobile */
+            display: flex; /* Override desktop flex behaviour */
+            flex-direction: column;
+            position: absolute; /* Take it out of flow for overlay effect */
+            top: 0;
+            left: 0;
+            height: 100%; /* Full height of main parent */
+            z-index: 10; /* Above chat area */
+            transform: translateX(0%); /* Start visible */
+            transition: transform 0.3s ease-out;
+        }
+
+        .chat-area {
+            flex: 1;
+            width: 100%;
+            margin: 0; /* Remove margin on mobile */
+            border-radius: 0; /* No border radius on mobile for full screen */
+            /* Initially hidden on mobile */
+            display: none;
+            position: absolute; /* Take it out of flow */
+            top: 0;
+            left: 0;
+            height: 100%; /* Full height of main parent */
+            z-index: 5; /* Below friends list */
+        }
+
+        /* Mobile specific classes for toggling visibility */
+        .friends-sidebar.hidden-mobile {
+            transform: translateX(-100%);
+            /* Using hidden on mobile to actually remove from flow (for screen readers) */
+            /* display: none; */ /* Will be handled by transform, or can add here if needed */
+        }
+
+        .chat-area.visible-mobile {
+            display: flex; /* Make it visible */
+            z-index: 15; /* Bring to front when visible */
+        }
+
+        .main-layout {
+            flex-direction: column; /* Stack vertically on mobile */
+            position: relative; /* For absolute positioning of children */
+        }
+
+        /* Desktop view: Sidebar and chat side-by-side */
+        @media (min-width: 769px) {
+            .friends-sidebar {
+                width: 25%; /* Desktop width */
+                border-right: 1px solid var(--border-color);
+                border-bottom: none;
+                max-height: 100%; /* Reset max-height */
+                position: static; /* Back to normal flow */
+                transform: translateX(0%); /* Ensure visible */
+                display: flex; /* Ensure displayed */
+            }
+            .chat-area {
+                flex: 1;
+                width: auto; /* Allow flex to manage width */
+                margin: 1rem; /* Restore margin */
+                border-radius: 0.75rem; /* Restore border radius */
+                position: static; /* Back to normal flow */
+                display: flex; /* Ensure displayed */
+            }
+            .main-layout {
+                flex-direction: row; /* Side-by-side on desktop */
+            }
+            .back-button-mobile {
+                display: none !important; /* Hide back button on desktop */
+            }
+        }
+
+        /* Keyframe Animations */
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+        }
+
+        @keyframes slideInTop {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Ensure smooth transitions for profile images */
+        img {
+            transition: transform 0.3s ease-in-out;
+        }
+        img:hover {
+            transform: scale(1.05);
+        }
+
     </style>
 </head>
-<body class="flex flex-col h-screen bg-gray-100">
-    <header class="bg-blue-600 text-white p-4 shadow-md flex justify-between items-center">
-        <h1 class="text-2xl font-bold">ChatApp</h1>
-        <div class="flex items-center space-x-4">
-            <span class="text-lg">Welcome, {{ current_full_name }}!</span>
-            <div class="flex items-center space-x-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition duration-150 ease-in-out cursor-pointer" onclick="window.location.href='/logout'">
-                <img src="{{url_for('static', filename='image/logout.png')}}" alt="Logout" class="w-5 h-5">
-                <span>Logout</span>
-            </div>
+<body class="flex flex-col h-screen">
+    <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 shadow-xl flex justify-between items-center z-10">
+        <h1 class="text-3xl font-extrabold tracking-tight">Chat Cyan</h1>
+        <div class="flex items-center space-x-6">
+            <span class="text-lg font-medium">Welcome, {{ current_full_name }}!</span>
         </div>
     </header>
 
-    <main class="flex flex-1 overflow-hidden bg-gray-100">
-        <div class="w-1/4 bg-white border-r border-gray-200 p-4 flex flex-col shadow-lg">
-            <h3 class="text-xl font-semibold text-gray-800 mb-4">Friends</h3>
-            <div class="mb-4">
+    <main class="flex flex-1 overflow-hidden main-layout">
+        <div id="friends-sidebar" class="bg-white border-r border-gray-200 p-4 flex flex-col shadow-lg friends-sidebar">
+            <h3 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-4">Friends</h3>
+            <div class="mb-5">
                 <input type="text" id="friend-search" placeholder="Search friends..."
-                       class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-base shadow-sm focus:shadow-md transition duration-200">
             </div>
-            <ul id="friends-list" class="flex-1 overflow-y-auto space-y-2">
+            <ul id="friends-list" class="flex-1 overflow-y-auto space-y-3">
                 {% for user in users %}
-                    <li class="p-3 rounded-lg cursor-pointer hover:bg-gray-100 transition duration-150 ease-in-out flex items-center justify-between"
+                    <li class="friend-list-item p-4 rounded-xl cursor-pointer hover:bg-blue-50 transition duration-150 ease-in-out flex items-center justify-between"
                         data-user-id="{{ user.id }}"
                         data-username="{{ user.username }}"
                         data-full-name="{{ user.full_name }}">
-                        <span id="friend-{{ user.id }}" class="font-medium text-gray-700">{{ user.full_name }}</span>
-                        <div id="status-{{ user.id }}" class="w-3 h-3 bg-gray-400 rounded-full border border-white"></div>
+                        <div class="flex items-center space-x-3">
+                            <img id="profile-image" src="static/profile_photos/id{{ user.id }}.jpg" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300 group-hover:border-blue-400 transition duration-200"/>
+                            <span id="friend-{{ user.id }}" class="font-medium text-gray-700 text-lg">{{ user.full_name }}</span>
+                        </div>
+                        <div id="status-{{ user.id }}" class="w-3 h-3 bg-gray-400 rounded-full border-2 border-white status-indicator"></div>
                     </li>
                 {% endfor %}
             </ul>
         </div>
 
-        <div class="flex-1 flex flex-col bg-white rounded-lg shadow-lg m-4">
-            <div id="chat-header" class="bg-gray-200 p-4 border-b border-gray-300 text-center text-xl font-semibold text-gray-800 rounded-t-lg">
-                <div id="no-chat-selected" class="no-chat-selected">
-                    <div class="no-chat-content">
-                        <div class="no-chat-icon">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                            </svg>
+        <div id="chat-area" class="flex flex-col bg-white rounded-xl shadow-xl chat-area">
+            <div id="chat-header" class="bg-gradient-to-r from-gray-100 to-gray-200 p-4 border-b border-gray-200 text-center text-xl font-semibold text-gray-800 rounded-t-xl flex items-center justify-center min-h-[70px] relative">
+                <button id="back-to-friends" class="back-button-mobile absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-gray-300 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 hidden md:hidden">
+                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                </button>
+                <div id="chat-header-content" class="flex items-center justify-center space-x-4 flex-grow">
+                    <div id="no-chat-selected" class="no-chat-selected">
+                        <div class="no-chat-content">
+                            <div class="no-chat-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="no-chat-title">Select a friend to start chatting</h3>
                         </div>
-                        <h3 class="no-chat-title">Select a friend to start chatting</h3>
                     </div>
+                    <div id="selected-friend-info" class="hidden flex items-center space-x-4 animate-fadeIn">
+                        </div>
                 </div>
             </div>
 
-            <div id="chat-messages" class="flex-1 p-4 overflow-y-auto chat-messages-container"></div>
+            <div id="chat-messages" class="flex-1 p-6 overflow-y-auto chat-messages-container flex flex-col space-y-3"></div>
 
-            <div id="chat-input-area" class="bg-gray-100 p-4 border-t border-gray-200 flex items-center space-x-4 rounded-b-lg hidden">
+            <div id="chat-input-area" class="bg-gray-100 p-4 border-t border-gray-200 flex items-center space-x-4 rounded-b-xl hidden">
                 <input type="text" id="message-input" autocomplete="off" placeholder="Type your message..."
-                       class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-sm">
+                       class="flex-1 px-5 py-3 border border-gray-300 rounded-full focus:ring-blue-500 focus:border-blue-500 text-base shadow-sm focus:shadow-md transition duration-200">
                 <button id="send-button"
-                        class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out">
+                        class="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105 shadow-md">
                     Send
                 </button>
             </div>
@@ -145,13 +317,13 @@
         const socket = io();
         const currentUserId = {{ current_user_id }};
         const currentUsername = "{{ current_username }}";
+        const currentFullName = "{{ current_full_name }}";
 
         let selectedFriendId = null;
         let selectedFriendUsername = null;
         let selectedFriendFullName = null;
-        let selectedFriendProfilePic = null;
 
-        const friendsList = document.getElementById('friends-list');
+        const friendsListContainer = document.getElementById('friends-list');
         const friendSearchInput = document.getElementById('friend-search');
         const chatHeader = document.getElementById('chat-header');
         const chatMessages = document.getElementById('chat-messages');
@@ -159,38 +331,86 @@
         const messageInput = document.getElementById('message-input');
         const sendButton = document.getElementById('send-button');
         const noChatSelectedDiv = document.getElementById('no-chat-selected');
+        const selectedFriendInfoDiv = document.getElementById('selected-friend-info'); // New element for friend info
+        const friendsSidebar = document.getElementById('friends-sidebar');
+        const chatArea = document.getElementById('chat-area');
+        const backToFriendsButton = document.getElementById('back-to-friends'); // New back button
 
+        // Function to manage mobile view state
+        function updateMobileView() {
+            if (window.innerWidth <= 768) { // Mobile view
+                if (selectedFriendId) {
+                    friendsSidebar.classList.add('hidden-mobile');
+                    chatArea.classList.add('visible-mobile');
+                    backToFriendsButton.classList.remove('hidden'); // Show back button
+                } else {
+                    friendsSidebar.classList.remove('hidden-mobile');
+                    chatArea.classList.remove('visible-mobile');
+                    backToFriendsButton.classList.add('hidden'); // Hide back button
+                }
+            } else { // Desktop view
+                friendsSidebar.classList.remove('hidden-mobile'); // Ensure visible
+                chatArea.classList.remove('visible-mobile'); // Ensure visible
+                backToFriendsButton.classList.add('hidden'); // Hide back button
+            }
+        }
 
+        // Initial setup for mobile view based on window size
+        updateMobileView();
 
-        friendsList.addEventListener('click', (event) => {
-            let targetLi = event.target.closest('li');
+        // Event listener for selecting a friend
+        friendsListContainer.addEventListener('click', (event) => {
+            let targetLi = event.target.closest('li.friend-list-item');
             if (targetLi) {
-                const currentActive = document.querySelector('#friends-list li.bg-blue-100');
+                const currentActive = document.querySelector('#friends-list li.active-chat');
                 if (currentActive) {
-                    currentActive.classList.remove('bg-blue-100');
-                    currentActive.classList.add('hover:bg-gray-100');
+                    currentActive.classList.remove('active-chat');
+                    currentActive.classList.add('hover:bg-blue-50');
                 }
 
-                targetLi.classList.add('bg-blue-100');
-                targetLi.classList.remove('hover:bg-gray-100');
+                targetLi.classList.add('active-chat');
+                targetLi.classList.remove('hover:bg-blue-50');
                 
-
                 selectedFriendId = targetLi.dataset.userId;
                 selectedFriendUsername = targetLi.dataset.username;
                 selectedFriendFullName = targetLi.dataset.fullName;
 
-                chatHeader.innerHTML = `<div class="flex items-center space-x-4">
-                                        <img src="static/profile_photos/id${selectedFriendId}.jpg" alt="Profile" class="w-12 h-12 rounded-full object-cover" />
-                                        <h2 class="text-xl font-semibold text-gray-800">${selectedFriendFullName}</h2>
-                                        </div>`;
-                noChatSelectedDiv.classList.add('hidden'); 
+                // Update chat header with selected friend's details
+                noChatSelectedDiv.classList.add('hidden'); // Hide the "no chat selected" message
+                selectedFriendInfoDiv.classList.remove('hidden'); // Show friend info container
+                selectedFriendInfoDiv.innerHTML = `
+                    <img id="profile-image" src="static/profile_photos/id${selectedFriendId}.jpg" alt="Profile" class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md" />
+                    <h2 class="text-2xl font-bold text-gray-800">${selectedFriendFullName}</h2>
+                `;
                 chatInputArea.classList.remove('hidden'); 
                 messageInput.focus();
+
+                updateMobileView(); // Adjust visibility for mobile
 
                 socket.emit('request_chat_history', { 'other_user_id': selectedFriendId });
             }
         });
 
+        // "Back" button event listener for mobile
+        backToFriendsButton.addEventListener('click', () => {
+            selectedFriendId = null; // Clear selected friend
+            chatMessages.innerHTML = ''; // Clear chat messages
+            noChatSelectedDiv.classList.remove('hidden'); // Show no chat selected message
+            selectedFriendInfoDiv.classList.add('hidden'); // Hide friend info
+            chatInputArea.classList.add('hidden'); // Hide input area
+
+            // Remove active state from any selected friend
+            const currentActive = document.querySelector('#friends-list li.active-chat');
+            if (currentActive) {
+                currentActive.classList.remove('active-chat');
+                currentActive.classList.add('hover:bg-blue-50');
+            }
+
+            updateMobileView(); // Go back to friends list view on mobile
+        });
+
+
+        // Event listener for sending messages
         sendButton.addEventListener('click', sendMessage);
         messageInput.addEventListener('keypress', (event) => {
             if (event.key === 'Enter') {
@@ -212,7 +432,7 @@
 
         function displayMessage(senderId, senderUsername, messageText, timestamp) {
             const messageDiv = document.createElement('div');
-            messageDiv.classList.add('mb-3', 'p-3', 'rounded-xl', 'max-w-xs', 'break-words', 'shadow-sm');
+            messageDiv.classList.add('mb-3', 'p-3', 'rounded-2xl', 'max-w-[75%]', 'break-words', 'shadow-md');
 
             const isCurrentUser = (senderId == currentUserId);
 
@@ -223,37 +443,36 @@
             }
 
             const messageP = document.createElement('p');
-            messageP.classList.add('text-base');
+            messageP.classList.add('text-base', 'leading-relaxed');
             messageP.textContent = messageText;
             messageDiv.appendChild(messageP);
 
             const timestampSpan = document.createElement('span');
-            timestampSpan.classList.add('block', 'text-xs', 'mt-1', isCurrentUser ? 'text-blue-100' : 'text-gray-500', 'text-right');
+            timestampSpan.classList.add('block', 'text-xs', 'mt-1', isCurrentUser ? 'text-blue-100' : 'text-gray-500', 'text-right', 'opacity-80');
             timestampSpan.textContent = timestamp;
             messageDiv.appendChild(timestampSpan);
 
             chatMessages.appendChild(messageDiv);
 
-            requestAnimationFrame(() => {
-                messageDiv.classList.add('chat-message-visible');
-            });
+            void messageDiv.offsetWidth; // Trigger reflow
+            messageDiv.classList.add('chat-message-visible');
 
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
+        // Socket.IO event handlers
         socket.on('receive_message', (data) => {
-            // new_message_friend_id = "friend-"+ data.sender_id;
-            // const new_message = document.getElementById(new_message_friend_id);
-            // if (new_message) {
-            //     new_message.classList.remove('font-medium', 'text-gray-700');
-            //     new_message.classList.add('font-extrabold', 'text-lg');
-            // }
             const isMessageForSelectedChat =
                 (data.sender_id == selectedFriendId && data.receiver_id == currentUserId) ||
                 (data.sender_id == currentUserId && data.receiver_id == selectedFriendId);
 
             if (isMessageForSelectedChat) {
                 displayMessage(data.sender_id, data.sender_username, data.message, data.timestamp);
+            } else {
+                const friendListItem = document.querySelector(`li[data-user-id="${data.sender_id}"]`);
+                if (friendListItem && !friendListItem.classList.contains('active-chat')) {
+                    friendListItem.classList.add('border-l-4', 'border-blue-500'); 
+                }
             }
         });
 
@@ -261,29 +480,8 @@
             if (data.other_user_id == selectedFriendId) {
                 chatMessages.innerHTML = '';
                 data.history.forEach(msg => {
-                    const messageDiv = document.createElement('div');
-                    messageDiv.classList.add('mb-3', 'p-3', 'rounded-xl', 'max-w-xs', 'break-words', 'shadow-sm');
-
-                    const isCurrentUser = (msg.sender_id == currentUserId);
-
-                    if (isCurrentUser) {
-                        messageDiv.classList.add('bg-blue-600', 'text-white', 'ml-auto', 'rounded-br-none');
-                    } else {
-                        messageDiv.classList.add('bg-gray-200', 'text-gray-800', 'mr-auto', 'rounded-bl-none');
-                    }
-
-                    const messageP = document.createElement('p');
-                    messageP.classList.add('text-base');
-                    messageP.textContent = msg.message_text;
-                    messageDiv.appendChild(messageP);
-
-                    const timestampSpan = document.createElement('span');
-                    timestampSpan.classList.add('block', 'text-xs', 'mt-1', isCurrentUser ? 'text-blue-100' : 'text-gray-500', 'text-right');
-                    timestampSpan.textContent = msg.timestamp;
-                    messageDiv.appendChild(timestampSpan);
-
-                    chatMessages.appendChild(messageDiv);
-                    messageDiv.classList.add('chat-message-visible');
+                    const senderFullName = (msg.sender_id == currentUserId) ? currentFullName : selectedFriendFullName;
+                    displayMessage(msg.sender_id, senderFullName, msg.message_text, msg.timestamp);
                 });
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
@@ -294,19 +492,20 @@
             if (statusElement) {
                 if (data.status === 'online') {
                     statusElement.classList.remove('bg-gray-400');
-                    statusElement.classList.add('bg-green-400');
+                    statusElement.classList.add('bg-green-400', 'animate-pulse-green');
                 } else {
-                    statusElement.classList.remove('bg-green-400');
+                    statusElement.classList.remove('bg-green-400', 'animate-pulse-green');
                     statusElement.classList.add('bg-gray-400');
                 }
             }
         });
 
+        // Initialize all users as offline (gray) initially
         document.querySelectorAll('#friends-list li').forEach(friendLi => {
             const userId = friendLi.dataset.userId;
             const statusElement = document.getElementById(`status-${userId}`);
             if (statusElement) {
-                statusElement.classList.remove('bg-green-400');
+                statusElement.classList.remove('bg-green-400', 'animate-pulse-green');
                 statusElement.classList.add('bg-gray-400');
             }
         });
@@ -319,9 +518,10 @@
             console.log('Disconnected from Socket.IO server');
         });
 
+        // Friend search functionality
         friendSearchInput.addEventListener('keyup', function() {
             const searchTerm = this.value.toLowerCase();
-            const friendItems = friendsList.querySelectorAll('li');
+            const friendItems = friendsListContainer.querySelectorAll('li.friend-list-item');
 
             friendItems.forEach(item => {
                 const fullName = item.dataset.fullName.toLowerCase();
@@ -331,6 +531,17 @@
                     item.style.display = 'none';
                 }
             });
+        });
+
+        // Listen for window resize to adjust layout
+        window.addEventListener('resize', updateMobileView);
+
+        // Add a default profile image for users who don't have one
+        document.querySelectorAll('img[alt="Profile"]').forEach(img => {
+            img.onerror = function() {
+                this.onerror = null; 
+                this.src = 'static/profile_photos/default.jpg'; 
+            };
         });
 
     </script>

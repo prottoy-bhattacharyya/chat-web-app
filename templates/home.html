@@ -1,98 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - Chat Cyan</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            overflow: hidden; 
-        }
-        .animated-background {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1;
-        }
-        .animated-background::before,
-        .animated-background::after {
-            content: '';
-            position: absolute;
-            background: linear-gradient(45deg, #a78bfa, #818cf8, #3b82f6);
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: moveGradient 15s infinite alternate;
-        }
-        .animated-background::before {
-            width: 150%;
-            height: 150%;
-            top: -50%;
-            left: -50%;
-        }
-        .animated-background::after {
-            width: 120%;
-            height: 120%;
-            bottom: -30%;
-            right: -30%;
-            animation-delay: 3s;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Home - Chat Cyan</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    }
 
-        @keyframes moveGradient {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(20%, 30%) scale(1.1); }
-            100% { transform: translate(0, 0) scale(1); }
-        }
+    .animated-background {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+    .animated-background::before,
+    .animated-background::after {
+      content: '';
+      position: absolute;
+      background: linear-gradient(45deg, #a78bfa, #818cf8, #3b82f6);
+      border-radius: 50%;
+      opacity: 0.3;
+      animation: moveGradient 15s infinite alternate;
+    }
 
-        .card-animation {
-            animation: fadeInScale 0.7s ease-out forwards;
-            opacity: 0;
-            transform: scale(0.95);
-        }
+    .animated-background::before {
+      width: 150%;
+      height: 150%;
+      top: -50%;
+      left: -50%;
+    }
 
-        @keyframes fadeInScale {
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
+    .animated-background::after {
+      width: 120%;
+      height: 120%;
+      bottom: -30%;
+      right: -30%;
+      animation-delay: 3s;
+    }
 
-        .profile-picture-animation {
-            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-        }
-        .profile-picture-animation:hover {
-            transform: scale(1.05) rotate(3deg);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
+    @keyframes moveGradient {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(20%, 30%) scale(1.1); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
 
-        .button-hover-effect {
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-        .button-hover-effect::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transition: all 0.4s ease-in-out;
-            z-index: -1;
-        }
-        .button-hover-effect:hover::before {
-            left: 0;
-        }
+    .card-animation {
+      animation: fadeInScale 0.7s ease-out forwards;
+      opacity: 0;
+      transform: scale(0.95);
+    }
 
-        @keyframes fadeIn {
+    @keyframes fadeInScale {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .profile-picture-animation {
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    .profile-picture-animation:hover {
+      transform: scale(1.05) rotate(3deg);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+    .button-hover-effect {
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .button-hover-effect::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transition: all 0.4s ease-in-out;
+      z-index: -1;
+    }
+    
+    .button-hover-effect:hover::before {
+      left: 0;
+    }
+
+    @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-10px); }
       to { opacity: 1; transform: translateY(0); }
     }
@@ -100,103 +102,110 @@
     .animate-fadeIn {
       animation: fadeIn 0.2s ease-out;
     }
-
-    </style>
+  </style>
 </head>
-<body>
 
-    <div class="fixed top-5 right-5 z-50">
-    <!-- Bell Icon Button -->
+<body class="overflow-auto sm:overflow-hidden">
+  <!-- Notification Panel -->
+  <div class="fixed top-5 right-5 z-50">
     <button id="notifBtn" class="relative p-3 bg-white rounded-full shadow-md hover:bg-gray-100 transition">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-          d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C8.67 6.165 8 7.388 8 9v5.159c0 .538-.214 1.055-.595 1.436L6 17h9z" />
-      </svg>
-      
+      <img src="{{ url_for('static', filename='image/bell.png') }}" alt="bell icon" class="w-6 h-6">
     </button>
-
     <div id="notifPanel" class="hidden mt-2 w-80 bg-white rounded-lg shadow-lg animate-fadeIn">
       <div class="p-4 border-b font-semibold text-gray-700">Notifications</div>
       <ul class="max-h-60 overflow-y-auto" id="notifList">
-        <!-- loop through notifications -->
         
-        <!-- end loop -->
       </ul>
     </div>
   </div>
 
-    <div class="animated-background"></div>
-    <div class="min-h-screen relative flex items-center justify-center p-4 z-10">
-        <div class="w-full max-w-lg mx-auto card-animation">
-            <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden backdrop-filter backdrop-blur-lg bg-opacity-80">
-                <div class="bg-gradient-to-br from-blue-600 to-purple-700 p-8 text-white relative overflow-hidden">
-                    <div class="absolute inset-0 bg-white opacity-10 blur-xl scale-150 "></div>
-                    <div class="flex items-center space-x-6 relative z-10">
-                        <form method="POST" enctype="multipart/form-data">
-                            <div class="relative group">
-                                <label for="profileUpload" class="cursor-pointer">
-                                    <div id="profilePreview" class="w-24 h-24 rounded-full bg-white/20 border-4 border-white/40 flex items-center justify-center overflow-hidden profile-picture-animation">
-                                        <img src="{{ url_for('static', filename='profile_photos/id' + id + '.jpg') }}" class="w-full h-full object-cover" id="profile-image" alt="Profile Picture" />
-                                    </div>
-                                    <input id="profileUpload" type="file" accept="image/*" class="hidden" name="profile_photo"/>
-                                </label>
-                                <div class="absolute -bottom-1 -right-1 w-7 h-7 bg-green-500 rounded-full border-3 border-white flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-200">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                            <div class="mt-5 block bg-white/10 rounded-full px-4 py-2 text-center text-sm font-semibold text-white border border-white/30 hover:bg-white/20 transition-all duration-200 button-hover-effect">
-                                <button type="submit">Upload Photo</button>
-                            </div>
-                        </form>
+  <!-- Background Animation -->
+  <div class="animated-background"></div>
 
-                        <div class="flex-1">
-                            <h1 class="text-3xl font-extrabold text-white tracking-tight leading-tight" style="font-family: 'Montserrat', sans-serif;">{{full_name}}</h1>
-                            <p class="text-blue-200 font-medium text-lg mt-1">{{username}}</p>
-                        </div>
-                        <a href="/logout" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg button-hover-effect">Logout</a>
-                    </div>
+  <!-- Profile Card -->
+  <div class="min-h-screen relative flex items-center justify-center p-4 z-10">
+    <div class="w-full max-w-4xl mx-auto card-animation px-4">
+      <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden backdrop-filter backdrop-blur-lg bg-opacity-80">
+        <!-- Header Section -->
+        <div class="bg-gradient-to-br from-blue-600 to-purple-700 p-8 text-white relative overflow-hidden">
+          <div class="absolute inset-0 bg-white opacity-10 blur-xl scale-150"></div>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-4 sm:space-y-0 relative z-10">
+            <form method="POST" enctype="multipart/form-data">
+              <div class="relative group">
+                <label for="profileUpload" class="cursor-pointer">
+                  <div id="profilePreview" class="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-white/20 border-4 border-white/40 flex items-center justify-center overflow-hidden profile-picture-animation">
+                    <img src="{{ url_for('static', filename='profile_photos/id' + id + '.jpg') }}" class="items-center justify-center w-full h-full object-cover" id="profile-image" alt="Profile Picture" />
+                  </div>
+                  <input id="profileUpload" type="file" accept="image/*" class="hidden" name="profile_photo"/>
+                </label>
+                <div class="absolute -bottom-1 -right-1 w-7 h-7 bg-green-500 rounded-full border-3 border-white flex items-center justify-center transform scale-0 group-hover:scale-100 transition-transform duration-200">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                  </svg>
                 </div>
+              </div>
+              <div class="mt-5 block bg-white/10 rounded-full px-4 py-2 text-center text-sm font-semibold text-white border border-white/30 hover:bg-white/20 transition-all duration-200 button-hover-effect">
+                <button type="submit">Upload Photo</button>
+              </div>
+            </form>
 
-                <div class="p-6 space-y-5">
-                    <div class="flex items-center space-x-4 text-gray-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-calendar text-blue-500 flex-shrink-0"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                        <span class="text-base font-medium">Born on: <strong class="text-gray-900">{{dob}}</strong></span>
-                    </div>
-
-                    <div class="flex items-center space-x-4 text-gray-700">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-mail text-purple-500 flex-shrink-0"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                        <span class="text-base font-medium">Email: <strong class="text-gray-900">{{email}}</strong></span>
-                    </div>
-                </div>
-
-                <div class="p-6 pt-0 space-y-4">
-                    <button class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center justify-center space-x-3 button-hover-effect">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-users"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                        <span><a href="/chat">Chat with Friends</a></span>
-                    </button>
-
-                    <button class="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center justify-center space-x-3 button-hover-effect">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-cpu"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect><rect x="9" y="9" width="6" height="6"></rect><path d="M9 1v3"></path><path d="M15 1v3"></path><path d="M9 20v3"></path><path d="M15 20v3"></path><path d="M20 9h3"></path><path d="M20 15h3"></path><path d="M1 9h3"></path><path d="M1 15h3"></path></svg>
-                        <span><a href="/aiChat">Ask AI</a></span>
-                    </button>
-
-                    <button class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center justify-center space-x-3 button-hover-effect">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-plus"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
-                        <span><a href="/add_friend">Add Friend</a></span>
-                    </button>
-
-                    <button class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center justify-center space-x-3 button-hover-effect">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user-check"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><polyline points="17,11 19,13 23,9"></polyline></svg>
-                        <span><a href="/friend_request">Friend Requests</a></span>
-                    </button>
-                </div>
+            <div class="flex-1">
+              <h1 class="text-3xl font-extrabold text-white tracking-tight leading-tight" style="font-family: 'Montserrat', sans-serif;">{{full_name}}</h1>
+              <p class="text-blue-200 font-medium text-lg mt-1">{{username}}</p>
             </div>
+            <a href="/logout" class="text-center bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 rounded-full transition duration-300 ease-in-out transform hover:scale-105 hover:shadow-lg button-hover-effect">Logout</a>
+          </div>
         </div>
+
+        <!-- Info Section -->
+        <div class="p-6 space-y-5">
+          <div class="flex items-center space-x-4 text-gray-700">
+            <svg class="text-blue-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+            <span class="text-base font-medium">Born on: <strong class="text-gray-900">{{dob}}</strong></span>
+          </div>
+
+          <div class="flex items-center space-x-4 text-gray-700">
+            <svg class="text-purple-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+            </svg>
+            <span class="text-base font-medium">Email: <strong class="text-gray-900">{{email}}</strong></span>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="p-6 pt-0 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <a href="/chat" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center justify-center space-x-3 button-hover-effect">
+            <svg xmlns="http://www.w3.org/2000/svg" class="feather feather-users" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg><span>Chat with Friends</span>
+          </a>
+
+          <a href="/aiChat" class="w-full bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center justify-center space-x-3 button-hover-effect">
+            <svg xmlns="http://www.w3.org/2000/svg" class="feather feather-cpu" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3"/><path d="M15 1v3"/><path d="M9 20v3"/><path d="M15 20v3"/><path d="M20 9h3"/><path d="M20 15h3"/><path d="M1 9h3"/><path d="M1 15h3"/>
+            </svg><span>Ask AI</span>
+          </a>
+
+          <a href="/add_friend" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center justify-center space-x-3 button-hover-effect">
+            <svg xmlns="http://www.w3.org/2000/svg" class="feather feather-user-plus" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/>
+            </svg><span>Add Friend</span>
+          </a>
+
+          <a href="/friend_request" class="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02] hover:shadow-xl flex items-center justify-center space-x-3 button-hover-effect">
+            <svg xmlns="http://www.w3.org/2000/svg" class="feather feather-user-check" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><polyline points="17,11 19,13 23,9"/>
+            </svg><span>Friend Requests</span>
+          </a>
+        </div>
+      </div>
     </div>
-</body>
-<script>
+  </div>
+
+  <!-- Scripts -->
+  <script>
     const socketio = io('/home');
     const profile_image = document.getElementById('profile-image');
     const notification_btn = document.getElementById('notifBtn');
@@ -204,9 +213,8 @@
     const notification_list = document.getElementById('notifList');
 
     profile_image.addEventListener('error', () => {
-        profile_image.src = "{{url_for('static', filename='/image/user.png')}}";
+      profile_image.src = "{{url_for('static', filename='/image/user.png')}}";
     });
-
 
     notification_btn.addEventListener('click', () => {
       notification_panel.classList.toggle('hidden');
@@ -218,36 +226,17 @@
       }
     });
 
-    socketio.on('request_received', (data) => {
-        notification_btn.innerHTML += `<span class="absolute top-2 right-2 bg-red-500 h-2 w-2 rounded-full"></span>`;
-        const new_notofication= `
-                                <li class="px-4 py-3 hover:bg-gray-50 border-b">
-                                    <p class="text-sm text-gray-700">New friend request from ${data['sender_full_name']}</p>
-                                </li>`;
+    const addNotification = (message) => {
+      notification_btn.innerHTML += `<span class="absolute top-2 right-2 bg-red-500 h-2 w-2 rounded-full"></span>`;
+      notification_list.innerHTML += `
+                                    <li class="px-4 py-3 hover:bg-gray-50 border-b">
+                                    	<p class="text-sm text-gray-700">${message}</p>
+                                    </li>`;
+    };
 
-        notification_list.innerHTML += new_notofication;
-        
-    });
-
-    socketio.on('request_accepted', (data) => {
-        notification_btn.innerHTML += `<span class="absolute top-2 right-2 bg-red-500 h-2 w-2 rounded-full"></span>`;
-        const new_notofication= `
-                                <li class="px-4 py-3 hover:bg-gray-50 border-b">
-                                    <p class="text-sm text-gray-700">${data['receiver_full_name']} accepted your friend request</p>
-                                </li>`;
-
-        notification_list.innerHTML += new_notofication;
-    });
-
-    socketio.on('request_rejected', (data) => {
-        notification_btn.innerHTML += `<span class="absolute top-2 right-2 bg-red-500 h-2 w-2 rounded-full"></span>`;
-        const new_notofication= `
-                                <li class="px-4 py-3 hover:bg-gray-50 border-b">
-                                    <p class="text-sm text-gray-700">${data['receiver_full_name']} Rejected your friend request</p>
-                                </li>`;
-
-        notification_list.innerHTML += new_notofication;
-    });
-
-</script>
+    socketio.on('request_received', data => addNotification(`New friend request from ${data['sender_full_name']}`));
+    socketio.on('request_accepted', data => addNotification(`${data['receiver_full_name']} accepted your friend request`));
+    socketio.on('request_rejected', data => addNotification(`${data['receiver_full_name']} rejected your friend request`));
+  </script>
+</body>
 </html>

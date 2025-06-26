@@ -311,7 +311,6 @@ def add_friend():
     return render_template('add_friend.html', users=users)
 
 @socketio.on('add_friend', namespace='/add_friend')
-# @socketio.on('request_received', namespace='/home')
 def add_friend(data):
     sender_id = session['user_id']
     receiver_id = data['receiver_id']
@@ -334,9 +333,10 @@ def add_friend(data):
             cursor.close()
             conn.close()
     
-    
-    emit('request_received', {'sender_full_name': sender_full_name}, room=str(receiver_id), namespace='/home')
-
+        try:
+            emit('request_received', {'sender_full_name': sender_full_name}, room=str(receiver_id), namespace='/home')
+        except:
+            print("error sending notification")
     
 @app.route('/friend_request')
 def friend_request():
@@ -391,8 +391,10 @@ def accept_friend_request(data):
         finally:
             cursor.close()
             conn.close()
-
-    emit('request_accepted', {'receiver_full_name': receiver_full_name}, room=str(sender_id), namespace='/home')
+        try:
+            emit('request_accepted', {'receiver_full_name': receiver_full_name}, room=str(sender_id), namespace='/home')
+        except:
+            print("error sending notification")
 
 @socketio.on('reject_friend_request', namespace='/friend_request')
 def reject_friend_request(data):
@@ -418,8 +420,10 @@ def reject_friend_request(data):
         finally:
             cursor.close()
             conn.close()
-
-    emit('request_rejected', {'receiver_full_name': receiver_full_name}, room=str(sender_id), namespace='/home')
+        try:
+            emit('request_rejected', {'receiver_full_name': receiver_full_name}, room=str(sender_id), namespace='/home')
+        except:
+            print("error sending notification")
 
 @app.route('/chat')
 def chat():
