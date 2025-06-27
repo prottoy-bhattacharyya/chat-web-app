@@ -501,7 +501,7 @@
     const popupInfo = document.getElementById('popupInfo');
 
     const personImages = document.querySelectorAll('.person-image');
-    personImages.forEach((image) => {
+    personImages.forEach((image) => {   
         image.addEventListener('error', () => {
             image.src = "{{url_for('static', filename='/image/user.png')}}";
         });

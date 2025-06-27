@@ -12,10 +12,10 @@
             margin: 0;
             min-height: 100vh;
             background: linear-gradient(-45deg, #0c0216, #30585e, #08172c, #121311);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
-            font-family: 'Inter', sans-serif;
+            color: #e0e0e0; /* Lighter text for dark background */
         }
 
         @keyframes gradientBG {
@@ -32,14 +32,72 @@
             }
         }
 
+        /* Card entry animation */
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* .animated-card {
+            animation: fadeInScale 0.6s ease-out forwards;
+            animation-delay: 0.2s; 
+            opacity: 0; 
+        } */
+
+        /* Input focus animation */
+        .input-animate:focus {
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.5); /* Tailwind's blue-500 equivalent */
+            border-color: #4299e1; /* Tailwind's blue-500 */
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Button hover animation */
+        .button-animate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease-in-out;
+        }
+
+        /* Flash message styling with subtle animation */
         .flash-message {
             padding: 0.75rem 1.25rem;
             margin-bottom: 1rem;
             border: 1px solid transparent;
             border-radius: 0.375rem;
-            position: absolute;
-            top: 8px;
-            left: 16px;
+            position: fixed; /* Changed to fixed for better visibility */
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            opacity: 0;
+            animation: slideInFromTop 0.5s ease-out forwards, fadeOut 3s ease-in 2.5s forwards; /* Slide in and fade out */
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes slideInFromTop {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
         }
 
         .flash-message.success {
@@ -65,59 +123,352 @@
             background-color: #fff3cd;
             border-color: #ffecb5;
         }
+
+        /* Table styling for better readability */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background-color: rgba(255, 255, 255, 0.05); /* Slightly transparent background */
+            border-radius: 0.5rem;
+            overflow: hidden; /* Ensures rounded corners on table */
+        }
+
+        .data-table th, .data-table td {
+            padding: 0.8rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .data-table th {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #a0aec0; /* Lighter gray for headers */
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        /* Scrollbar styling for tables */
+        .scrollable-table-container {
+            max-height: 300px; /* Limit height */
+            overflow-y: auto; /* Enable vertical scrolling */
+            margin-bottom: 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Custom scrollbar styles (Webkit) */
+        .scrollable-table-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .scrollable-table-container::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .scrollable-table-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .scrollable-table-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Image hover effect */
+        .image-hover-effect:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+            transition: all 0.3s ease-in-out;
+        }
+
+        /* Toggle Switch Styling */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #2196F3;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
     </style>
 </head>
 
-<body class="flex items-center justify-center min-h-screen bg-gray-100">
+<body class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-            <div class="mb-4">
-                {% for category, message in messages %}
-                    <div class="flash-message {{ category }}">{{ message }}</div>
-                {% endfor %}
-            </div>
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">{{ message }}</div>
+            {% endfor %}
         {% endif %}
     {% endwith %}
-    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-lg border border-gray-200">
-        <img id="settings" src="{{url_for('static', filename='image/settings.png')}}" alt="" class="w-20 mx-auto">
-        <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">Admin Panel</h2>
-        <p class="text-center text-gray-600 mb-8">Manage application settings.</p>
 
+    <div class="bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-3xl border border-gray-700 animated-card">
+        <img id="settings" src="{{url_for('static', filename='image/settings.png')}}" alt="Settings Icon"
+            class="w-20 sm:w-24 mx-auto mb-4 sm:mb-6 image-hover-effect">
+        <h2 class="text-3xl sm:text-4xl font-bold text-center text-white mb-2 sm:mb-4">Admin Panel</h2>
+        <p class="text-center text-gray-400 mb-6 sm:mb-8 text-base sm:text-lg">Manage application settings and data.</p>
 
-        <div class="mb-8 p-6 bg-blue-50 rounded-lg border border-blue-200">
-            <h3 class="text-xl font-semibold text-blue-800 mb-4">Change API Key</h3>
-            <p class="text-sm text-blue-700 mb-4">
+        <div class="mb-8 sm:mb-10 p-4 sm:p-6 bg-blue-900 bg-opacity-30 rounded-lg border border-blue-800 backdrop-blur-sm">
+            <h3 class="text-xl sm:text-2xl font-semibold text-blue-300 mb-3 sm:mb-4">Change API Key</h3>
+            <p class="text-sm text-blue-200 mb-4 sm:mb-6">
                 Update the API key for the Meta Llama AI integration. Ensure you provide a valid key from OpenRouter.ai.
             </p>
-            <form method="POST">
-                <div class="space-y-4">
-                    <div>
-                        <label for="api-key-input" class="block text-sm font-medium text-gray-700 mb-1">New API
-                            Key</label>
-                        <input name="new_api_key" type="text"
-                            placeholder="sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-                            class="mt-1 block w-full px-4 py-2 border border-blue-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition duration-150 ease-in-out"
-                            autocomplete="off"
-                            required>
-                    </div>
-                    <button type="submit"
-                        class="w-full bg-blue-600 text-white py-2.5 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out font-medium text-lg shadow-md">Save
-                        API Key
-                    </button>
+            <form method="POST" class="space-y-4 sm:space-y-5">
+                <div>
+                    <label for="api-key-input" class="block text-sm font-medium text-gray-300 mb-1">New API
+                        Key</label>
+                    <input name="new_api_key" type="text" id="api-key-input"
+                        placeholder="sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                        class="mt-1 block w-full px-3 py-2 sm:px-4 sm:py-2 border border-blue-600 rounded-md shadow-sm bg-gray-700 text-white placeholder-gray-500 focus:outline-none input-animate"
+                        autocomplete="off" required>
                 </div>
+                <button type="submit"
+                    class="w-full bg-blue-700 text-white py-2.5 sm:py-3 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition duration-200 ease-in-out font-medium text-base sm:text-lg shadow-lg button-animate">Save
+                    API Key
+                </button>
             </form>
         </div>
 
-        <div class="text-center mt-6">
-            <img src="{{url_for('static', filename='image/home-page.png')}}" alt="" class="flex w-10 mx-auto">
+        <!-- Refresh Controls -->
+        <div class="flex flex-col sm:flex-row justify-between items-center bg-gray-700 bg-opacity-30 p-4 rounded-lg mb-8 sm:mb-10 border border-gray-600 backdrop-blur-sm">
+            <div class="flex items-center mb-4 sm:mb-0">
+                <label for="autoRefreshToggle" class="text-gray-300 mr-3 text-sm sm:text-base">Auto Refresh (3s):</label>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="autoRefreshToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <button id="manualRefreshBtn"
+                class="bg-purple-700 text-white py-2 px-4 rounded-md hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-800 transition duration-200 ease-in-out font-medium text-base shadow-lg button-animate">
+                Manual Refresh
+            </button>
+        </div>
+
+        <div class="mb-8 sm:mb-10">
+            <h3 class="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">All Users Info</h3>
+            <div class="scrollable-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Profile Pic</th>
+                            <th>Full Name</th>
+                            <th>Username</th>
+                            <th>Date of Birth</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    {% if not users %}
+                    <tbody>
+                        <tr>
+                            <td colspan="4">No Users found.</td>
+                        </tr>
+                    </tbody>
+                    {% endif %}
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{user.id}}</td>
+                            <td>
+                                <img id="profile-image" src="{{ url_for('static', filename='profile_photos/id' + user.id + '.jpg') }}"
+                                    alt="User Profile" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover image-hover-effect">
+                            </td>
+                            <td>{{user.full_name}}</td>
+                            <td>{{user.username}}</td>
+                            <td>{{user.dob}}</td>
+                            <td>{{user.email}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mb-8 sm:mb-10">
+            <h3 class="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">All Friendships Info</h3>
+            <div class="scrollable-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Sender ID</th>
+                            <th>Receiver ID</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    {% if not friends %}
+                    <tbody>
+                        <tr>
+                            <td colspan="4">No Friendships found.</td>
+                        </tr>
+                    </tbody>
+                    {% endif %}
+                    <tbody>
+                        {% for friend in friends %}
+                        <tr>
+                            <td>{{friend.sender_id}}</td>
+                            <td>{{friend.receiver_id}}</td>
+                            <td>{{friend.status}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mb-8 sm:mb-10">
+            <h3 class="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">All Messages Info</h3>
+            <div class="scrollable-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Sender ID</th>
+                            <th>Receiver ID</th>
+                            <th>Message Text</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    {% if not messages %}
+                    <tbody>
+                        <tr>
+                            <td colspan="4">No messages found.</td>
+                        </tr>
+                    </tbody>
+                    {% endif %}
+                    <tbody>
+                        {% for message in messages %}
+                        <tr>
+                            <td>{{message.sender_id}}</td>
+                            <td>{{message.receiver_id}}</td>
+                            <td>{{message.message_text}}</td>
+                            <td>{{message.timestamp}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="text-center mt-6 sm:mt-8">
             <a href="/login"
-                class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-gray-700 bg-gray-200 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-150 ease-in-out">
+                class="inline-flex items-center px-5 py-2.5 sm:px-6 sm:py-3 border border-transparent text-sm sm:text-base font-medium rounded-full text-gray-200 bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 focus:ring-offset-gray-800 transition duration-200 ease-in-out button-animate">
+                <img src="{{url_for('static', filename='image/home-page.png')}}" alt="Home Icon" class="w-5 h-5 sm:w-6 sm:h-6 mr-2 filter invert">
                 &larr; Go Back to Home
             </a>
         </div>
     </div>
 
     <div id="message-box" class="message-box"></div>
+
+    <script>
+        const profileImages = document.querySelectorAll('#profile-image');
+        profileImages.forEach((image) => {
+            image.addEventListener('error', () => {
+                image.src = "{{url_for('static', filename='image/user.png')}}";
+            });
+        });
+
+
+        const autoRefreshToggle = document.getElementById('autoRefreshToggle');
+        const manualRefreshBtn = document.getElementById('manualRefreshBtn');
+        const refreshInterval = 3000; // 3 seconds
+        let refreshTimer;
+
+        function startAutoRefresh() {
+            if (refreshTimer) clearInterval(refreshTimer);
+            refreshTimer = setInterval(() => {
+                location.reload(); // Reload the page
+            }, refreshInterval);
+            console.log('Auto refresh started.');
+            localStorage.setItem('autoRefreshEnabled', 'true'); 
+        }
+
+        // Function to stop auto-refresh
+        function stopAutoRefresh() {
+            if (refreshTimer) {
+                clearInterval(refreshTimer);
+                refreshTimer = null;
+                console.log('Auto refresh stopped.');
+            }
+            localStorage.setItem('autoRefreshEnabled', 'false'); 
+        }
+
+        // Event listener for the toggle switch
+        autoRefreshToggle.addEventListener('change', function() {
+            if (this.checked) {
+                startAutoRefresh();
+            } else {
+                stopAutoRefresh();
+            }
+        });
+
+        manualRefreshBtn.addEventListener('click', function() {
+            location.reload(); // Reload the page immediately
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const isAutoRefreshEnabled = localStorage.getItem('autoRefreshEnabled') === 'true';
+            autoRefreshToggle.checked = isAutoRefreshEnabled;
+            if (isAutoRefreshEnabled) {
+                startAutoRefresh();
+            }
+        });
+    </script>
 </body>
 
 </html>

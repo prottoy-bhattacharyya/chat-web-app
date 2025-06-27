@@ -336,6 +336,13 @@
         const chatArea = document.getElementById('chat-area');
         const backToFriendsButton = document.getElementById('back-to-friends'); // New back button
 
+        const profile_image = document.querySelectorAll('#profile-image');
+            profile_image.forEach((image)=>{
+                image.addEventListener('error',()=>{
+                    image.src = "{{url_for('static', filename='image/user.png')}}"
+                });
+            });
+
         // Function to manage mobile view state
         function updateMobileView() {
             if (window.innerWidth <= 768) { // Mobile view
@@ -360,6 +367,7 @@
 
         // Event listener for selecting a friend
         friendsListContainer.addEventListener('click', (event) => {
+
             let targetLi = event.target.closest('li.friend-list-item');
             if (targetLi) {
                 const currentActive = document.querySelector('#friends-list li.active-chat');
@@ -384,6 +392,13 @@
                 `;
                 chatInputArea.classList.remove('hidden'); 
                 messageInput.focus();
+                
+                const profile_image = document.querySelectorAll('#profile-image');
+                profile_image.forEach((image)=>{
+                    image.addEventListener('error',()=>{
+                        image.src = "{{url_for('static', filename='image/user.png')}}"
+                    });
+                });
 
                 updateMobileView(); // Adjust visibility for mobile
 
@@ -431,6 +446,7 @@
         }
 
         function displayMessage(senderId, senderUsername, messageText, timestamp) {
+            
             const messageDiv = document.createElement('div');
             messageDiv.classList.add('mb-3', 'p-3', 'rounded-2xl', 'max-w-[75%]', 'break-words', 'shadow-md');
 
@@ -537,12 +553,15 @@
         window.addEventListener('resize', updateMobileView);
 
         // Add a default profile image for users who don't have one
-        document.querySelectorAll('img[alt="Profile"]').forEach(img => {
-            img.onerror = function() {
-                this.onerror = null; 
-                this.src = 'static/profile_photos/default.jpg'; 
-            };
-        });
+        // document.querySelectorAll('img[alt="Profile"]').forEach(img => {
+        //     img.onerror = function() {
+        //         this.onerror = null; 
+        //         this.src = 'static/profile_photos/default.jpg'; 
+        //     };
+        // });
+        
+
+        
 
     </script>
 </body>

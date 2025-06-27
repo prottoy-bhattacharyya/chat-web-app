@@ -112,7 +112,33 @@ def admin():
         flash("You are not authorized to access this page.", "danger")
         return redirect(url_for('login'))
     
-    
+    conn = get_db_connection()
+    if conn:
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("SELECT * FROM apikeys")
+            api_keys = cursor.fetchall()
+
+            cursor.execute("SELECT * FROM users")
+            users = cursor.fetchall()
+            for user in users:
+                user['dob'] = user['dob'].strftime("%d-%m-%Y")
+                user['id'] = str(user['id'])
+            cursor.execute("SELECT * FROM friends")
+            friends = cursor.fetchall()
+
+            cursor.execute("SELECT * FROM messages")
+            messages = cursor.fetchall()
+
+            cursor.execute("SELECT * FROM aiChat")
+            aiChat = cursor.fetchall()
+
+            
+        except mysql.connector.Error as err:
+            print(f"Error fetching API keys: {err}")
+        finally:
+            cursor.close()
+            conn.close()
     
     if request.method == 'POST':
         is_admin = False
@@ -140,7 +166,7 @@ def admin():
         finally:
             cursor.close()
             conn.close()
-    return render_template('admin.html')
+    return render_template('admin.html', api_keys=api_keys, users=users, friends=friends, messages=messages, aiChat=aiChat)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -335,6 +361,7 @@ def add_friend(data):
     
         try:
             emit('request_received', {'sender_full_name': sender_full_name}, room=str(receiver_id), namespace='/home')
+            print(f"notification sent to {receiver_id}")
         except:
             print("error sending notification")
     
@@ -393,6 +420,7 @@ def accept_friend_request(data):
             conn.close()
         try:
             emit('request_accepted', {'receiver_full_name': receiver_full_name}, room=str(sender_id), namespace='/home')
+            print(f"notification sent to {sender_id}")
         except:
             print("error sending notification")
 
@@ -422,6 +450,7 @@ def reject_friend_request(data):
             conn.close()
         try:
             emit('request_rejected', {'receiver_full_name': receiver_full_name}, room=str(sender_id), namespace='/home')
+            print(f"notification sent to {sender_id}")
         except:
             print("error sending notification")
 
@@ -528,6 +557,11 @@ def handle_send_message(data):
                     'sender_username': sender_username
                 }, room=str(receiver_id))
 
+            emit('new_message', {
+                'sender_username': sender_username,
+                'timestamp': timestamp
+                }, room=str(receiver_id), namespace='/home')
+            
             print(f"Message from {sender_username} (ID: {sender_id}) to {receiver_id}: {message_text}")
 
         except mysql.connector.Error as err:

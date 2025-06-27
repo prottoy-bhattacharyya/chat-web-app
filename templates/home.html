@@ -204,7 +204,6 @@
     </div>
   </div>
 
-  <!-- Scripts -->
   <script>
     const socketio = io('/home');
     const profile_image = document.getElementById('profile-image');
@@ -234,9 +233,31 @@
                                     </li>`;
     };
 
-    socketio.on('request_received', data => addNotification(`New friend request from ${data['sender_full_name']}`));
-    socketio.on('request_accepted', data => addNotification(`${data['receiver_full_name']} accepted your friend request`));
-    socketio.on('request_rejected', data => addNotification(`${data['receiver_full_name']} rejected your friend request`));
+    try{
+      socketio.on('request_received', (data) => addNotification(`New friend request from ${data['sender_full_name']}`));
+    }
+    catch(e){
+      console.log(e);
+    }
+    try{
+      socketio.on('request_accepted', (data) => addNotification(`${data['receiver_full_name']} accepted your friend request`));
+    }
+    catch(e){
+      console.log(e);
+    }
+    try{
+      socketio.on('request_rejected', (data) => addNotification(`${data['receiver_full_name']} rejected your friend request`));
+    }
+    catch(e){
+      console.log(e);
+    }
+    try{
+      socketio.on('new_message', (data) => addNotification(`${data['sender_username']} sent you a new message`));
+    }
+    catch(e){
+      console.log(e);
+    }
+
   </script>
 </body>
 </html>
