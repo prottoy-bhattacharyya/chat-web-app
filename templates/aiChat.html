@@ -307,32 +307,29 @@
             let previous_msg = "";
             if (previous_msg_element) {
                 previous_msg_element.forEach(element => {
-                    previous_msg += "i said : " + element.textContent;
+                    previous_msg += " i said : " + element.textContent;
                 });
-                console.log("previous_msg_element:"+ previous_msg_element);
             }
             
-            const user_prompt_text = chat_input_element.value.trim();
+            let user_prompt_text = chat_input_element.value.trim();
 
             if (user_prompt_text !== "") {
-                console.log("Client: Sending prompt:", user_prompt_text);
 
                 const userMsgHtml = `
-                <div class = "previous_msg">
                     <div class="message-container user-message">
                         <div class="message-bubble user-bubble">
-                            ${user_prompt_text}
+                            <p class="previous_msg">${user_prompt_text}</p>
                         </div>
                         <div class="avatar user-avatar">${userFirstLetter}</div>
-                    </div>
-                </div>`;
+                    </div>`;
                 messages_area.innerHTML += userMsgHtml;
 
                 messages_area.innerHTML += load;
 
                 messages_area.scrollTop = messages_area.scrollHeight;
-
-                ai_socketio.emit("ai_from_client", { prompt: previous_msg + "i am saying " + user_prompt_text  });
+                
+                user_prompt_text = previous_msg + "now i am saying " + user_prompt_text;
+                ai_socketio.emit("ai_from_client", { prompt:  user_prompt_text  });
                 chat_input_element.value = "";
                 chat_input_element.focus();
             }

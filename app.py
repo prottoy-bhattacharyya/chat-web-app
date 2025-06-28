@@ -124,10 +124,35 @@ def admin():
             for user in users:
                 user['dob'] = user['dob'].strftime("%d-%m-%Y")
                 user['id'] = str(user['id'])
-            cursor.execute("SELECT * FROM friends")
+
+            
+            cursor.execute("""SELECT
+                                    s.username AS sender_username,
+                                    r.username AS receiver_username,
+                                    f.status
+                                FROM
+                                    friends AS f
+                                JOIN
+                                    users AS s ON f.sender_id = s.id
+                                JOIN
+                                    users AS r ON f.receiver_id = r.id;                    
+                        """)
             friends = cursor.fetchall()
 
-            cursor.execute("SELECT * FROM messages")
+            cursor.execute("""SELECT
+                                    s.username AS sender_username,
+                                    r.username AS receiver_username,
+                                    m.message_text,
+                                    m.timestamp
+                                FROM
+                                    messages AS m
+                                JOIN
+                                    users AS s ON m.sender_id = s.id
+                                JOIN
+                                    users AS r ON m.receiver_id = r.id
+                                order by
+                                    m.timestamp;
+                            """)
             messages = cursor.fetchall()
 
             cursor.execute("SELECT * FROM aiChat")

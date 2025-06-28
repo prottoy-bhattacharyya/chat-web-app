@@ -346,8 +346,8 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Sender ID</th>
-                            <th>Receiver ID</th>
+                            <th>Sender Username</th>
+                            <th>Receiver Username</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -361,8 +361,8 @@
                     <tbody>
                         {% for friend in friends %}
                         <tr>
-                            <td>{{friend.sender_id}}</td>
-                            <td>{{friend.receiver_id}}</td>
+                            <td>{{friend.sender_username}}</td>
+                            <td>{{friend.receiver_username}}</td>
                             <td>{{friend.status}}</td>
                         </tr>
                         {% endfor %}
@@ -377,8 +377,8 @@
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Sender ID</th>
-                            <th>Receiver ID</th>
+                            <th>Sender Username</th>
+                            <th>Receiver Username</th>
                             <th>Message Text</th>
                             <th>Timestamp</th>
                         </tr>
@@ -393,8 +393,8 @@
                     <tbody>
                         {% for message in messages %}
                         <tr>
-                            <td>{{message.sender_id}}</td>
-                            <td>{{message.receiver_id}}</td>
+                            <td>{{message.sender_username}}</td>
+                            <td>{{message.receiver_username}}</td>
                             <td>{{message.message_text}}</td>
                             <td>{{message.timestamp}}</td>
                         </tr>

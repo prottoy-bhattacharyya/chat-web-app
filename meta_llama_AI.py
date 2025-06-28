@@ -27,7 +27,7 @@ def metaLlama(prompt, user_id, username):
     html_text = ''' Please format your response using only HTML tags. 
                           For example, use <p> for paragraphs, <strong> for bold text, 
                           <em> for italics,  
-                          <br> for line breaks and colorful texts
+                          <br> for line breaks
                           and never mention about html tags in your answer I repeat DO NOT
                           mention about html tags in your answer I repeat DO NOT'''
     try:
@@ -37,10 +37,11 @@ def metaLlama(prompt, user_id, username):
       )
       
       completion = client.chat.completions.create(
-          model="meta-llama/llama-4-maverick:free",
+          # model="meta-llama/llama-4-maverick:free",
           #  model = "nvidia/llama-3.1-nemotron-ultra-253b-v1:free",
           # model = "deepseek/deepseek-r1-0528-qwen3-8b:free",
           # model="google/gemini-2.0-flash-exp:free",
+          model="deepseek/deepseek-r1-0528:free",
           messages=[
               {
                 "role": "user",

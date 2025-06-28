@@ -109,7 +109,8 @@
   <!-- Notification Panel -->
   <div class="fixed top-5 right-5 z-50">
     <button id="notifBtn" class="relative p-3 bg-white rounded-full shadow-md hover:bg-gray-100 transition">
-      <img src="{{ url_for('static', filename='image/bell.png') }}" alt="bell icon" class="w-6 h-6">
+      <!-- <img src="{{ url_for('static', filename='image/bell.png') }}" alt="bell icon" class="w-6 h-6"> -->
+      <video src="{{ url_for('static', filename='image/bell.mp4') }}" id="bell-video"  muted class=" top-0 left-0 w-10 "></video>
     </button>
     <div id="notifPanel" class="hidden mt-2 w-80 bg-white rounded-lg shadow-lg animate-fadeIn">
       <div class="p-4 border-b font-semibold text-gray-700">Notifications</div>
@@ -210,6 +211,7 @@
     const notification_btn = document.getElementById('notifBtn');
     const notification_panel = document.getElementById('notifPanel');
     const notification_list = document.getElementById('notifList');
+    const bell_video = document.getElementById('bell-video');
 
     profile_image.addEventListener('error', () => {
       profile_image.src = "{{url_for('static', filename='/image/user.png')}}";
@@ -226,12 +228,17 @@
     });
 
     const addNotification = (message) => {
-      notification_btn.innerHTML += `<span class="absolute top-2 right-2 bg-red-500 h-2 w-2 rounded-full"></span>`;
-      notification_list.innerHTML += `
-                                    <li class="px-4 py-3 hover:bg-gray-50 border-b">
-                                    	<p class="text-sm text-gray-700">${message}</p>
-                                    </li>`;
-    };
+        play_promise = bell_video.play();
+
+        // This part WILL execute after 2 seconds
+        setTimeout(() => {
+          notification_btn.innerHTML += `<span class="absolute top-2 right-2 bg-red-500 h-2 w-2 rounded-full"></span>`;
+          notification_list.innerHTML += `
+                                        <li class="px-4 py-3 hover:bg-gray-50 border-b">
+                                          <p class="text-sm text-gray-700">${message}</p>
+                                        </li>`;
+        }, 2000); // 2000 milliseconds = 2 seconds
+      };
 
     try{
       socketio.on('request_received', (data) => addNotification(`New friend request from ${data['sender_full_name']}`));
