@@ -22,10 +22,9 @@
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-light);
-            overflow: hidden; /* Prevent body scroll and manage scroll within chat */
+            overflow: hidden; 
         }
 
-        /* Custom Scrollbar for chat messages */
         .chat-messages-container::-webkit-scrollbar {
             width: 8px;
         }
@@ -41,7 +40,6 @@
             background: var(--primary-blue);
         }
 
-        /* No Chat Selected State */
         .no-chat-selected {
             flex: 1;
             display: flex;
@@ -58,24 +56,24 @@
             color: #6B7280;
         }
         .no-chat-icon {
-            width: 8rem; /* Larger icon */
+            width: 8rem;
             height: 8rem;
-            background: rgba(59, 130, 246, 0.1); /* Using hardcoded RGB for primary-blue */
+            background: rgba(11, 100, 245, 0.144); 
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 1.5rem;
-            animation: pulse 2s infinite ease-in-out; /* Subtle pulse animation */
+            animation: pulse 2s infinite ease-in-out;
         }
         .no-chat-icon svg {
-            width: 60px; /* Larger SVG */
+            width: 60px; 
             height: 60px;
             color: var(--primary-blue);
         }
         .no-chat-title {
             font-family: 'Poppins', sans-serif;
-            font-size: 1.8rem; /* Larger title */
+            font-size: 1.8rem;
             font-weight: 700;
             color: var(--text-dark);
         }
@@ -85,7 +83,6 @@
             margin-top: 0.5rem;
         }
 
-        /* Message Animations */
         .chat-message-sent, .chat-message-received {
             opacity: 0;
             transform: translateY(20px);
@@ -96,7 +93,6 @@
             transform: translateY(0);
         }
 
-        /* Friend List Item Animations */
         .friend-list-item {
             transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
@@ -109,100 +105,98 @@
             color: var(--text-light) !important;
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
             transform: scale(1.02);
-            position: relative; /* For the active indicator */
+            position: relative;
             z-index: 1;
         }
         .friend-list-item.active-chat span {
-            color: var(--text-light); /* Ensure text is white */
+            color: var(--text-light);
         }
         .friend-list-item.active-chat .status-indicator {
-            border-color: var(--primary-blue); /* Adjust border for active state */
+            border-color: var(--primary-blue);
         }
 
-        /* Header Animation */
         header {
             animation: slideInTop 0.5s ease-out;
         }
 
-        /* Main content fade in */
         main {
             animation: fadeIn 0.6s ease-out forwards;
         }
 
-        /* Responsive adjustments for mobile */
-        /* Default for mobile: friends list visible, chat hidden */
         .friends-sidebar {
-            width: 100%; /* Full width on mobile */
+            width: 100%;
             border-right: none;
             border-bottom: 1px solid var(--border-color);
-            max-height: 100%; /* Allow full height */
-            /* Ensure it's displayed by default on mobile */
-            display: flex; /* Override desktop flex behaviour */
+            max-height: 100%;
+            display: flex; 
             flex-direction: column;
-            position: absolute; /* Take it out of flow for overlay effect */
+            position: absolute; 
             top: 0;
             left: 0;
-            height: 100%; /* Full height of main parent */
-            z-index: 10; /* Above chat area */
-            transform: translateX(0%); /* Start visible */
+            height: 100%; 
+            z-index: 10;
+            transform: translateX(0%); 
             transition: transform 0.3s ease-out;
         }
 
         .chat-area {
             flex: 1;
             width: 100%;
-            margin: 0; /* Remove margin on mobile */
-            border-radius: 0; /* No border radius on mobile for full screen */
-            /* Initially hidden on mobile */
+            margin: 0;
+            border-radius: 0; 
+
             display: none;
-            position: absolute; /* Take it out of flow */
+            position: absolute; 
             top: 0;
             left: 0;
-            height: 100%; /* Full height of main parent */
-            z-index: 5; /* Below friends list */
+            height: 100%; 
+            z-index: 5; 
         }
 
         /* Mobile specific classes for toggling visibility */
         .friends-sidebar.hidden-mobile {
             transform: translateX(-100%);
-            /* Using hidden on mobile to actually remove from flow (for screen readers) */
-            /* display: none; */ /* Will be handled by transform, or can add here if needed */
         }
 
         .chat-area.visible-mobile {
-            display: flex; /* Make it visible */
-            z-index: 15; /* Bring to front when visible */
+            display: flex; 
+            z-index: 15; 
         }
 
         .main-layout {
-            flex-direction: column; /* Stack vertically on mobile */
-            position: relative; /* For absolute positioning of children */
+            flex-direction: column;
+            position: relative; 
         }
 
         /* Desktop view: Sidebar and chat side-by-side */
         @media (min-width: 769px) {
             .friends-sidebar {
-                width: 25%; /* Desktop width */
+                width: 25%;
                 border-right: 1px solid var(--border-color);
                 border-bottom: none;
-                max-height: 100%; /* Reset max-height */
-                position: static; /* Back to normal flow */
-                transform: translateX(0%); /* Ensure visible */
-                display: flex; /* Ensure displayed */
+                max-height: 100%; 
+                position: static; 
+                transform: translateX(0%); 
+                display: flex; 
             }
             .chat-area {
                 flex: 1;
-                width: auto; /* Allow flex to manage width */
-                margin: 1rem; /* Restore margin */
-                border-radius: 0.75rem; /* Restore border radius */
-                position: static; /* Back to normal flow */
-                display: flex; /* Ensure displayed */
+                width: auto;
+                margin: 1rem; 
+                border-radius: 0.75rem; 
+                position: static; 
+                display: flex; 
             }
+
+            #chat-input-area {
+                padding-bottom: 2rem;
+            }
+
             .main-layout {
-                flex-direction: row; /* Side-by-side on desktop */
+                flex-direction: row;
             }
             .back-button-mobile {
-                display: none !important; /* Hide back button on desktop */
+                display: none !important;
             }
         }
 
@@ -302,7 +296,7 @@
 
             <div id="chat-messages" class="flex-1 p-6 overflow-y-auto chat-messages-container flex flex-col space-y-3"></div>
 
-            <div id="chat-input-area" class="bg-gray-100 p-4 border-t border-gray-200 flex items-center space-x-4 rounded-b-xl hidden">
+            <div id="chat-input-area" class="bg-gray-100 p-3 py-3 border-t border-gray-200 flex items-center space-x-4 rounded-b-xl hidden">
                 <input type="text" id="message-input" autocomplete="off" placeholder="Type your message..."
                        class="flex-1 px-5 py-3 border border-gray-300 rounded-full focus:ring-blue-500 focus:border-blue-500 text-base shadow-sm focus:shadow-md transition duration-200">
                 <button id="send-button"

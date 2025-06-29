@@ -183,7 +183,7 @@ def admin():
                             )
                 conn.commit()
                 print(f"API key updated successfully!  {new_api_key}")
-                flash("API key added successfully!", "success")
+                flash("API key updated successfully!", "success")
         
         except mysql.connector.Error as err:
             print(f"Error inserting API key: {err}")
@@ -217,7 +217,6 @@ def login():
                     session['user_id'] = user['id']
                     session['username'] = user['username']
                     session['full_name'] = user['full_name']
-                    flash('Logged in successfully!', 'success')
                     return redirect(url_for('home'))
                 else:
                     flash('Invalid username or password', 'danger')
