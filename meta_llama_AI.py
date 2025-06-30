@@ -9,7 +9,7 @@ def metaLlama(prompt, user_id, username):
       cursor = sqldb.cursor()
       print("Connected to database")
 
-      cursor.execute("""SELECT api_key FROM apiKeys
+      cursor.execute("""SELECT api_key FROM apikeys
                         WHERE id = 1;""")
       
       new_api_key = cursor.fetchone()[0]
