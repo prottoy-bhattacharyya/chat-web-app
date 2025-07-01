@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatify</title>
+    <title>Chat Cyan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
@@ -47,6 +47,7 @@
             justify-content: center;
             height: 100%;
         }
+
         .no-chat-content {
             display: flex;
             flex-direction: column;
@@ -153,7 +154,6 @@
             z-index: 5; 
         }
 
-        /* Mobile specific classes for toggling visibility */
         .friends-sidebar.hidden-mobile {
             transform: translateX(-100%);
         }
@@ -168,7 +168,6 @@
             position: relative; 
         }
 
-        /* Desktop view: Sidebar and chat side-by-side */
         @media (min-width: 769px) {
             .friends-sidebar {
                 width: 25%;
@@ -200,7 +199,6 @@
             }
         }
 
-        /* Keyframe Animations */
         @keyframes pulse {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
             70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
@@ -232,7 +230,6 @@
             }
         }
 
-        /* Ensure smooth transitions for profile images */
         img {
             transition: transform 0.3s ease-in-out;
         }
@@ -306,257 +303,244 @@
             </div>
         </div>
     </main>
+</body>
+<script>
+    const socket = io();
+    const currentUserId = {{ current_user_id }};
+    const currentUsername = "{{ current_username }}";
+    const currentFullName = "{{ current_full_name }}";
 
-    <script>
-        const socket = io();
-        const currentUserId = {{ current_user_id }};
-        const currentUsername = "{{ current_username }}";
-        const currentFullName = "{{ current_full_name }}";
+    let selectedFriendId = null;
+    let selectedFriendUsername = null;
+    let selectedFriendFullName = null;
 
-        let selectedFriendId = null;
-        let selectedFriendUsername = null;
-        let selectedFriendFullName = null;
+    const friendsListContainer = document.getElementById('friends-list');
+    const friendSearchInput = document.getElementById('friend-search');
+    const chatHeader = document.getElementById('chat-header');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInputArea = document.getElementById('chat-input-area');
+    const messageInput = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+    const noChatSelectedDiv = document.getElementById('no-chat-selected');
+    const selectedFriendInfoDiv = document.getElementById('selected-friend-info'); // New element for friend info
+    const friendsSidebar = document.getElementById('friends-sidebar');
+    const chatArea = document.getElementById('chat-area');
+    const backToFriendsButton = document.getElementById('back-to-friends'); // New back button
 
-        const friendsListContainer = document.getElementById('friends-list');
-        const friendSearchInput = document.getElementById('friend-search');
-        const chatHeader = document.getElementById('chat-header');
-        const chatMessages = document.getElementById('chat-messages');
-        const chatInputArea = document.getElementById('chat-input-area');
-        const messageInput = document.getElementById('message-input');
-        const sendButton = document.getElementById('send-button');
-        const noChatSelectedDiv = document.getElementById('no-chat-selected');
-        const selectedFriendInfoDiv = document.getElementById('selected-friend-info'); // New element for friend info
-        const friendsSidebar = document.getElementById('friends-sidebar');
-        const chatArea = document.getElementById('chat-area');
-        const backToFriendsButton = document.getElementById('back-to-friends'); // New back button
-
-        const profile_image = document.querySelectorAll('#profile-image');
-            profile_image.forEach((image)=>{
-                image.addEventListener('error',()=>{
-                    image.src = "{{url_for('static', filename='image/user.png')}}"
-                });
+    const profile_image = document.querySelectorAll('#profile-image');
+        profile_image.forEach((image)=>{
+            image.addEventListener('error',()=>{
+                image.src = "{{url_for('static', filename='image/user.png')}}"
             });
-
-        // Function to manage mobile view state
-        function updateMobileView() {
-            if (window.innerWidth <= 768) { // Mobile view
-                if (selectedFriendId) {
-                    friendsSidebar.classList.add('hidden-mobile');
-                    chatArea.classList.add('visible-mobile');
-                    backToFriendsButton.classList.remove('hidden'); // Show back button
-                } else {
-                    friendsSidebar.classList.remove('hidden-mobile');
-                    chatArea.classList.remove('visible-mobile');
-                    backToFriendsButton.classList.add('hidden'); // Hide back button
-                }
-            } else { // Desktop view
-                friendsSidebar.classList.remove('hidden-mobile'); // Ensure visible
-                chatArea.classList.remove('visible-mobile'); // Ensure visible
-                backToFriendsButton.classList.add('hidden'); // Hide back button
-            }
-        }
-
-        // Initial setup for mobile view based on window size
-        updateMobileView();
-
-        // Event listener for selecting a friend
-        friendsListContainer.addEventListener('click', (event) => {
-
-            let targetLi = event.target.closest('li.friend-list-item');
-            if (targetLi) {
-                const currentActive = document.querySelector('#friends-list li.active-chat');
-                if (currentActive) {
-                    currentActive.classList.remove('active-chat');
-                    currentActive.classList.add('hover:bg-blue-50');
-                }
-
-                targetLi.classList.add('active-chat');
-                targetLi.classList.remove('hover:bg-blue-50');
-                
-                selectedFriendId = targetLi.dataset.userId;
-                selectedFriendUsername = targetLi.dataset.username;
-                selectedFriendFullName = targetLi.dataset.fullName;
-
-                // Update chat header with selected friend's details
-                noChatSelectedDiv.classList.add('hidden'); // Hide the "no chat selected" message
-                selectedFriendInfoDiv.classList.remove('hidden'); // Show friend info container
-                selectedFriendInfoDiv.innerHTML = `
-                    <img id="profile-image" src="static/profile_photos/id${selectedFriendId}.jpg" alt="Profile" class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md" />
-                    <h2 class="text-2xl font-bold text-gray-800">${selectedFriendFullName}</h2>
-                `;
-                chatInputArea.classList.remove('hidden'); 
-                messageInput.focus();
-                
-                const profile_image = document.querySelectorAll('#profile-image');
-                profile_image.forEach((image)=>{
-                    image.addEventListener('error',()=>{
-                        image.src = "{{url_for('static', filename='image/user.png')}}"
-                    });
-                });
-
-                updateMobileView(); // Adjust visibility for mobile
-
-                socket.emit('request_chat_history', { 'other_user_id': selectedFriendId });
-            }
         });
 
-        // "Back" button event listener for mobile
-        backToFriendsButton.addEventListener('click', () => {
-            selectedFriendId = null; // Clear selected friend
-            chatMessages.innerHTML = ''; // Clear chat messages
-            noChatSelectedDiv.classList.remove('hidden'); // Show no chat selected message
-            selectedFriendInfoDiv.classList.add('hidden'); // Hide friend info
-            chatInputArea.classList.add('hidden'); // Hide input area
+    // Function to manage mobile view state
+    function updateMobileView() {
+        if (window.innerWidth <= 768) { // Mobile view
+            if (selectedFriendId) {
+                friendsSidebar.classList.add('hidden-mobile');
+                chatArea.classList.add('visible-mobile');
+                backToFriendsButton.classList.remove('hidden'); // Show back button
+            } else {
+                friendsSidebar.classList.remove('hidden-mobile');
+                chatArea.classList.remove('visible-mobile');
+                backToFriendsButton.classList.add('hidden'); // Hide back button
+            }
+        } else { // Desktop view
+            friendsSidebar.classList.remove('hidden-mobile'); // Ensure visible
+            chatArea.classList.remove('visible-mobile'); // Ensure visible
+            backToFriendsButton.classList.add('hidden'); // Hide back button
+        }
+    }
 
-            // Remove active state from any selected friend
+    // Initial setup for mobile view based on window size
+    updateMobileView();
+
+    // Event listener for selecting a friend
+    friendsListContainer.addEventListener('click', (event) => {
+
+        let targetLi = event.target.closest('li.friend-list-item');
+        if (targetLi) {
             const currentActive = document.querySelector('#friends-list li.active-chat');
             if (currentActive) {
                 currentActive.classList.remove('active-chat');
                 currentActive.classList.add('hover:bg-blue-50');
             }
 
-            updateMobileView(); // Go back to friends list view on mobile
-        });
+            targetLi.classList.add('active-chat');
+            targetLi.classList.remove('hover:bg-blue-50');
+            
+            selectedFriendId = targetLi.dataset.userId;
+            selectedFriendUsername = targetLi.dataset.username;
+            selectedFriendFullName = targetLi.dataset.fullName;
 
-
-        // Event listener for sending messages
-        sendButton.addEventListener('click', sendMessage);
-        messageInput.addEventListener('keypress', (event) => {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        });
-
-        function sendMessage() {
-            const message = messageInput.value.trim();
-            if (message && selectedFriendId) {
-                socket.emit('send_message', {
-                    'receiver_id': selectedFriendId,
-                    'message': message
+            // Update chat header with selected friend's details
+            noChatSelectedDiv.classList.add('hidden'); // Hide the "no chat selected" message
+            selectedFriendInfoDiv.classList.remove('hidden'); // Show friend info container
+            selectedFriendInfoDiv.innerHTML = `
+                <img id="profile-image" src="static/profile_photos/id${selectedFriendId}.jpg" alt="Profile" class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md" />
+                <h2 class="text-2xl font-bold text-gray-800">${selectedFriendFullName}</h2>
+            `;
+            chatInputArea.classList.remove('hidden'); 
+            messageInput.focus();
+            
+            const profile_image = document.querySelectorAll('#profile-image');
+            profile_image.forEach((image)=>{
+                image.addEventListener('error',()=>{
+                    image.src = "{{url_for('static', filename='image/user.png')}}"
                 });
-                messageInput.value = '';
-                messageInput.focus();
-            }
+            });
+
+            updateMobileView(); // Adjust visibility for mobile
+
+            socket.emit('request_chat_history', { 'other_user_id': selectedFriendId });
+        }
+    });
+
+    // "Back" button event listener for mobile
+    backToFriendsButton.addEventListener('click', () => {
+        selectedFriendId = null; // Clear selected friend
+        chatMessages.innerHTML = ''; // Clear chat messages
+        noChatSelectedDiv.classList.remove('hidden'); // Show no chat selected message
+        selectedFriendInfoDiv.classList.add('hidden'); // Hide friend info
+        chatInputArea.classList.add('hidden'); // Hide input area
+
+        // Remove active state from any selected friend
+        const currentActive = document.querySelector('#friends-list li.active-chat');
+        if (currentActive) {
+            currentActive.classList.remove('active-chat');
+            currentActive.classList.add('hover:bg-blue-50');
         }
 
-        function displayMessage(senderId, senderUsername, messageText, timestamp) {
-            
-            const messageDiv = document.createElement('div');
-            messageDiv.classList.add('mb-3', 'p-3', 'rounded-2xl', 'max-w-[75%]', 'break-words', 'shadow-md');
+        updateMobileView(); // Go back to friends list view on mobile
+    });
 
-            const isCurrentUser = (senderId == currentUserId);
 
-            if (isCurrentUser) {
-                messageDiv.classList.add('bg-blue-600', 'text-white', 'ml-auto', 'rounded-br-none', 'chat-message-sent');
-            } else {
-                messageDiv.classList.add('bg-gray-200', 'text-gray-800', 'mr-auto', 'rounded-bl-none', 'chat-message-received');
+    // Event listener for sending messages
+    sendButton.addEventListener('click', sendMessage);
+    messageInput.addEventListener('keypress', (event) => {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    function sendMessage() {
+        const message = messageInput.value.trim();
+        if (message && selectedFriendId) {
+            socket.emit('send_message', {
+                'receiver_id': selectedFriendId,
+                'message': message
+            });
+            messageInput.value = '';
+            messageInput.focus();
+        }
+    }
+
+    function displayMessage(senderId, senderUsername, messageText, timestamp) {
+        
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('mb-3', 'p-3', 'rounded-2xl', 'max-w-[75%]', 'break-words', 'shadow-md');
+
+        const isCurrentUser = (senderId == currentUserId);
+
+        if (isCurrentUser) {
+            messageDiv.classList.add('bg-blue-600', 'text-white', 'ml-auto', 'rounded-br-none', 'chat-message-sent');
+        } else {
+            messageDiv.classList.add('bg-gray-200', 'text-gray-800', 'mr-auto', 'rounded-bl-none', 'chat-message-received');
+        }
+
+        const messageP = document.createElement('p');
+        messageP.classList.add('text-base', 'leading-relaxed');
+        messageP.textContent = messageText;
+        messageDiv.appendChild(messageP);
+
+        const timestampSpan = document.createElement('span');
+        timestampSpan.classList.add('block', 'text-xs', 'mt-1', isCurrentUser ? 'text-blue-100' : 'text-gray-500', 'text-right', 'opacity-80');
+        timestampSpan.textContent = timestamp;
+        messageDiv.appendChild(timestampSpan);
+
+        chatMessages.appendChild(messageDiv);
+
+        void messageDiv.offsetWidth; // Trigger reflow
+        messageDiv.classList.add('chat-message-visible');
+
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // Socket.IO event handlers
+    socket.on('receive_message', (data) => {
+        const isMessageForSelectedChat =
+            (data.sender_id == selectedFriendId && data.receiver_id == currentUserId) ||
+            (data.sender_id == currentUserId && data.receiver_id == selectedFriendId);
+
+        if (isMessageForSelectedChat) {
+            displayMessage(data.sender_id, data.sender_username, data.message, data.timestamp);
+        } else {
+            const friendListItem = document.querySelector(`li[data-user-id="${data.sender_id}"]`);
+            if (friendListItem && !friendListItem.classList.contains('active-chat')) {
+                friendListItem.classList.add('border-l-4', 'border-blue-500'); 
             }
+        }
+    });
 
-            const messageP = document.createElement('p');
-            messageP.classList.add('text-base', 'leading-relaxed');
-            messageP.textContent = messageText;
-            messageDiv.appendChild(messageP);
-
-            const timestampSpan = document.createElement('span');
-            timestampSpan.classList.add('block', 'text-xs', 'mt-1', isCurrentUser ? 'text-blue-100' : 'text-gray-500', 'text-right', 'opacity-80');
-            timestampSpan.textContent = timestamp;
-            messageDiv.appendChild(timestampSpan);
-
-            chatMessages.appendChild(messageDiv);
-
-            void messageDiv.offsetWidth; // Trigger reflow
-            messageDiv.classList.add('chat-message-visible');
-
+    socket.on('chat_history', (data) => {
+        if (data.other_user_id == selectedFriendId) {
+            chatMessages.innerHTML = '';
+            data.history.forEach(msg => {
+                const senderFullName = (msg.sender_id == currentUserId) ? currentFullName : selectedFriendFullName;
+                displayMessage(msg.sender_id, senderFullName, msg.message_text, msg.timestamp);
+            });
             chatMessages.scrollTop = chatMessages.scrollHeight;
         }
+    });
 
-        // Socket.IO event handlers
-        socket.on('receive_message', (data) => {
-            const isMessageForSelectedChat =
-                (data.sender_id == selectedFriendId && data.receiver_id == currentUserId) ||
-                (data.sender_id == currentUserId && data.receiver_id == selectedFriendId);
-
-            if (isMessageForSelectedChat) {
-                displayMessage(data.sender_id, data.sender_username, data.message, data.timestamp);
+    socket.on('user_status', (data) => {
+        const statusElement = document.getElementById(`status-${data.user_id}`);
+        if (statusElement) {
+            if (data.status === 'online') {
+                statusElement.classList.remove('bg-gray-400');
+                statusElement.classList.add('bg-green-400', 'animate-pulse-green');
             } else {
-                const friendListItem = document.querySelector(`li[data-user-id="${data.sender_id}"]`);
-                if (friendListItem && !friendListItem.classList.contains('active-chat')) {
-                    friendListItem.classList.add('border-l-4', 'border-blue-500'); 
-                }
-            }
-        });
-
-        socket.on('chat_history', (data) => {
-            if (data.other_user_id == selectedFriendId) {
-                chatMessages.innerHTML = '';
-                data.history.forEach(msg => {
-                    const senderFullName = (msg.sender_id == currentUserId) ? currentFullName : selectedFriendFullName;
-                    displayMessage(msg.sender_id, senderFullName, msg.message_text, msg.timestamp);
-                });
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-        });
-
-        socket.on('user_status', (data) => {
-            const statusElement = document.getElementById(`status-${data.user_id}`);
-            if (statusElement) {
-                if (data.status === 'online') {
-                    statusElement.classList.remove('bg-gray-400');
-                    statusElement.classList.add('bg-green-400', 'animate-pulse-green');
-                } else {
-                    statusElement.classList.remove('bg-green-400', 'animate-pulse-green');
-                    statusElement.classList.add('bg-gray-400');
-                }
-            }
-        });
-
-        // Initialize all users as offline (gray) initially
-        document.querySelectorAll('#friends-list li').forEach(friendLi => {
-            const userId = friendLi.dataset.userId;
-            const statusElement = document.getElementById(`status-${userId}`);
-            if (statusElement) {
                 statusElement.classList.remove('bg-green-400', 'animate-pulse-green');
                 statusElement.classList.add('bg-gray-400');
             }
+        }
+    });
+
+    // Initialize all users as offline (gray) initially
+    document.querySelectorAll('#friends-list li').forEach(friendLi => {
+        const userId = friendLi.dataset.userId;
+        const statusElement = document.getElementById(`status-${userId}`);
+        if (statusElement) {
+            statusElement.classList.remove('bg-green-400', 'animate-pulse-green');
+            statusElement.classList.add('bg-gray-400');
+        }
+    });
+
+    socket.on('connect', () => {
+        console.log('Connected to Socket.IO server');
+    });
+
+    socket.on('disconnect', () => {
+        console.log('Disconnected from Socket.IO server');
+    });
+
+    // Friend search functionality
+    friendSearchInput.addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase();
+        const friendItems = friendsListContainer.querySelectorAll('li.friend-list-item');
+
+        friendItems.forEach(item => {
+            const fullName = item.dataset.fullName.toLowerCase();
+            if (fullName.includes(searchTerm)) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
         });
+    });
 
-        socket.on('connect', () => {
-            console.log('Connected to Socket.IO server');
-        });
-
-        socket.on('disconnect', () => {
-            console.log('Disconnected from Socket.IO server');
-        });
-
-        // Friend search functionality
-        friendSearchInput.addEventListener('keyup', function() {
-            const searchTerm = this.value.toLowerCase();
-            const friendItems = friendsListContainer.querySelectorAll('li.friend-list-item');
-
-            friendItems.forEach(item => {
-                const fullName = item.dataset.fullName.toLowerCase();
-                if (fullName.includes(searchTerm)) {
-                    item.style.display = 'flex';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        });
-
-        // Listen for window resize to adjust layout
-        window.addEventListener('resize', updateMobileView);
-
-        // Add a default profile image for users who don't have one
-        // document.querySelectorAll('img[alt="Profile"]').forEach(img => {
-        //     img.onerror = function() {
-        //         this.onerror = null; 
-        //         this.src = 'static/profile_photos/default.jpg'; 
-        //     };
-        // });
-        
-
-        
-
-    </script>
-</body>
+    window.addEventListener('resize', updateMobileView);
+    
+</script>
 </html>

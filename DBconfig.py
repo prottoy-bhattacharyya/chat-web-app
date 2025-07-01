@@ -1,5 +1,3 @@
-import mysql.connector
-
 def DBconfig():
   DB_CONFIG = {
     # 'host': 'localhost',

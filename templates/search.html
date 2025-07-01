@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friend Finder</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Light gray background */
+        }
+
+        /* Custom animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        .animate-slide-up {
+            animation: slideUp 0.6s ease-out forwards;
+        }
+        .animate-delay-100 { animation-delay: 0.1s; }
+        .animate-delay-200 { animation-delay: 0.2s; }
+        .animate-delay-300 { animation-delay: 0.3s; }
+        .animate-delay-400 { animation-delay: 0.4s; }
+
+        /* Modal specific styles */
+        .modal-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease-out;
+        }
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-content {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+            max-width: 90%;
+            width: 400px;
+            text-align: center;
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="antialiased">
+    <div class="min-h-screen bg-gray-100 flex flex-col items-center py-8 px-4">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-800 mb-8 animate-fade-in">Search...</h1>
+
+        <!-- Search Bar -->
+        <div class="w-full max-w-2xl mb-8 animate-slide-up animate-delay-200">
+            <div class="relative flex items-center w-full bg-white rounded-full shadow-xl p-2 focus-within:ring-4 focus-within:ring-blue-400 focus-within:ring-opacity-60 transition-all duration-300 ease-in-out">
+                <svg class="w-6 h-6 text-gray-400 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <input
+                    type="text"
+                    placeholder="Search for friends or profiles..."
+                    class="flex-grow px-4 py-2 text-gray-800 outline-none bg-transparent placeholder-gray-400 text-lg rounded-full"
+                    aria-label="Search input"
+                    id="searchInput"
+                />
+                <button
+                    type="button"
+                    class="absolute right-16 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none hidden transition-colors duration-200"
+                    id="clearSearchBtn"
+                    aria-label="Clear search"
+                >
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                <button
+                    type="button"
+                    class="bg-blue-500 text-white p-3 rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200 ease-in-out transform active:scale-95"
+                    aria-label="Perform search"
+                    id="searchButton"
+                >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Profile Sections Grid -->
+        <div class="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 px-2 sm:px-4">
+            <!-- Friends Section -->
+            <div class="bg-white rounded-xl shadow-xl p-6 hover:shadow-2xl hover:scale-[1.01] transition-all duration-300 ease-in-out animate-slide-up animate-delay-300">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b-2 border-blue-200 pb-2 flex items-center">
+                    <svg class="w-7 h-7 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h-5v-2a3 3 0 013-3h2V9l3 3m-9 1h4m-4 0a2 2 0 110-4 2 2 0 010 4zm0 0c1.532.532 2.766 1.166 3.793 1.938A9.953 9.953 0 0112 21c-4.418 0-8-3.582-8-8s3.582-8 8-8 8 3.582 8 8a9.953 9.953 0 01-1.207 4.756C16.234 14.166 14.968 13.532 13.436 13.532z"></path></svg>
+                    My Friends
+                </h2>
+                <div id="friendsSection" class="space-y-4 min-h-[100px] flex flex-col justify-center items-center">
+                    <div class="loading-spinner"></div>
+                    <p class="text-gray-500">Loading friends...</p>
+                </div>
+            </div>
+
+            <!-- Received Requests Section -->
+            <div class="bg-white rounded-xl shadow-xl p-6 hover:shadow-2xl hover:scale-[1.01] transition-all duration-300 ease-in-out animate-slide-up animate-delay-400">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b-2 border-green-200 pb-2 flex items-center">
+                    <svg class="w-7 h-7 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    Received Requests
+                </h2>
+                <div id="receivedRequestsSection" class="space-y-4 min-h-[100px] flex flex-col justify-center items-center">
+                    <div class="loading-spinner"></div>
+                    <p class="text-gray-500">Loading received requests...</p>
+                </div>
+            </div>
+
+            <!-- Sent Requests Section -->
+            <div class="bg-white rounded-xl shadow-xl p-6 hover:shadow-2xl hover:scale-[1.01] transition-all duration-300 ease-in-out animate-slide-up animate-delay-500">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b-2 border-yellow-200 pb-2 flex items-center">
+                    <svg class="w-7 h-7 mr-2 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7l4-4m0 0l4 4m-4-4v18"></path></svg>
+                    Sent Requests
+                </h2>
+                <div id="sentRequestsSection" class="space-y-4 min-h-[100px] flex flex-col justify-center items-center">
+                    <div class="loading-spinner"></div>
+                    <p class="text-gray-500">Loading sent requests...</p>
+                </div>
+            </div>
+
+            <!-- Other Profiles Section -->
+            <div class="bg-white rounded-xl shadow-xl p-6 hover:shadow-2xl hover:scale-[1.01] transition-all duration-300 ease-in-out animate-slide-up animate-delay-600 col-span-1 md:col-span-2 lg:col-span-3">
+                <h2 class="text-2xl font-semibold text-gray-800 mb-4 border-b-2 border-purple-200 pb-2 flex items-center">
+                    <svg class="w-7 h-7 mr-2 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M12 20.057h.008v.007H12v-.007zm-1.257-1.637l-1.944-1.944A8 8 0 0112 4c4.418 0 8 3.582 8 8 0 1.986-.724 3.805-1.944 5.292l-1.944 1.944M12 18a6 6 0 100-12 6 6 0 000 12z"></path></svg>
+                    Other Profiles
+                </h2>
+                <div id="otherProfilesSection" class="space-y-4 min-h-[100px] flex flex-col justify-center items-center">
+                    <div class="loading-spinner"></div>
+                    <p class="text-gray-500">Loading other profiles...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="confirmationModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="modalTitle" class="text-xl font-bold mb-4 text-gray-800">Confirm Action</h3>
+            <p id="modalMessage" class="text-gray-700 mb-6"></p>
+            <div class="flex justify-center space-x-4">
+                <button id="modalConfirmBtn" class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 transform active:scale-95">Confirm</button>
+                <button id="modalCancelBtn" class="px-6 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition-colors duration-200 transform active:scale-95">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables for Firebase instances and user ID
+        let app;
+        let db;
+        let auth;
+        let userId = null;
+        let isAuthReady = false; // Flag to indicate if auth state is settled
+
+        // Firebase configuration and app ID (provided by the Canvas environment)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // DOM elements
+        const userIdDisplay = document.getElementById('userIdDisplay');
+        const currentUserIdSpan = document.getElementById('currentUserId');
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
+        const friendsSection = document.getElementById('friendsSection');
+        const receivedRequestsSection = document.getElementById('receivedRequestsSection');
+        const sentRequestsSection = document.getElementById('sentRequestsSection');
+        const otherProfilesSection = document.getElementById('otherProfilesSection');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+        const modalCancelBtn = document.getElementById('modalCancelBtn');
+
+        // --- Firebase Initialization and Authentication ---
+        window.onload = async () => {
+            try {
+                // Initialize Firebase App
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Listen for authentication state changes
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        currentUserIdSpan.textContent = userId;
+                        userIdDisplay.classList.remove('hidden');
+                        console.log("Authenticated with user ID:", userId);
+                        // Ensure user profile exists
+                        await ensureUserProfileExists(userId);
+                        isAuthReady = true;
+                        // Start listening to data once authenticated
+                        setupRealtimeListeners();
+                    } else {
+                        // Sign in anonymously if no user is found or initial token fails
+                        if (!initialAuthToken) {
+                            await signInAnonymously(auth);
+                            console.log("Signed in anonymously.");
+                        } else {
+                            // If initial token was provided but failed, try anonymous sign-in as fallback
+                            console.error("Initial auth token failed, attempting anonymous sign-in.");
+                            await signInAnonymously(auth);
+                        }
+                    }
+                });
+
+                // Attempt to sign in with custom token if available
+                if (initialAuthToken) {
+                    try {
+                        await signInWithCustomToken(auth, initialAuthToken);
+                        console.log("Signed in with custom token.");
+                    } catch (error) {
+                        console.error("Error signing in with custom token:", error);
+                        // Fallback to anonymous sign-in if custom token fails
+                        await signInAnonymously(auth);
+                    }
+                } else {
+                    // If no initial token, sign in anonymously immediately
+                    await signInAnonymously(auth);
+                }
+
+            } catch (error) {
+                console.error("Error initializing Firebase:", error);
+                // Display a user-friendly message if Firebase fails to initialize
+                displayMessage(friendsSection, "Error loading app. Please try again later.", true);
+                displayMessage(receivedRequestsSection, "Error loading app. Please try again later.", true);
+                displayMessage(sentRequestsSection, "Error loading app. Please try again later.", true);
+                displayMessage(otherProfilesSection, "Error loading app. Please try again later.", true);
+            }
+        };
+
+        // Ensures a user profile exists in Firestore for the current user
+        async function ensureUserProfileExists(uid) {
+            const userDocRef = doc(db, `artifacts/${appId}/users/${uid}/profile/data`);
+            const userDocSnap = await getDoc(userDocRef);
+
+            if (!userDocSnap.exists()) {
+                // Create a basic profile if it doesn't exist
+                const defaultProfile = {
+                    name: `User_${uid.substring(0, 8)}`, // A simple default name
+                    searchableName: `user_${uid.substring(0, 8)}`.toLowerCase(), // For case-insensitive search
+                    createdAt: new Date()
+                };
+                await setDoc(userDocRef, defaultProfile);
+                console.log("User profile created for:", uid);
+            }
+        }
+
+        // --- Real-time Data Listeners ---
+        function setupRealtimeListeners() {
+            if (!isAuthReady || !userId) {
+                console.warn("Auth not ready or userId not available for setting up listeners.");
+                return;
+            }
+
+            // Listen for Friends
+            const friendsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/friends`);
+            onSnapshot(friendsCollectionRef, (snapshot) => {
+                const friends = [];
+                snapshot.forEach(doc => {
+                    friends.push({ id: doc.id, ...doc.data() });
+                });
+                renderFriends(friends);
+            }, (error) => {
+                console.error("Error fetching friends:", error);
+                displayMessage(friendsSection, "Error loading friends.");
+            });
+
+            // Listen for Received Requests
+            const receivedRequestsCollectionRef = collection(db, `artifacts/${appId}/public/data/friendRequests`);
+            const receivedRequestsQuery = query(receivedRequestsCollectionRef, where("receiverId", "==", userId), where("status", "==", "pending"));
+            onSnapshot(receivedRequestsQuery, (snapshot) => {
+                const requests = [];
+                snapshot.forEach(doc => {
+                    requests.push({ id: doc.id, ...doc.data() });
+                });
+                renderReceivedRequests(requests);
+            }, (error) => {
+                console.error("Error fetching received requests:", error);
+                displayMessage(receivedRequestsSection, "Error loading received requests.");
+            });
+
+            // Listen for Sent Requests
+            const sentRequestsCollectionRef = collection(db, `artifacts/${appId}/public/data/friendRequests`);
+            const sentRequestsQuery = query(sentRequestsCollectionRef, where("senderId", "==", userId), where("status", "==", "pending"));
+            onSnapshot(sentRequestsQuery, (snapshot) => {
+                const requests = [];
+                snapshot.forEach(doc => {
+                    requests.push({ id: doc.id, ...doc.data() });
+                });
+                renderSentRequests(requests);
+            }, (error) => {
+                console.error("Error fetching sent requests:", error);
+                displayMessage(sentRequestsSection, "Error loading sent requests.");
+            });
+
+            // Listen for Other Profiles (all profiles excluding current user, friends, and those with pending requests)
+            const allProfilesCollectionRef = collection(db, `artifacts/${appId}/users`);
+            onSnapshot(allProfilesCollectionRef, async (snapshot) => {
+                const allUsers = [];
+                snapshot.forEach(doc => {
+                    // Get the actual profile data from the subcollection
+                    const profileDataRef = doc(db, `artifacts/${appId}/users/${doc.id}/profile/data`);
+                    allUsers.push(getDoc(profileDataRef).then(profileSnap => {
+                        if (profileSnap.exists()) {
+                            return { id: doc.id, ...profileSnap.data() };
+                        }
+                        return null;
+                    }));
+                });
+
+                const profiles = (await Promise.all(allUsers)).filter(p => p !== null);
+
+                // Filter out current user, friends, and users with pending requests
+                const friendsSnap = await getDocs(collection(db, `artifacts/${appId}/users/${userId}/friends`));
+                const friendIds = new Set(friendsSnap.docs.map(doc => doc.id));
+
+                const sentRequestsSnap = await getDocs(query(collection(db, `artifacts/${appId}/public/data/friendRequests`), where("senderId", "==", userId), where("status", "==", "pending")));
+                const sentRequestReceiverIds = new Set(sentRequestsSnap.docs.map(doc => doc.data().receiverId));
+
+                const receivedRequestsSnap = await getDocs(query(collection(db, `artifacts/${appId}/public/data/friendRequests`), where("receiverId", "==", userId), where("status", "==", "pending")));
+                const receivedRequestSenderIds = new Set(receivedRequestsSnap.docs.map(doc => doc.data().senderId));
+
+                const otherProfiles = profiles.filter(profile =>
+                    profile.id !== userId &&
+                    !friendIds.has(profile.id) &&
+                    !sentRequestReceiverIds.has(profile.id) &&
+                    !receivedRequestSenderIds.has(profile.id)
+                );
+
+                renderOtherProfiles(otherProfiles);
+            }, (error) => {
+                console.error("Error fetching other profiles:", error);
+                displayMessage(otherProfilesSection, "Error loading other profiles.");
+            });
+        }
+
+        // --- Rendering Functions ---
+        function displayMessage(sectionElement, message, isError = false) {
+            sectionElement.innerHTML = `<p class="text-center ${isError ? 'text-red-500' : 'text-gray-500'}">${message}</p>`;
+        }
+
+        function renderFriends(friends) {
+            friendsSection.innerHTML = ''; // Clear previous content
+            if (friends.length === 0) {
+                displayMessage(friendsSection, "No friends yet!");
+                return;
+            }
+            friends.forEach(friend => {
+                const friendCard = createProfileCard(friend, 'friend');
+                friendsSection.appendChild(friendCard);
+            });
+        }
+
+        function renderReceivedRequests(requests) {
+            receivedRequestsSection.innerHTML = '';
+            if (requests.length === 0) {
+                displayMessage(receivedRequestsSection, "No pending requests.");
+                return;
+            }
+            requests.forEach(request => {
+                const requestCard = createProfileCard(request, 'received');
+                receivedRequestsSection.appendChild(requestCard);
+            });
+        }
+
+        function renderSentRequests(requests) {
+            sentRequestsSection.innerHTML = '';
+            if (requests.length === 0) {
+                displayMessage(sentRequestsSection, "No sent requests.");
+                return;
+            }
+            requests.forEach(request => {
+                const requestCard = createProfileCard(request, 'sent');
+                sentRequestsSection.appendChild(requestCard);
+            });
+        }
+
+        function renderOtherProfiles(profiles) {
+            otherProfilesSection.innerHTML = '';
+            if (profiles.length === 0) {
+                displayMessage(otherProfilesSection, "No other profiles found.");
+                return;
+            }
+            // Sort profiles alphabetically by name
+            profiles.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+            profiles.forEach(profile => {
+                const profileCard = createProfileCard(profile, 'other');
+                otherProfilesSection.appendChild(profileCard);
+            });
+        }
+
+        // Helper to create a profile card HTML element
+        function createProfileCard(data, type) {
+            const card = document.createElement('div');
+            card.className = 'flex items-center justify-between p-4 bg-gray-50 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 ease-in-out';
+            card.setAttribute('data-id', data.id); // Store the ID for actions
+
+            let profileName = data.name || `User_${data.id.substring(0, 8)}`;
+            let profileId = data.id;
+
+            // For received/sent requests, the 'id' in data is the request ID,
+            // and the profile details are of the sender/receiver.
+            if (type === 'received') {
+                profileName = data.senderName || `User_${data.senderId.substring(0, 8)}`;
+                profileId = data.senderId;
+            } else if (type === 'sent') {
+                profileName = data.receiverName || `User_${data.receiverId.substring(0, 8)}`;
+                profileId = data.receiverId;
+            }
+
+            card.innerHTML = `
+                <div class="flex flex-col">
+                    <span class="font-medium text-gray-800 text-lg">${profileName}</span>
+                    <span class="text-gray-500 text-sm font-mono">${profileId}</span>
+                </div>
+                <div class="flex space-x-2">
+                    ${getActionsForType(type, data.id, profileId)}
+                </div>
+            `;
+            return card;
+        }
+
+        // Helper to get action buttons based on profile type
+        function getActionsForType(type, requestId, profileId) {
+            switch (type) {
+                case 'friend':
+                    return `
+                        <button class="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors duration-200 transform active:scale-95 text-sm" onclick="showConfirmationModal('unfriend', '${profileId}')">Unfriend</button>
+                    `;
+                case 'received':
+                    return `
+                        <button class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 transition-colors duration-200 transform active:scale-95 text-sm" onclick="acceptFriendRequest('${requestId}', '${profileId}')">Accept</button>
+                        <button class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500 transition-colors duration-200 transform active:scale-95 text-sm" onclick="showConfirmationModal('reject', '${requestId}')">Reject</button>
+                    `;
+                case 'sent':
+                    return `
+                        <button class="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 transition-colors duration-200 transform active:scale-95 text-sm" onclick="showConfirmationModal('cancel', '${requestId}')">Cancel Request</button>
+                    `;
+                case 'other':
+                    return `
+                        <button class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200 transform active:scale-95 text-sm" onclick="sendFriendRequest('${profileId}')">Add Friend</button>
+                    `;
+                default:
+                    return '';
+            }
+        }
+
+        // --- Firebase Actions ---
+
+        // Send a friend request
+        async function sendFriendRequest(receiverId) {
+            if (!userId) {
+                console.error("User not authenticated.");
+                return;
+            }
+            if (userId === receiverId) {
+                showModalMessage("Error", "You cannot send a friend request to yourself.");
+                return;
+            }
+
+            try {
+                // Check if a request already exists or if they are already friends
+                const existingRequestQuery = query(
+                    collection(db, `artifacts/${appId}/public/data/friendRequests`),
+                    where("senderId", "==", userId),
+                    where("receiverId", "==", receiverId),
+                    where("status", "==", "pending")
+                );
+                const existingRequestSnap = await getDocs(existingRequestQuery);
+
+                if (!existingRequestSnap.empty) {
+                    showModalMessage("Request Already Sent", "You have already sent a friend request to this user.");
+                    return;
+                }
+
+                const existingFriendshipQuery = query(
+                    collection(db, `artifacts/${appId}/users/${userId}/friends`),
+                    where("userId", "==", receiverId) // Check if receiver is already a friend
+                );
+                const existingFriendshipSnap = await getDocs(existingFriendshipQuery);
+
+                if (!existingFriendshipSnap.empty) {
+                    showModalMessage("Already Friends", "You are already friends with this user.");
+                    return;
+                }
+
+                // Get sender's profile name
+                const senderProfileSnap = await getDoc(doc(db, `artifacts/${appId}/users/${userId}/profile/data`));
+                const senderName = senderProfileSnap.exists() ? senderProfileSnap.data().name : `User_${userId.substring(0, 8)}`;
+
+                // Get receiver's profile name
+                const receiverProfileSnap = await getDoc(doc(db, `artifacts/${appId}/users/${receiverId}/profile/data`));
+                const receiverName = receiverProfileSnap.exists() ? receiverProfileSnap.data().name : `User_${receiverId.substring(0, 8)}`;
+
+
+                await addDoc(collection(db, `artifacts/${appId}/public/data/friendRequests`), {
+                    senderId: userId,
+                    receiverId: receiverId,
+                    senderName: senderName,
+                    receiverName: receiverName,
+                    status: "pending",
+                    timestamp: new Date()
+                });
+                showModalMessage("Success", "Friend request sent!");
+            } catch (error) {
+                console.error("Error sending friend request:", error);
+                showModalMessage("Error", "Failed to send friend request.");
+            }
+        }
+
+        // Accept a friend request
+        async function acceptFriendRequest(requestId, senderId) {
+            if (!userId) {
+                console.error("User not authenticated.");
+                return;
+            }
+
+            try {
+                const batch = writeBatch(db);
+
+                // 1. Update the request status to 'accepted'
+                const requestRef = doc(db, `artifacts/${appId}/public/data/friendRequests`, requestId);
+                batch.update(requestRef, { status: "accepted", acceptedAt: new Date() });
+
+                // 2. Add sender to current user's friends list
+                const currentUserFriendsRef = doc(db, `artifacts/${appId}/users/${userId}/friends`, senderId);
+                const senderProfileSnap = await getDoc(doc(db, `artifacts/${appId}/users/${senderId}/profile/data`));
+                const senderName = senderProfileSnap.exists() ? senderProfileSnap.data().name : `User_${senderId.substring(0, 8)}`;
+                batch.set(currentUserFriendsRef, { userId: senderId, name: senderName, friendedAt: new Date() });
+
+                // 3. Add current user to sender's friends list
+                const senderFriendsRef = doc(db, `artifacts/${appId}/users/${senderId}/friends`, userId);
+                const currentUserProfileSnap = await getDoc(doc(db, `artifacts/${appId}/users/${userId}/profile/data`));
+                const currentUserName = currentUserProfileSnap.exists() ? currentUserProfileSnap.data().name : `User_${userId.substring(0, 8)}`;
+                batch.set(senderFriendsRef, { userId: userId, name: currentUserName, friendedAt: new Date() });
+
+                await batch.commit();
+                showModalMessage("Success", "Friend request accepted!");
+            } catch (error) {
+                console.error("Error accepting friend request:", error);
+                showModalMessage("Error", "Failed to accept friend request.");
+            }
+        }
+
+        // Reject a friend request
+        async function rejectFriendRequest(requestId) {
+            if (!userId) {
+                console.error("User not authenticated.");
+                return;
+            }
+            try {
+                const requestRef = doc(db, `artifacts/${appId}/public/data/friendRequests`, requestId);
+                await updateDoc(requestRef, { status: "rejected", rejectedAt: new Date() });
+                showModalMessage("Success", "Friend request rejected.");
+            } catch (error) {
+                console.error("Error rejecting friend request:", error);
+                showModalMessage("Error", "Failed to reject friend request.");
+            }
+        }
+
+        // Cancel a sent friend request
+        async function cancelFriendRequest(requestId) {
+            if (!userId) {
+                console.error("User not authenticated.");
+                return;
+            }
+            try {
+                const requestRef = doc(db, `artifacts/${appId}/public/data/friendRequests`, requestId);
+                await deleteDoc(requestRef); // Or update status to 'cancelled'
+                showModalMessage("Success", "Friend request cancelled.");
+            } catch (error) {
+                console.error("Error cancelling friend request:", error);
+                showModalMessage("Error", "Failed to cancel friend request.");
+            }
+        }
+
+        // Unfriend a user
+        async function unfriend(friendId) {
+            if (!userId) {
+                console.error("User not authenticated.");
+                return;
+            }
+            try {
+                const batch = writeBatch(db);
+
+                // Remove from current user's friends list
+                const currentUserFriendRef = doc(db, `artifacts/${appId}/users/${userId}/friends`, friendId);
+                batch.delete(currentUserFriendRef);
+
+                // Remove current user from friend's friends list
+                const friendUserFriendRef = doc(db, `artifacts/${appId}/users/${friendId}/friends`, userId);
+                batch.delete(friendUserFriendRef);
+
+                await batch.commit();
+                showModalMessage("Success", "Unfriended successfully.");
+            } catch (error) {
+                console.error("Error unfriending:", error);
+                showModalMessage("Error", "Failed to unfriend.");
+            }
+        }
+
+        // --- Search Functionality ---
+        searchInput.addEventListener('input', (event) => {
+            const searchTerm = event.target.value.trim().toLowerCase();
+            if (searchTerm) {
+                clearSearchBtn.classList.remove('hidden');
+            } else {
+                clearSearchBtn.classList.add('hidden');
+            }
+            // Trigger search on input change for dynamic filtering
+            performSearch(searchTerm);
+        });
+
+        clearSearchBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearSearchBtn.classList.add('hidden');
+            performSearch(''); // Clear search results
+        });
+
+        document.getElementById('searchButton').addEventListener('click', () => {
+            const searchTerm = searchInput.value.trim().toLowerCase();
+            performSearch(searchTerm);
+        });
+
+        async function performSearch(searchTerm) {
+            if (!isAuthReady || !userId) {
+                console.warn("Auth not ready or userId not available for search.");
+                return;
+            }
+
+            // Fetch all profiles again (or use a cached list if available and up-to-date)
+            const allUsers = [];
+            const snapshot = await getDocs(collection(db, `artifacts/${appId}/users`));
+            snapshot.forEach(doc => {
+                const profileDataRef = doc(db, `artifacts/${appId}/users/${doc.id}/profile/data`);
+                allUsers.push(getDoc(profileDataRef).then(profileSnap => {
+                    if (profileSnap.exists()) {
+                        return { id: doc.id, ...profileSnap.data() };
+                    }
+                    return null;
+                }));
+            });
+            const profiles = (await Promise.all(allUsers)).filter(p => p !== null);
+
+            // Filter out current user, friends, and users with pending requests
+            const friendsSnap = await getDocs(collection(db, `artifacts/${appId}/users/${userId}/friends`));
+            const friendIds = new Set(friendsSnap.docs.map(doc => doc.id));
+
+            const sentRequestsSnap = await getDocs(query(collection(db, `artifacts/${appId}/public/data/friendRequests`), where("senderId", "==", userId), where("status", "==", "pending")));
+            const sentRequestReceiverIds = new Set(sentRequestsSnap.docs.map(doc => doc.data().receiverId));
+
+            const receivedRequestsSnap = await getDocs(query(collection(db, `artifacts/${appId}/public/data/friendRequests`), where("receiverId", "==", userId), where("status", "==", "pending")));
+            const receivedRequestSenderIds = new Set(receivedRequestsSnap.docs.map(doc => doc.data().senderId));
+
+            const filteredProfiles = profiles.filter(profile =>
+                profile.id !== userId &&
+                !friendIds.has(profile.id) &&
+                !sentRequestReceiverIds.has(profile.id) &&
+                !receivedRequestSenderIds.has(profile.id) &&
+                (profile.name && profile.name.toLowerCase().includes(searchTerm) || profile.id.toLowerCase().includes(searchTerm))
+            );
+
+            renderOtherProfiles(filteredProfiles);
+        }
+
+        // --- Custom Confirmation Modal Logic ---
+        let currentActionCallback = null;
+
+        function showConfirmationModal(actionType, id) {
+            confirmationModal.classList.add('active');
+            let message = "";
+            let confirmAction = null;
+
+            switch (actionType) {
+                case 'unfriend':
+                    message = `Are you sure you want to unfriend ${id}?`;
+                    confirmAction = () => unfriend(id);
+                    break;
+                case 'reject':
+                    message = `Are you sure you want to reject this friend request from ${id.substring(0,8)}...?`;
+                    confirmAction = () => rejectFriendRequest(id);
+                    break;
+                case 'cancel':
+                    message = `Are you sure you want to cancel this friend request to ${id.substring(0,8)}...?`;
+                    confirmAction = () => cancelFriendRequest(id);
+                    break;
+                default:
+                    message = "Are you sure you want to proceed?";
+                    confirmAction = () => console.log("Default confirm action for ID:", id);
+            }
+
+            modalTitle.textContent = "Confirm Action";
+            modalMessage.textContent = message;
+            currentActionCallback = confirmAction;
+        }
+
+        function hideConfirmationModal() {
+            confirmationModal.classList.remove('active');
+            currentActionCallback = null;
+        }
+
+        modalConfirmBtn.addEventListener('click', () => {
+            if (currentActionCallback) {
+                currentActionCallback();
+            }
+            hideConfirmationModal();
+        });
+
+        modalCancelBtn.addEventListener('click', () => {
+            hideConfirmationModal();
+        });
+
+        // Generic message modal (for errors/success)
+        function showModalMessage(title, message) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            modalConfirmBtn.classList.add('hidden'); // Hide confirm button
+            modalCancelBtn.textContent = 'Close'; // Change cancel to close
+            confirmationModal.classList.add('active');
+
+            // Reset modal buttons when closed
+            modalCancelBtn.onclick = () => {
+                hideConfirmationModal();
+                modalConfirmBtn.classList.remove('hidden');
+                modalCancelBtn.textContent = 'Cancel';
+                modalCancelBtn.onclick = hideConfirmationModal; // Reset default handler
+            };
+        }
+    </script>
+</body>
+</html>

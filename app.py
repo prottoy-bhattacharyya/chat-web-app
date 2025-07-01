@@ -358,6 +358,13 @@ def add_friend():
         finally:
             cursor.close()
             conn.close()
+
+    if request.method == 'POST':
+        friends_name = request.form['friends_name']
+        if friends_name != '':
+            return render_template('search.html', friends_name=friends_name)
+        else:
+            return render_template('add_friend.html', users=users)
     return render_template('add_friend.html', users=users)
 
 @socketio.on('add_friend', namespace='/add_friend')
@@ -389,6 +396,10 @@ def add_friend(data):
         except:
             print("error sending notification")
     
+@app.route('/search')
+def search():
+    return render_template('search.html')
+
 @app.route('/friend_request')
 def friend_request():
     if 'user_id' not in session:
