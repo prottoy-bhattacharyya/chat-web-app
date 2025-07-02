@@ -19,16 +19,17 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #a7b7ed, #e0c3fc);
+            /* Dark mode background */
+            background: linear-gradient(135deg, #1a202c, #2d3748);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
             overflow-x: hidden;
+            color: #e2e8f0; /* Default text color for dark mode */
         }
 
-        
         .background-animation {
             position: absolute;
             top: 0;
@@ -43,7 +44,8 @@
         .background-animation::after {
             content: '';
             position: absolute;
-            background: rgba(255, 255, 255, 0.1);
+            /* Darker, subtle glow */
+            background: rgba(45, 55, 72, 0.5);
             border-radius: 50%;
             animation: moveBackground 20s infinite alternate;
         }
@@ -72,13 +74,12 @@
             100% { transform: translate(0, 0) scale(1); }
         }
 
-
-      
         .header {
-            background: rgba(255, 255, 255, 0.1);
+            /* Darker header background */
+            background: rgba(26, 32, 44, 0.7);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(74, 85, 104, 0.5);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
             width: 100%;
             position: sticky;
             top: 0;
@@ -89,7 +90,7 @@
         .header-container {
             max-width: 1152px;
             margin: 0 auto;
-            padding: 0 20px; 
+            padding: 0 20px;
         }
 
         .header-content {
@@ -108,7 +109,8 @@
         .header-icon {
             width: 36px;
             height: 36px;
-            color: #2563eb;
+            /* Lighter icon color for dark mode */
+            color: #63b3ed;
             transition: transform 0.3s ease;
         }
 
@@ -117,69 +119,70 @@
         }
 
         .header-title {
-            font-size: 26px; 
+            font-size: 26px;
             font-weight: 700;
-            color: #111827;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            /* Lighter text for dark mode */
+            color: #e2e8f0;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.15);
         }
 
-        
         .main-container {
             max-width: 1152px;
             margin: 0 auto;
             padding: 0 20px;
-            padding-top: 40px; 
-            flex-grow: 1; 
+            padding-top: 40px;
+            flex-grow: 1;
         }
 
         .content-header {
             margin-bottom: 30px;
-            text-align: center; 
+            text-align: center;
             animation: slideInDown 0.6s ease-out;
         }
 
         .content-title {
-            font-size: 28px; 
+            font-size: 28px;
             font-weight: 700;
-            color: #111827;
+            /* Lighter text for dark mode */
+            color: #e2e8f0;
             margin-bottom: 10px;
         }
 
         .content-subtitle {
-            color: #4b5563; 
+            /* Lighter subtitle for dark mode */
+            color: #a0aec0;
             font-size: 16px;
         }
 
-       
         .people-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
             gap: 25px;
-            padding-bottom: 40px; 
+            padding-bottom: 40px;
         }
 
         .person-card {
-            background: rgba(255, 255, 255, 0.2); 
-            backdrop-filter: blur(5px); 
-            border-radius: 15px; 
-            border: 1px solid rgba(255, 255, 255, 0.3); 
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+            /* Darker card background */
+            background: rgba(45, 55, 72, 0.4);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            border: 1px solid rgba(74, 85, 104, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
             overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             animation: fadeIn 0.5s ease-out forwards;
-            opacity: 0; 
+            opacity: 0;
         }
 
         .person-card:nth-child(even) { animation-delay: 0.1s; }
         .person-card:nth-child(odd) { animation-delay: 0.2s; }
 
-
         .person-card:hover {
             transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.15); 
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
         }
 
         .person-image-container {
@@ -187,7 +190,7 @@
             position: relative;
             overflow: hidden;
             cursor: pointer;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            border-bottom: 1px solid rgba(74, 85, 104, 0.5);
         }
 
         .person-image {
@@ -195,16 +198,16 @@
             height: 100%;
             object-fit: cover;
             transition: transform 0.4s ease;
-            filter: grayscale(20%); 
+            filter: grayscale(40%); /* Slightly more grayscale for dark mode */
         }
 
         .person-card:hover .person-image {
             transform: scale(1.1);
-            filter: grayscale(0%); 
+            filter: grayscale(0%);
         }
 
         .person-content {
-            padding: 15px; 
+            padding: 15px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -214,9 +217,10 @@
         .person-name {
             text-align: center;
             font-weight: 600;
-            color: #111827;
+            /* Lighter text for dark mode */
+            color: #e2e8f0;
             font-size: 16px;
-            margin-bottom: 12px; 
+            margin-bottom: 12px;
             line-height: 1.3;
             display: -webkit-box;
             -webkit-line-clamp: 2;
@@ -235,67 +239,71 @@
             width: 100%;
             border: none;
             border-radius: 25px;
-            padding: 10px 0; 
+            padding: 10px 0;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease; 
-            height: 40px; 
+            transition: all 0.3s ease;
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px; 
+            gap: 8px;
         }
 
         .accept-request-btn {
-            background-color: #2563eb;
+            /* Dark mode accept button */
+            background-color: #48bb78; /* Green */
             color: white;
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 4px 10px rgba(72, 187, 120, 0.3);
         }
 
         .accept-request-btn:hover {
-            background-color: #1d4ed8; 
+            background-color: #38a169; /* Darker green */
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 6px 12px rgba(72, 187, 120, 0.4);
         }
 
         .remove-btn {
-            background-color: rgba(255, 255, 255, 0.4); 
-            color: #374151;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            /* Dark mode remove button */
+            background-color: rgba(74, 85, 104, 0.4);
+            color: #e2e8f0;
+            border: 1px solid rgba(113, 128, 150, 0.5);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         }
 
         .remove-btn:hover {
-            background-color: rgba(255, 255, 255, 0.6);
-            color: #1f2937;
+            background-color: rgba(113, 128, 150, 0.6);
+            color: #f7fafc;
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
         }
 
         .no-friends {
-            grid-column: 1 / -1; 
+            grid-column: 1 / -1;
             text-align: center;
             padding: 50px 20px;
             font-size: 18px;
-            color: #6b7280;
-            background: rgba(255, 255, 255, 0.3);
+            /* Lighter text for no friends message */
+            color: #a0aec0;
+            /* Darker background for no friends message */
+            background: rgba(45, 55, 72, 0.5);
             backdrop-filter: blur(5px);
             border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(74, 85, 104, 0.6);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             animation: fadeIn 0.8s ease-out;
         }
 
-       
         .popup-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.2); 
-            backdrop-filter: blur(5px); 
+            /* Darker overlay background */
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -311,18 +319,19 @@
         }
 
         .popup-card {
-            background-color: rgba(255, 255, 255, 0.7); 
-            backdrop-filter: blur(25px); 
-            border-radius: 20px; 
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25); 
-            padding: 30px; 
+            /* Darker popup card background */
+            background-color: rgba(45, 55, 72, 0.8);
+            backdrop-filter: blur(25px);
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            padding: 30px;
             width: 90%;
             max-width: 450px;
             position: relative;
             text-align: center;
             transform: scale(0.9);
             opacity: 0;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease; /* Bounce effect */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
         }
 
         .popup-overlay.show .popup-card {
@@ -332,18 +341,19 @@
 
         .popup-close-btn {
             position: absolute;
-            top: 15px; 
+            top: 15px;
             right: 15px;
             background: none;
             border: none;
             font-size: 30px;
             cursor: pointer;
-            color: #6b7280;
+            /* Lighter close button color */
+            color: #a0aec0;
             transition: color 0.2s ease, transform 0.2s ease;
         }
 
         .popup-close-btn:hover {
-            color: #ef4444; 
+            color: #fc8181; /* Red for hover */
             transform: rotate(90deg);
         }
 
@@ -352,9 +362,9 @@
             height: 140px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 20px; 
-            border: 4px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            border: 4px solid rgba(74, 85, 104, 0.8);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease;
         }
 
@@ -363,20 +373,29 @@
         }
 
         .popup-name {
-            font-size: 26px; 
+            font-size: 26px;
             font-weight: 700;
-            color: #111827;
+            /* Lighter text for popup name */
+            color: #e2e8f0;
             margin-bottom: 12px;
         }
 
         .popup-info {
-            font-size: 17px; 
-            color: #4b5563;
+            font-size: 17px;
+            /* Lighter text for popup info */
+            color: #a0aec0;
             line-height: 1.6;
             margin-bottom: 25px;
         }
+        .fade-out {
+            animation: fadeOutAndShrink 0.5s ease-out forwards;
+        }
 
-       
+        @keyframes fadeOutAndShrink {
+            from { opacity: 1; transform: scale(1) translateY(0); }
+            to { opacity: 0; transform: scale(0.8) translateY(20px); height: 0; padding: 0; margin: 0;}
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -387,7 +406,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-      
         @media (min-width: 640px) {
             .people-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -421,7 +439,8 @@
 </head>
 
 <body>
-    <div class="background-animation"></div> <div class="header">
+    <div class="background-animation"></div>
+    <div class="header">
         <div class="header-container">
             <div class="header-content">
                 <div class="header-left">
@@ -488,113 +507,96 @@
     </div>
 
     <script>
-      
         const socketio = io('/friend_request');
-    socketio.on('connect', () => {
-        console.log('Connected to friend_request namespace');
-    });
-
-    const people_grid = document.getElementById('people-grid');
-    const profilePopup = document.getElementById('profilePopup');
-    const closePopupBtn = document.getElementById('closePopupBtn');
-    const popupImage = document.getElementById('popupImage');
-    const popupName = document.getElementById('popupName');
-    const popupInfo = document.getElementById('popupInfo');
-
-   
-    const personImages = document.querySelectorAll('.person-image');
-    personImages.forEach((image) => {
-        image.addEventListener('error', () => {
-            image.src = "{{url_for('static', filename='/image/user.png')}}";
+        socketio.on('connect', () => {
+            console.log('Connected to friend_request namespace');
         });
-    });
 
-    people_grid.addEventListener('click', (event) => {
-        const accept_request_btn = event.target.closest('.accept-request-btn');
-        const reject_request_btn = event.target.closest('.remove-btn');
-        const person_image_container = event.target.closest('.person-image-container');
+        const people_grid = document.getElementById('people-grid');
+        const profilePopup = document.getElementById('profilePopup');
+        const closePopupBtn = document.getElementById('closePopupBtn');
+        const popupImage = document.getElementById('popupImage');
+        const popupName = document.getElementById('popupName');
+        const popupInfo = document.getElementById('popupInfo');
 
-        if (accept_request_btn) {
-            const sender_id = accept_request_btn.dataset.userId;
-            socketio.emit('accept_friend_request', { 'sender_id': sender_id });
+        const personImages = document.querySelectorAll('.person-image');
+        personImages.forEach((image) => {
+            image.addEventListener('error', () => {
+                image.src = "{{url_for('static', filename='/image/user.png')}}";
+            });
+        });
 
-            console.log("request accepted");
-            accept_request_btn.innerHTML = '<i class="fas fa-check"></i> Request Accepted';
-            accept_request_btn.disabled = true;
-            const card = accept_request_btn.closest('.person-card');
-            const removeBtn = card.querySelector('.remove-btn');
-            if (removeBtn) {
-                removeBtn.style.display = 'none';
-            }
-            
-            card.style.opacity = '0.5'; 
-            card.style.pointerEvents = 'none'; 
-        }
+        people_grid.addEventListener('click', (event) => {
+            const accept_request_btn = event.target.closest('.accept-request-btn');
+            const reject_request_btn = event.target.closest('.remove-btn');
+            const person_image_container = event.target.closest('.person-image-container');
 
-        else if (reject_request_btn) {
-            const sender_id = reject_request_btn.dataset.userId;
-            socketio.emit('reject_friend_request', { 'sender_id': sender_id });
+            if (accept_request_btn) {
+                const sender_id = accept_request_btn.dataset.userId;
+                socketio.emit('accept_friend_request', { 'sender_id': sender_id });
 
-            console.log("request rejected");
-            const card = reject_request_btn.closest('.person-card');
-            
-            card.classList.add('fade-out');
-            card.addEventListener('animationend', () => {
-                card.remove(); 
-                
-                if (people_grid.children.length === 0) {
-                    const noFriendsMessage = document.createElement('div');
-                    noFriendsMessage.classList.add('no-friends');
-                    noFriendsMessage.innerHTML = '<p>No friend requests at the moment.</p>';
-                    people_grid.appendChild(noFriendsMessage);
+                console.log("request accepted");
+                accept_request_btn.innerHTML = '<i class="fas fa-check"></i> Request Accepted';
+                accept_request_btn.disabled = true;
+                const card = accept_request_btn.closest('.person-card');
+                const removeBtn = card.querySelector('.remove-btn');
+                if (removeBtn) {
+                    removeBtn.style.display = 'none';
                 }
-            }, { once: true });
-        }
+                
+                card.style.opacity = '0.5';
+                card.style.pointerEvents = 'none';
+            }
 
-        else if (person_image_container) {
-            const userId = person_image_container.dataset.userId;
-            const userFullname = person_image_container.dataset.userFullname;
-            const userName = person_image_container.dataset.userUsername;
-            const userEmail = person_image_container.dataset.userEmail;
-            const userDob = person_image_container.dataset.userDob;
+            else if (reject_request_btn) {
+                const sender_id = reject_request_btn.dataset.userId;
+                socketio.emit('reject_friend_request', { 'sender_id': sender_id });
 
-            popupImage.src = "/static/profile_photos/id" + userId + ".jpg";
-            popupImage.addEventListener('error', () => {
-                popupImage.src = "{{url_for('static', filename='/image/user.png')}}";
-            }, { once: true }); 
+                console.log("request rejected");
+                const card = reject_request_btn.closest('.person-card');
+                
+                card.classList.add('fade-out');
+                card.addEventListener('animationend', () => {
+                    card.remove();
+                    
+                    if (people_grid.children.length === 0) {
+                        const noFriendsMessage = document.createElement('div');
+                        noFriendsMessage.classList.add('no-friends');
+                        noFriendsMessage.innerHTML = '<p>No friend requests at the moment.</p>';
+                        people_grid.appendChild(noFriendsMessage);
+                    }
+                }, { once: true });
+            }
 
-            popupName.textContent = userFullname;
-            popupInfo.innerHTML = `<strong>Username:</strong> ${userName}<br>
-                                    <strong>Email:</strong> ${userEmail}<br>
-                                    <strong>Date of Birth:</strong> ${userDob || 'N/A'}`; // Added N/A for missing DOB
-            profilePopup.classList.add('show');
-        }
-    });
+            else if (person_image_container) {
+                const userId = person_image_container.dataset.userId;
+                const userFullname = person_image_container.dataset.userFullname;
+                const userName = person_image_container.dataset.userUsername;
+                const userEmail = person_image_container.dataset.userEmail;
+                const userDob = person_image_container.dataset.userDob;
 
-    closePopupBtn.addEventListener('click', () => {
-        profilePopup.classList.remove('show');
-    });
+                popupImage.src = "/static/profile_photos/id" + userId + ".jpg";
+                popupImage.addEventListener('error', () => {
+                    popupImage.src = "{{url_for('static', filename='/image/user.png')}}";
+                }, { once: true });
 
-    profilePopup.addEventListener('click', (event) => {
-        if (event.target === profilePopup) {
+                popupName.textContent = userFullname;
+                popupInfo.innerHTML = `<strong>Username:</strong> ${userName}<br>
+                                        <strong>Email:</strong> ${userEmail}<br>
+                                        <strong>Date of Birth:</strong> ${userDob || 'N/A'}`;
+                profilePopup.classList.add('show');
+            }
+        });
+
+        closePopupBtn.addEventListener('click', () => {
             profilePopup.classList.remove('show');
-        }
-    });
+        });
 
-    const styleSheet = document.createElement("style");
-    styleSheet.type = "text/css";
-    styleSheet.innerText = `
-        .fade-out {
-            animation: fadeOutAndShrink 0.5s ease-out forwards;
-        }
-
-        @keyframes fadeOutAndShrink {
-            from { opacity: 1; transform: scale(1) translateY(0); }
-            to { opacity: 0; transform: scale(0.8) translateY(20px); height: 0; padding: 0; margin: 0;}
-        }
-    `;
-    document.head.appendChild(styleSheet);
-
+        profilePopup.addEventListener('click', (event) => {
+            if (event.target === profilePopup) {
+                profilePopup.classList.remove('show');
+            }
+        });
     </script>
 </body>
 </html>

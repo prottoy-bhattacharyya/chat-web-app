@@ -69,7 +69,7 @@ def init_db():
                     user_id INT NOT NULL,
                     prompt TEXT NOT NULL,
                     response TEXT NOT NULL,
-                    time_stamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY (user_id) REFERENCES users(id)
                 );
             """)
@@ -155,7 +155,17 @@ def admin():
                             """)
             messages = cursor.fetchall()
 
-            cursor.execute("SELECT * FROM aiChat")
+            cursor.execute("""SELECT 
+                                users.username AS sender_username,
+                                aiChat.prompt,
+                                aiChat.response,
+                                aiChat.timestamp
+                            FROM 
+                                aiChat
+                           JOIN
+                                users on aiChat.user_id = users.id
+                            ORDER BY 
+                                timestamp ASC;""")
             aiChat = cursor.fetchall()
 
             

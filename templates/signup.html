@@ -1,346 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up - Chat App</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #002544, #001a30, #0a0a1a);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden; /* Prevent scrollbar from background animations */
-        }
-
-        .signup-container {
-            background: rgba(255, 255, 255, 0.08); /* Semi-transparent background */
-            backdrop-filter: blur(10px); /* Frosted glass effect */
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 40px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            animation: fadeInScale 0.8s ease-out forwards;
-            position: relative;
-            z-index: 10;
-        }
-
-        .signup-container h2 {
-            background: linear-gradient(45deg, #6dd5ed, #2193b0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-            margin-bottom: 30px;
-            font-size: 2.5rem;
-            letter-spacing: 1px;
-            animation: slideInFromTop 0.8s ease-out forwards;
-        }
-
-        .form-group label {
-            color: #e0e0e0;
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: block;
-            opacity: 0; /* For animation */
-            transform: translateY(20px); /* For animation */
-            animation: fadeInSlideUp 0.6s ease-out forwards;
-            animation-delay: var(--delay);
-        }
-
-        .form-group input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #ffffff;
-            padding: 12px 20px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            outline: none;
-            width: 100%; /* Ensure inputs take full width */
-            opacity: 0; /* For animation */
-            transform: translateY(20px); /* For animation */
-            animation: fadeInSlideUp 0.6s ease-out forwards;
-            animation-delay: var(--delay);
-        }
-
-        .form-group input::placeholder {
-            color: #a0a0a0;
-        }
-
-        .form-group input:focus {
-            border-color: #6dd5ed;
-            box-shadow: 0 0 0 3px rgba(109, 213, 237, 0.4);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .toggle-password-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s ease-in-out;
-            opacity: 0; /* For animation */
-            transform: translateY(20px); /* For animation */
-            animation: fadeInSlideUp 0.6s ease-out forwards;
-            animation-delay: var(--delay);
-        }
-
-        .toggle-password-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .toggle-password-btn img {
-            filter: invert(100%) brightness(150%) sepia(10%) saturate(1000%) hue-rotate(180deg); /* Adjust eye icon color for dark background */
-            width: 20px;
-        }
-
-        .signup-button {
-            background: linear-gradient(45deg, #6dd5ed, #2193b0);
-            color: #ffffff;
-            font-weight: 600;
-            padding: 14px 25px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 25px;
-            letter-spacing: 0.5px;
-            animation: popIn 0.5s ease-out forwards;
-            animation-delay: 1.2s; /* Delay for button */
-            opacity: 0; /* For animation */
-            transform: scale(0.9); /* For animation */
-        }
-
-        .signup-button:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 5px 15px rgba(33, 147, 176, 0.4);
-        }
-
-        .login-link {
-            text-align: center;
-            margin-top: 25px;
-            color: #b0b0b0;
-            font-size: 0.9rem;
-            animation: fadeIn 1s ease-out forwards;
-            animation-delay: 1.4s;
-            opacity: 0;
-        }
-
-        .login-link a {
-            color: #6dd5ed;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        .login-link a:hover {
-            color: #2193b0;
-            text-decoration: underline;
-        }
-
-        /* --- Background Animation --- */
-        .background-shapes {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .shape {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: moveShapes 15s infinite ease-in-out alternate;
-        }
-
-        .shape:nth-child(1) {
-            width: 150px;
-            height: 150px;
-            top: 10%;
-            left: 5%;
-            animation-delay: 0s;
-        }
-
-        .shape:nth-child(2) {
-            width: 100px;
-            height: 100px;
-            top: 50%;
-            left: 80%;
-            animation-delay: 5s;
-        }
-
-        .shape:nth-child(3) {
-            width: 200px;
-            height: 200px;
-            top: 70%;
-            left: 20%;
-            animation-delay: 10s;
-        }
-        .shape:nth-child(4) {
-            width: 80px;
-            height: 80px;
-            top: 30%;
-            left: 60%;
-            animation-delay: 3s;
-        }
-        .shape:nth-child(5) {
-            width: 120px;
-            height: 120px;
-            top: 85%;
-            left: 50%;
-            animation-delay: 7s;
-        }
-
-        /* --- Keyframe Animations --- */
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        @keyframes slideInFromTop {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes popIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes moveShapes {
-            0% {
-                transform: translate(0, 0) scale(1);
-            }
-            25% {
-                transform: translate(20px, 30px) scale(1.05);
-            }
-            50% {
-                transform: translate(0, 60px) scale(1);
-            }
-            75% {
-                transform: translate(-20px, 30px) scale(0.95);
-            }
-            100% {
-                transform: translate(0, 0) scale(1);
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Signup</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{url_for('static', filename='signup.css')}}" />
 </head>
-<body class="flex items-center justify-center min-h-screen">
-    <div class="background-shapes">
+<body>
+  <div class="background-shapes">
         <div class="shape"></div>
         <div class="shape"></div>
         <div class="shape"></div>
         <div class="shape"></div>
         <div class="shape"></div>
     </div>
-
-    <div class="signup-container w-full max-w-md">
-        <h2 class="text-3xl font-bold text-center mb-6">Sign Up</h2>
-
-        <form method="POST" autocomplete="off" class="space-y-5">
-            <div class="form-group" style="--delay: 0.2s;">
-                <label for="full_name">Full Name</label>
-                <input type="text" id="full_name" name="full_name" placeholder="Enter your full name..." required>
-            </div>
-            <div class="form-group" style="--delay: 0.3s;">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Choose a unique username..." required>
-            </div>
-            <div class="form-group" style="--delay: 0.4s;">
-                <label for="dob">Date of Birth</label>
-                <input type="date" id="dob" name="dob" required>
-            </div>
-            <div class="form-group" style="--delay: 0.5s;">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="name@example.com" required>
-            </div>
-            <div class="form-group" style="--delay: 0.6s;">
-                <label for="password">Password</label>
-                <div class="relative flex items-center">
-                    <input type="password" id="password" placeholder="password" required name="password" class="pr-12">
-                    <button type="button" id="togglePassword" class="toggle-password-btn absolute right-3">
-                        <img id="eye" src="{{url_for('static', filename='/image/eye.png')}}" alt="Show/Hide Password">
-                    </button>
-                </div>
-            </div>
-            <button type="submit" class="signup-button">
-                Sign Up
-            </button>
-        </form>
-        <p class="login-link">
-            Already have an account? <a href="/login">Login here</a>
-        </p>
+  <div class="container">
+    <div class="signup">
+      <h2>Signup</h2>
+      <form action="" method="POST" autocomplete="off">
+        <div class="input-box">
+          <input type="text" name="full_name" required />
+          <span class="floating-label">Full Name</span>
+        </div>
+        <div class="input-box">
+          <input type="text" name="username" required />
+          <span class="floating-label">Username</span>
+        </div>
+        <div class="input-box">
+          <input type="date" name="dob" required />
+          <span class="floating-label">Date of Birth</span>
+        </div>
+        <div class="input-box">
+          <input type="text" name="email" required />
+          <span class="floating-label">Email</span>
+        </div>
+        <div class="input-box password-box">
+          <input type="password" id="password" name="password" required />
+          <span class="floating-label">Password</span>
+          <img src="{{url_for('static', filename='image/eye.png')}}" id="togglePassword" onclick="togglePasswordVisibility(this, 'password')"/>
+        </div>
+        <div class="input-box password-box">
+          <input type="password" id="retypePassword" name="retypePassword" required />
+          <span class="floating-label">Re-enter Password</span>
+          <img src="{{url_for('static', filename='image/eye.png')}}" id="toggleRePassword" onclick="togglePasswordVisibility(this, 'retypePassword')"/>
+        </div>
+        <div class="button">
+          <button type="submit">Register</button>
+        </div>
+        <div class="foot">
+          <p>Already have an account? <a href="/login">Login</a></p>
+        </div>
+      </form>
     </div>
-</body>
+  </div>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const passIn = document.getElementById('password');
-        const btn = document.getElementById('togglePassword');
-        const eye = document.getElementById('eye');
+  function togglePasswordVisibility(iconElement, passwordFieldId) {
+    const passwordField = document.getElementById(passwordFieldId);
+    const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordField.setAttribute('type', type);
 
-        btn.addEventListener('click', function () {
-            const type = passIn.getAttribute('type') === 'password' ? 'text' : 'password';
-            passIn.setAttribute('type', type);
-            // No need to focus if you click the button, it can be distracting
-            // passIn.focus();
-            if (type === 'password') {
-                // Ensure these paths are correct in your Flask app
-                eye.src = "{{url_for('static', filename='/image/eye.png')}}";
-            } else {
-                eye.src = "{{url_for('static', filename='/image/hide.png')}}";
-            }
-        });
-    });
+    if (type === 'password') {
+      iconElement.src = "{{url_for('static', filename='image/eye.png')}}"; 
+    } else {
+      iconElement.src = "{{url_for('static', filename='image/hide.png')}}";
+    }
+  }
 </script>
+</body>
 </html>

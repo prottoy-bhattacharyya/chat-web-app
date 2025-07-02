@@ -258,7 +258,7 @@
         {% endif %}
     {% endwith %}
 
-    <div class="bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-sm sm:max-w-lg md:max-w-2xl lg:max-w-3xl border border-gray-700 animated-card">
+    <div class="bg-gray-800 p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-3xl sm:max-w-lg md:max-w-4xl lg:max-w-3xl border border-gray-700 animated-card">
         <img id="settings" src="{{url_for('static', filename='image/settings.png')}}" alt="Settings Icon"
             class="w-20 sm:w-24 mx-auto mb-4 sm:mb-6 image-hover-effect">
         <h2 class="text-3xl sm:text-4xl font-bold text-center text-white mb-2 sm:mb-4">Admin Panel</h2>
@@ -397,6 +397,39 @@
                             <td>{{message.receiver_username}}</td>
                             <td>{{message.message_text}}</td>
                             <td>{{message.timestamp}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mb-8 sm:mb-10">
+            <h3 class="text-xl sm:text-2xl font-semibold text-white mb-3 sm:mb-4">All Friendships Info</h3>
+            <div class="scrollable-table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Sender Username</th>
+                            <th>Prompt</th>
+                            <th>Response</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    {% if not aiChat %}
+                    <tbody>
+                        <tr>
+                            <td colspan="4">No messages found.</td>
+                        </tr>
+                    </tbody>
+                    {% endif %}
+                    <tbody>
+                        {% for chat_info in aiChat %}
+                        <tr>
+                            <td>{{chat_info.sender_username}}</td>
+                            <td>{{chat_info.prompt}}</td>
+                            <td>{{chat_info.response}}</td>
+                            <td>{{chat_info.timestamp}}</td>
                         </tr>
                         {% endfor %}
                     </tbody>

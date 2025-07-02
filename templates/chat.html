@@ -9,43 +9,45 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
     <style>
         :root {
-            --primary-blue: #3B82F6;
-            --secondary-blue: #60A5FA;
+            --primary-blue: #60A5FA; /* Lighter blue for primary actions */
+            --secondary-blue: #93C5FD; /* Even lighter blue */
             --accent-green: #34D399;
-            --text-dark: #1F2937;
-            --text-light: #F9FAFB;
-            --bg-light: #F9FAFB;
-            --bg-dark: #E5E7EB;
-            --border-color: #D1D5DB;
+            --text-dark: #E5E7EB; /* Light gray for dark text (on dark background) */
+            --text-light: #1F2937; /* Dark gray for light text (on light background) */
+            --bg-light: #1F2937; /* Dark background for overall page */
+            --bg-dark: #374151; /* Slightly lighter dark background for elements */
+            --border-color: #4B5563; /* Darker border color */
         }
 
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-light);
-            overflow: hidden; 
+            color: var(--text-dark); /* Default text color for body */
+            overflow: hidden;
         }
 
         .chat-messages-container::-webkit-scrollbar {
             width: 8px;
         }
         .chat-messages-container::-webkit-scrollbar-track {
-            background: var(--bg-dark);
+            background: rgba(96, 165, 250, 0.2);
             border-radius: 10px;
         }
         .chat-messages-container::-webkit-scrollbar-thumb {
-            background: var(--secondary-blue);
+            background: var(--primary-blue);
             border-radius: 10px;
         }
         .chat-messages-container::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-blue);
+            background: var(--secondary-blue);
         }
 
         .no-chat-selected {
-            flex: 1;
             display: flex;
-            align-items: center;
-            justify-content: center;
             height: 100%;
+            margin-top: 20%;
+        }
+        .chat-header-content {
+            background-color: var(--bg-dark); /* Darker background for header content */
         }
 
         .no-chat-content {
@@ -54,12 +56,12 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            color: #6B7280;
+            color: #9CA3AF; /* Lighter gray for descriptions */
         }
         .no-chat-icon {
             width: 8rem;
             height: 8rem;
-            background: rgba(11, 100, 245, 0.144); 
+            background: rgba(96, 165, 250, 0.2); /* Lighter blue with transparency */
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -68,7 +70,7 @@
             animation: pulse 2s infinite ease-in-out;
         }
         .no-chat-icon svg {
-            width: 60px; 
+            width: 60px;
             height: 60px;
             color: var(--primary-blue);
         }
@@ -76,7 +78,7 @@
             font-family: 'Poppins', sans-serif;
             font-size: 1.8rem;
             font-weight: 700;
-            color: var(--text-dark);
+            color: var(--text-dark); /* Using text-dark for titles in dark mode */
         }
         .no-chat-description {
             font-size: 1rem;
@@ -98,13 +100,14 @@
             transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         }
         .friend-list-item:hover {
+            background-color: rgba(96, 165, 250, 0.1); /* Lighter blue hover for dark mode */
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Darker shadow */
         }
         .friend-list-item.active-chat {
             background-color: var(--primary-blue) !important;
             color: var(--text-light) !important;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 4px 15px rgba(96, 165, 250, 0.4); /* Shadow for active chat in dark mode */
             transform: scale(1.02);
             position: relative;
             z-index: 1;
@@ -129,14 +132,14 @@
             border-right: none;
             border-bottom: 1px solid var(--border-color);
             max-height: 100%;
-            display: flex; 
+            display: flex;
             flex-direction: column;
-            position: absolute; 
+            position: absolute;
             top: 0;
             left: 0;
-            height: 100%; 
+            height: 100%;
             z-index: 10;
-            transform: translateX(0%); 
+            transform: translateX(0%);
             transition: transform 0.3s ease-out;
         }
 
@@ -144,14 +147,15 @@
             flex: 1;
             width: 100%;
             margin: 0;
-            border-radius: 0; 
+            border-radius: 0;
 
             display: none;
-            position: absolute; 
+            position: absolute;
             top: 0;
             left: 0;
-            height: 100%; 
-            z-index: 5; 
+            height: 100%;
+            z-index: 5;
+           
         }
 
         .friends-sidebar.hidden-mobile {
@@ -159,13 +163,14 @@
         }
 
         .chat-area.visible-mobile {
-            display: flex; 
-            z-index: 15; 
+            display: flex;
+            z-index: 15;
         }
 
         .main-layout {
             flex-direction: column;
-            position: relative; 
+            position: relative;
+            
         }
 
         @media (min-width: 769px) {
@@ -173,18 +178,18 @@
                 width: 25%;
                 border-right: 1px solid var(--border-color);
                 border-bottom: none;
-                max-height: 100%; 
-                position: static; 
-                transform: translateX(0%); 
-                display: flex; 
+                max-height: 100%;
+                position: static;
+                transform: translateX(0%);
+                display: flex;
             }
             .chat-area {
                 flex: 1;
                 width: auto;
-                margin: 1rem; 
-                border-radius: 0.75rem; 
-                position: static; 
-                display: flex; 
+                margin: 1rem;
+                border-radius: 0.75rem;
+                position: static;
+                display: flex;
             }
 
             #chat-input-area {
@@ -197,12 +202,16 @@
             .back-button-mobile {
                 display: none !important;
             }
+            .overflow-y-auto{
+                /* overflow-y: auto; */
+                    background-color:rgb(31 41 55 / var(--tw-bg-opacity, 1));
+            }
         }
 
         @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(96, 165, 250, 0.4); } /* Lighter blue for pulse */
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(96, 165, 250, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(96, 165, 250, 0); }
         }
         @keyframes pulse-green {
             0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4); }
@@ -240,7 +249,7 @@
     </style>
 </head>
 <body class="flex flex-col h-screen">
-    <header class="bg-gradient-to-r from-blue-600 to-blue-800 text-white p-4 shadow-xl flex justify-between items-center z-10">
+    <header class="bg-gradient-to-r from-blue-700 to-blue-900 text-white p-4 shadow-xl flex justify-between items-center z-10">
         <h1 class="text-3xl font-extrabold tracking-tight">Chat Cyan</h1>
         <div class="flex items-center space-x-6">
             <span class="text-lg font-medium">Welcome, {{ current_full_name }}!</span>
@@ -248,34 +257,34 @@
     </header>
 
     <main class="flex flex-1 overflow-hidden main-layout">
-        <div id="friends-sidebar" class="bg-white border-r border-gray-200 p-4 flex flex-col shadow-lg friends-sidebar">
-            <h3 class="text-2xl font-bold text-gray-800 mb-6 border-b pb-4">Friends</h3>
+        <div id="friends-sidebar" class="bg-gray-800 border-r border-gray-700 p-4 flex flex-col shadow-lg friends-sidebar">
+            <h3 class="text-2xl font-bold text-gray-100 mb-6 border-b border-gray-700 pb-4">Friends</h3>
             <div class="mb-5">
                 <input type="text" id="friend-search" placeholder="Search friends..."
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-base shadow-sm focus:shadow-md transition duration-200">
+                        class="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-base shadow-sm focus:shadow-md transition duration-200 bg-gray-700 text-white placeholder-gray-400">
             </div>
             <ul id="friends-list" class="flex-1 overflow-y-auto space-y-3">
                 {% for user in users %}
-                    <li class="friend-list-item p-4 rounded-xl cursor-pointer hover:bg-blue-50 transition duration-150 ease-in-out flex items-center justify-between"
+                    <li class="friend-list-item p-4 rounded-xl cursor-pointer hover:bg-blue-900 transition duration-150 ease-in-out flex items-center justify-between"
                         data-user-id="{{ user.id }}"
                         data-username="{{ user.username }}"
                         data-full-name="{{ user.full_name }}">
                         <div class="flex items-center space-x-3">
-                            <img id="profile-image" src="static/profile_photos/id{{ user.id }}.jpg" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-gray-300 group-hover:border-blue-400 transition duration-200"/>
-                            <span id="friend-{{ user.id }}" class="font-medium text-gray-700 text-lg">{{ user.full_name }}</span>
+                            <img id="profile-image" src="static/profile_photos/id{{ user.id }}.jpg" alt="Profile" class="w-10 h-10 rounded-full object-cover border-2 border-gray-500 group-hover:border-blue-400 transition duration-200"/>
+                            <span id="friend-{{ user.id }}" class="font-medium text-gray-200 text-lg">{{ user.full_name }}</span>
                         </div>
-                        <div id="status-{{ user.id }}" class="w-3 h-3 bg-gray-400 rounded-full border-2 border-white status-indicator"></div>
+                        <div id="status-{{ user.id }}" class="w-3 h-3 bg-gray-600 rounded-full border-2 border-gray-800 status-indicator"></div>
                     </li>
                 {% endfor %}
             </ul>
         </div>
 
-        <div id="chat-area" class="flex flex-col bg-white rounded-xl shadow-xl chat-area">
-            <div id="chat-header" class="bg-gradient-to-r from-gray-100 to-gray-200 p-4 border-b border-gray-200 text-center text-xl font-semibold text-gray-800 rounded-t-xl flex items-center justify-center min-h-[70px] relative">
-                <button id="back-to-friends" class="back-button-mobile absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-gray-300 hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 hidden md:hidden">
-                    <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        <div id="chat-area" class="flex flex-col bg-gray-900 rounded-xl shadow-xl chat-area">
+            <div id="chat-header" class="text-center text-xl font-semibold text-gray-100 rounded-t-xl flex items-center justify-center min-h-[70px] relative bg-gray-800">
+                <button id="back-to-friends" class="back-button-mobile absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 hidden md:hidden">
+                    <svg class="w-6 h-6 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 </button>
-                <div id="chat-header-content" class="flex items-center justify-center space-x-4 flex-grow">
+                <div id="chat-header-content" class="bg-gray-800 flex items-center justify-center space-x-4 flex-grow">
                     <div id="no-chat-selected" class="no-chat-selected">
                         <div class="no-chat-content">
                             <div class="no-chat-icon">
@@ -284,6 +293,7 @@
                                 </svg>
                             </div>
                             <h3 class="no-chat-title">Select a friend to start chatting</h3>
+                            <p class="no-chat-description">Your conversations will appear here.</p>
                         </div>
                     </div>
                     <div id="selected-friend-info" class="hidden flex items-center space-x-4 animate-fadeIn">
@@ -293,9 +303,9 @@
 
             <div id="chat-messages" class="flex-1 p-6 overflow-y-auto chat-messages-container flex flex-col space-y-3"></div>
 
-            <div id="chat-input-area" class="bg-gray-100 p-3 py-3 border-t border-gray-200 flex items-center space-x-4 rounded-b-xl hidden">
+            <div id="chat-input-area" class="bg-gray-800 p-3 py-3 border-t border-gray-700 flex items-center space-x-4 rounded-b-xl hidden">
                 <input type="text" id="message-input" autocomplete="off" placeholder="Type your message..."
-                       class="flex-1 px-5 py-3 border border-gray-300 rounded-full focus:ring-blue-500 focus:border-blue-500 text-base shadow-sm focus:shadow-md transition duration-200">
+                        class="flex-1 px-5 py-3 border border-gray-600 rounded-full focus:ring-blue-500 focus:border-blue-500 text-base shadow-sm focus:shadow-md transition duration-200 bg-gray-700 text-white placeholder-gray-400">
                 <button id="send-button"
                         class="bg-blue-600 text-white px-8 py-3 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300 ease-in-out transform hover:scale-105 shadow-md">
                     Send
@@ -364,12 +374,12 @@
             const currentActive = document.querySelector('#friends-list li.active-chat');
             if (currentActive) {
                 currentActive.classList.remove('active-chat');
-                currentActive.classList.add('hover:bg-blue-50');
+                currentActive.classList.add('hover:bg-blue-900'); /* Adjusted for dark mode hover */
             }
 
             targetLi.classList.add('active-chat');
-            targetLi.classList.remove('hover:bg-blue-50');
-            
+            targetLi.classList.remove('hover:bg-blue-900'); /* Adjusted for dark mode hover */
+
             selectedFriendId = targetLi.dataset.userId;
             selectedFriendUsername = targetLi.dataset.username;
             selectedFriendFullName = targetLi.dataset.fullName;
@@ -378,12 +388,12 @@
             noChatSelectedDiv.classList.add('hidden'); // Hide the "no chat selected" message
             selectedFriendInfoDiv.classList.remove('hidden'); // Show friend info container
             selectedFriendInfoDiv.innerHTML = `
-                <img id="profile-image" src="static/profile_photos/id${selectedFriendId}.jpg" alt="Profile" class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md" />
-                <h2 class="text-2xl font-bold text-gray-800">${selectedFriendFullName}</h2>
+                <img id="profile-image" src="static/profile_photos/id${selectedFriendId}.jpg" alt="Profile" class="w-14 h-14 rounded-full object-cover border-2 border-gray-700 shadow-md" />
+                <h2 class="text-2xl font-bold text-gray-100">${selectedFriendFullName}</h2>
             `;
-            chatInputArea.classList.remove('hidden'); 
+            chatInputArea.classList.remove('hidden');
             messageInput.focus();
-            
+
             const profile_image = document.querySelectorAll('#profile-image');
             profile_image.forEach((image)=>{
                 image.addEventListener('error',()=>{
@@ -409,7 +419,7 @@
         const currentActive = document.querySelector('#friends-list li.active-chat');
         if (currentActive) {
             currentActive.classList.remove('active-chat');
-            currentActive.classList.add('hover:bg-blue-50');
+            currentActive.classList.add('hover:bg-blue-900'); /* Adjusted for dark mode hover */
         }
 
         updateMobileView(); // Go back to friends list view on mobile
@@ -437,7 +447,7 @@
     }
 
     function displayMessage(senderId, senderUsername, messageText, timestamp) {
-        
+
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('mb-3', 'p-3', 'rounded-2xl', 'max-w-[75%]', 'break-words', 'shadow-md');
 
@@ -446,7 +456,7 @@
         if (isCurrentUser) {
             messageDiv.classList.add('bg-blue-600', 'text-white', 'ml-auto', 'rounded-br-none', 'chat-message-sent');
         } else {
-            messageDiv.classList.add('bg-gray-200', 'text-gray-800', 'mr-auto', 'rounded-bl-none', 'chat-message-received');
+            messageDiv.classList.add('bg-gray-700', 'text-gray-100', 'mr-auto', 'rounded-bl-none', 'chat-message-received'); /* Adjusted for dark mode */
         }
 
         const messageP = document.createElement('p');
@@ -455,7 +465,7 @@
         messageDiv.appendChild(messageP);
 
         const timestampSpan = document.createElement('span');
-        timestampSpan.classList.add('block', 'text-xs', 'mt-1', isCurrentUser ? 'text-blue-100' : 'text-gray-500', 'text-right', 'opacity-80');
+        timestampSpan.classList.add('block', 'text-xs', 'mt-1', isCurrentUser ? 'text-blue-100' : 'text-gray-400', 'text-right', 'opacity-80'); /* Adjusted for dark mode */
         timestampSpan.textContent = timestamp;
         messageDiv.appendChild(timestampSpan);
 
@@ -478,7 +488,7 @@
         } else {
             const friendListItem = document.querySelector(`li[data-user-id="${data.sender_id}"]`);
             if (friendListItem && !friendListItem.classList.contains('active-chat')) {
-                friendListItem.classList.add('border-l-4', 'border-blue-500'); 
+                friendListItem.classList.add('border-l-4', 'border-blue-500');
             }
         }
     });
@@ -498,11 +508,11 @@
         const statusElement = document.getElementById(`status-${data.user_id}`);
         if (statusElement) {
             if (data.status === 'online') {
-                statusElement.classList.remove('bg-gray-400');
+                statusElement.classList.remove('bg-gray-600'); /* Adjusted for dark mode */
                 statusElement.classList.add('bg-green-400', 'animate-pulse-green');
             } else {
                 statusElement.classList.remove('bg-green-400', 'animate-pulse-green');
-                statusElement.classList.add('bg-gray-400');
+                statusElement.classList.add('bg-gray-600'); /* Adjusted for dark mode */
             }
         }
     });
@@ -513,7 +523,7 @@
         const statusElement = document.getElementById(`status-${userId}`);
         if (statusElement) {
             statusElement.classList.remove('bg-green-400', 'animate-pulse-green');
-            statusElement.classList.add('bg-gray-400');
+            statusElement.classList.add('bg-gray-600'); /* Adjusted for dark mode */
         }
     });
 
@@ -541,6 +551,6 @@
     });
 
     window.addEventListener('resize', updateMobileView);
-    
+
 </script>
 </html>

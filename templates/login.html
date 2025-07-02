@@ -3,316 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Chat App</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #002544, #001a30, #0a0a1a);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden; /* Prevent scrollbar from background animations */
-        }
-
-        .flash-message {
-            padding: 0.75rem 1.25rem;
-            border: 1px solid transparent;
-            border-radius: 0.375rem;
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 50px;
-            width: 260px;
-            z-index: 9999; /* Optional: ensures it appears on top */
-        }
-        .flash-message.success {
-            color: #0f5132;
-            background-color: #d1e7dd;
-            border-color: #badbcc;
-        }
-        .flash-message.danger {
-            color: #842029;
-            background-color: #f8d7da;
-            border-color: #f5c2c7;
-        }
-        .flash-message.info {
-            color: #055160;
-            background-color: #cff4fc;
-            border-color: #b6effb;
-        }
-        .flash-message.warning {
-            color: #664d03;
-            background-color: #fff3cd;
-            border-color: #ffecb5;
-        }
-
-        .login-container {
-            background: rgba(255, 255, 255, 0.08); /* Semi-transparent background */
-            backdrop-filter: blur(10px); /* Frosted glass effect */
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 40px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-            animation: fadeInScale 0.8s ease-out forwards;
-            position: relative;
-            z-index: 10;
-        }
-
-        .login-container h2 {
-            background: linear-gradient(45deg, #6dd5ed, #2193b0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 700;
-            margin-bottom: 30px;
-            font-size: 2.5rem;
-            letter-spacing: 1px;
-            animation: slideInFromTop 0.8s ease-out forwards;
-        }
-
-        .form-group label {
-            color: #e0e0e0;
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: block;
-            opacity: 0; /* For animation */
-            transform: translateY(20px); /* For animation */
-            animation: fadeInSlideUp 0.6s ease-out forwards;
-            animation-delay: var(--delay);
-        }
-
-        .form-group input {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #ffffff;
-            padding: 12px 20px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            outline: none;
-            width: 100%; /* Ensure inputs take full width */
-            opacity: 0; /* For animation */
-            transform: translateY(20px); /* For animation */
-            animation: fadeInSlideUp 0.6s ease-out forwards;
-            animation-delay: var(--delay);
-        }
-
-        .form-group input::placeholder {
-            color: #a0a0a0;
-        }
-
-        .form-group input:focus {
-            border-color: #6dd5ed;
-            box-shadow: 0 0 0 3px rgba(109, 213, 237, 0.4);
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .toggle-password-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s ease-in-out;
-            opacity: 0; /* For animation */
-            transform: translateY(20px); /* For animation */
-            animation: fadeInSlideUp 0.6s ease-out forwards;
-            animation-delay: var(--delay);
-        }
-
-        .toggle-password-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .toggle-password-btn img {
-            filter: invert(100%) brightness(150%) sepia(10%) saturate(1000%) hue-rotate(180deg); /* Adjust eye icon color for dark background */
-            width: 20px;
-        }
-
-        .login-button {
-            background: linear-gradient(45deg, #6dd5ed, #2193b0);
-            color: #ffffff;
-            font-weight: 600;
-            padding: 14px 25px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 25px;
-            letter-spacing: 0.5px;
-            animation: popIn 0.5s ease-out forwards;
-            animation-delay: 0.7s; /* Delay for button */
-            opacity: 0; /* For animation */
-            transform: scale(0.9); /* For animation */
-        }
-
-        .login-button:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 5px 15px rgba(33, 147, 176, 0.4);
-        }
-
-        .signup-link {
-            text-align: center;
-            margin-top: 25px;
-            color: #b0b0b0;
-            font-size: 0.9rem;
-            animation: fadeIn 1s ease-out forwards;
-            animation-delay: 0.9s;
-            opacity: 0;
-        }
-
-        .signup-link a {
-            color: #6dd5ed;
-            text-decoration: none;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        .signup-link a:hover {
-            color: #2193b0;
-            text-decoration: underline;
-        }
-
-        /* --- Background Animation --- */
-        .background-shapes {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .shape {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            animation: moveShapes 15s infinite ease-in-out alternate;
-        }
-
-        .shape:nth-child(1) {
-            width: 150px;
-            height: 150px;
-            top: 10%;
-            left: 5%;
-            animation-delay: 0s;
-        }
-
-        .shape:nth-child(2) {
-            width: 100px;
-            height: 100px;
-            top: 50%;
-            left: 80%;
-            animation-delay: 5s;
-        }
-
-        .shape:nth-child(3) {
-            width: 200px;
-            height: 200px;
-            top: 70%;
-            left: 20%;
-            animation-delay: 10s;
-        }
-        .shape:nth-child(4) {
-            width: 80px;
-            height: 80px;
-            top: 30%;
-            left: 60%;
-            animation-delay: 3s;
-        }
-        .shape:nth-child(5) {
-            width: 120px;
-            height: 120px;
-            top: 85%;
-            left: 50%;
-            animation-delay: 7s;
-        }
-
-        /* --- Keyframe Animations --- */
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        @keyframes slideInFromTop {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes fadeInSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes popIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes moveShapes {
-            0% {
-                transform: translate(0, 0) scale(1);
-            }
-            25% {
-                transform: translate(20px, 30px) scale(1.05);
-            }
-            50% {
-                transform: translate(0, 60px) scale(1);
-            }
-            75% {
-                transform: translate(-20px, 30px) scale(0.95);
-            }
-            100% {
-                transform: translate(0, 0) scale(1);
-            }
-        }
-    </style>
+    <title>Chat aplication</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+     rel="stylesheet"
+     integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+     crossorigin="anonymous">
+     
+     <link rel="stylesheet" href="{{url_for('static', filename='login.css')}}">
 </head>
-<body class="flex items-center justify-center min-h-screen">
+<body>
+    <div class="background-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    <!-- {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="mb-4">
+                {% for category, message in messages %}
+                    <div class="flash-message {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %} -->
+  <div class="logo"><a href="/"><img src="{{url_for('static', filename='image/logo4.png')}}" alt=""></a></div>
+  <div class="container-wrapper">
+    <div class="container">
+        <form class="form" method="POST">
+            <div class="text"><a href="/login"><h1>Login</h1></a></div>
+                <div class="username">
+                    <input type="text" name="username" required>
+                    <div class="placeholder">Username</div>
+                </div>
+                <div class="pass">
+                    <input type="password" id="myInput" name="password" required>
+                    <div class="placeholder-pass">Password</div>
+                </div>
+                <div class="foget-show">
+                    <label for="show"><input type="checkbox" onclick="myFunction()">Show password</label>
+                </div>
+                
+                <div class="button">
+                <button type="submit" class="btn"><a>Log in</a></button>
+                </div>
+                <div class="register">
+                    Or, Create an account
+                    <a href="/signup">Register</a>
+                </div>
+            </form>
+        </div>
+    </div>
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <div class="mb-4">
@@ -322,58 +64,6 @@
             </div>
         {% endif %}
     {% endwith %}
-
-    <div class="background-shapes">
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-    </div>
-
-    <div class="login-container w-full max-w-md">
-        <h2 class="text-3xl font-bold text-center mb-6">Login</h2>
-
-        <form method="POST" autocomplete="off" class="space-y-5">
-            <div class="form-group" style="--delay: 0.2s;">
-                <label for="username_email">Username</label>
-                <input type="text" id="username_email" name="username" placeholder="Enter your username" required>
-            </div>
-            <div class="form-group" style="--delay: 0.4s;">
-                <label for="password">Password</label>
-                <div class="relative flex items-center">
-                    <input type="password" id="password" placeholder="password" required name="password" class="pr-12">
-                    <button type="button" id="togglePassword" class="toggle-password-btn absolute right-3">
-                        <!-- Ensure you have these images in your static folder -->
-                        <img id="eye" src="{{url_for('static', filename='/image/eye.png')}}" alt="Show/Hide Password">
-                    </button>
-                </div>
-            </div>
-            <button type="submit" class="login-button">
-                Login
-            </button>
-        </form>
-        <p class="signup-link">
-            Don't have an account? <a href="/signup">Sign up here</a>
-        </p>
-    </div>
 </body>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const passIn = document.getElementById('password');
-        const btn = document.getElementById('togglePassword');
-        const eye = document.getElementById('eye');
-
-        btn.addEventListener('click', function () {
-            const type = passIn.getAttribute('type') === 'password' ? 'text' : 'password';
-            passIn.setAttribute('type', type);
-            if (type === 'password') {
-                // Ensure these paths are correct in your Flask app
-                eye.src = "{{url_for('static', filename='/image/eye.png')}}";
-            } else {
-                eye.src = "{{url_for('static', filename='/image/hide.png')}}";
-            }
-        });
-    });
-</script>
+<script src="{{url_for('static', filename='showpass.js')}}"></script>
 </html>

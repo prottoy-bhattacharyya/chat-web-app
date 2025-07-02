@@ -20,24 +20,26 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #a7b7ed, #e0c3fc);
+            /* Dark mode background */
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: relative; 
-            overflow-x: hidden; 
+            position: relative;
+            overflow-x: hidden;
+            color: #e0e0e0; /* Light text color for dark mode */
         }
+
         .antialiased {
             font-family: 'Inter', sans-serif;
             display: flex;
             justify-content: center;
-            align-items: flex-start; 
+            align-items: flex-start;
             margin: 0;
             padding-top: 2rem;
         }
 
-      
         .background-animation {
             position: absolute;
             top: 0;
@@ -52,7 +54,8 @@
         .background-animation::after {
             content: '';
             position: absolute;
-            background: rgba(255, 255, 255, 0.1);
+            /* Darker, subtle background elements */
+            background: rgba(40, 40, 60, 0.4);
             border-radius: 50%;
             animation: moveBackground 20s infinite alternate;
         }
@@ -76,18 +79,25 @@
         }
 
         @keyframes moveBackground {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(100px, 50px) scale(1.1); }
-            100% { transform: translate(0, 0) scale(1); }
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(100px, 50px) scale(1.1);
+            }
+
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
         }
 
-
-       
         .header {
-            background: rgba(255, 255, 255, 0.1);
+            /* Darker header with subtle transparency */
+            background: rgba(26, 26, 46, 0.7);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(60, 60, 90, 0.5);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
             width: 100%;
             position: sticky;
             top: 0;
@@ -115,9 +125,9 @@
         }
 
         .header-icon {
-            width: 36px; 
+            width: 36px;
             height: 36px;
-            color: #2563eb;
+            color: #6a8cff; /* Lighter blue for icon */
             transition: transform 0.3s ease;
         }
 
@@ -128,68 +138,70 @@
         .header-title {
             font-size: 26px;
             font-weight: 700;
-            color: #111827;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            color: #e0e0e0; /* Light text color */
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
         }
 
-       
         .main-container {
             max-width: 1152px;
             margin: 0 auto;
             padding: 0 20px;
-            padding-top: 40px; 
-            flex-grow: 1; 
+            padding-top: 40px;
+            flex-grow: 1;
         }
 
         .content-header {
-            margin-bottom: 30px; 
-            text-align: center; 
+            margin-bottom: 30px;
+            text-align: center;
             animation: slideInDown 0.6s ease-out;
         }
 
         .content-title {
-            font-size: 28px; 
+            font-size: 28px;
             font-weight: 700;
-            color: #111827;
+            color: #e0e0e0; /* Light text color */
             margin-bottom: 10px;
         }
 
         .content-subtitle {
-            color: #4b5563;
+            color: #b0b0b0; /* Slightly darker light text color */
             font-size: 16px;
         }
 
-        
         .people-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
-            gap: 25px; 
-            padding-bottom: 40px; 
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 25px;
+            padding-bottom: 40px;
         }
 
-      
         .person-card {
-            background: rgba(255, 255, 255, 0.2); 
-            backdrop-filter: blur(5px); 
-            border-radius: 15px; 
-            border: 1px solid rgba(255, 255, 255, 0.3); 
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1); 
+            /* Darker card with subtle transparency and border */
+            background: rgba(35, 35, 55, 0.6);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            border: 1px solid rgba(60, 60, 90, 0.7);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
             overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            animation: fadeIn 0.5s ease-out forwards; 
-            opacity: 0; 
+            animation: fadeIn 0.5s ease-out forwards;
+            opacity: 0;
         }
 
-        .person-card:nth-child(even) { animation-delay: 0.1s; }
-        .person-card:nth-child(odd) { animation-delay: 0.2s; }
+        .person-card:nth-child(even) {
+            animation-delay: 0.1s;
+        }
 
+        .person-card:nth-child(odd) {
+            animation-delay: 0.2s;
+        }
 
         .person-card:hover {
-            transform: translateY(-8px) scale(1.02); 
-            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.15);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.6);
         }
 
         .person-image-container {
@@ -197,7 +209,7 @@
             position: relative;
             overflow: hidden;
             cursor: pointer;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            border-bottom: 1px solid rgba(60, 60, 90, 0.7);
         }
 
         .person-image {
@@ -205,12 +217,12 @@
             height: 100%;
             object-fit: cover;
             transition: transform 0.4s ease;
-            filter: grayscale(20%);
+            filter: grayscale(40%); /* Slightly more grayscale for dark mode */
         }
 
         .person-card:hover .person-image {
             transform: scale(1.1);
-            filter: grayscale(0%); 
+            filter: grayscale(0%);
         }
 
         .person-content {
@@ -224,7 +236,7 @@
         .person-name {
             text-align: center;
             font-weight: 600;
-            color: #111827;
+            color: #e0e0e0; /* Light text color */
             font-size: 16px;
             margin-bottom: 12px;
             line-height: 1.3;
@@ -250,51 +262,51 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            height: 40px; 
+            height: 40px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px; 
+            gap: 8px;
         }
 
         .add-friend-btn {
-            background-color: #2563eb;
+            background-color: #4a69bd; /* Darker blue */
             color: white;
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 4px 10px rgba(74, 105, 189, 0.4);
         }
 
         .add-friend-btn:hover {
-            background-color: #1d4ed8;
+            background-color: #3b508f; /* Even darker blue */
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 6px 12px rgba(74, 105, 189, 0.6);
         }
 
         .remove-btn {
-            background-color: rgba(255, 255, 255, 0.4); 
-            color: #374151;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            background-color: rgba(60, 60, 90, 0.4); /* Darker transparent background */
+            color: #d0d0d0; /* Light gray text */
+            border: 1px solid rgba(90, 90, 120, 0.5);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
         .remove-btn:hover {
-            background-color: rgba(255, 255, 255, 0.6);
-            color: #1f2937;
+            background-color: rgba(80, 80, 110, 0.6);
+            color: #ffffff;
             transform: translateY(-2px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
         }
 
         .no-friends {
-            grid-column: 1 / -1; 
+            grid-column: 1 / -1;
             text-align: center;
             padding: 50px 20px;
-            font-size: 18px;
-            color: #6b7280;
-            background: rgba(255, 255, 255, 0.3);
+            /* Darker transparent background for no friends message */
+            background: rgba(35, 35, 55, 0.6);
             backdrop-filter: blur(5px);
             border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(60, 60, 90, 0.7);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             animation: fadeIn 0.8s ease-out;
+            color: #b0b0b0; /* Light gray text */
         }
 
         .popup-overlay {
@@ -303,8 +315,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(5px); 
+            background-color: rgba(0, 0, 0, 0.5); /* Darker overlay */
+            backdrop-filter: blur(8px); /* Increased blur */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -320,18 +332,19 @@
         }
 
         .popup-card {
-            background-color: rgba(255, 255, 255, 0.7); 
-            backdrop-filter: blur(25px); 
+            /* Darker popup card with stronger blur */
+            background-color: rgba(25, 25, 45, 0.8);
+            backdrop-filter: blur(30px);
             border-radius: 20px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25); 
-            padding: 30px; 
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+            padding: 30px;
             width: 90%;
-            max-width: 450px; 
+            max-width: 450px;
             position: relative;
             text-align: center;
             transform: scale(0.9);
             opacity: 0;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease; /* Bounce effect */
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
         }
 
         .popup-overlay.show .popup-card {
@@ -341,29 +354,30 @@
 
         .popup-close-btn {
             position: absolute;
-            top: 15px; 
+            top: 15px;
             right: 15px;
             background: none;
             border: none;
             font-size: 30px;
             cursor: pointer;
-            color: #6b7280;
+            color: #b0b0b0; /* Light gray close button */
             transition: color 0.2s ease, transform 0.2s ease;
         }
 
         .popup-close-btn:hover {
-            color: #ef4444; 
+            color: #ff6b6b; /* Reddish hover */
             transform: rotate(90deg);
         }
 
         .popup-image {
-            width: 140px; 
+            width: 140px;
             height: 140px;
             border-radius: 50%;
             object-fit: cover;
-            margin-bottom: 20px; 
-            border: 4px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin: 0 auto;
+            margin-bottom: 20px;
+            border: 4px solid rgba(60, 60, 90, 0.8); /* Darker border */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             transition: transform 0.3s ease;
         }
 
@@ -372,28 +386,61 @@
         }
 
         .popup-name {
-            font-size: 26px; 
+            font-size: 26px;
             font-weight: 700;
-            color: #111827;
+            color: #e0e0e0; /* Light text color */
             margin-bottom: 12px;
         }
 
         .popup-info {
-            font-size: 17px; 
-            color: #4b5563;
+            font-size: 17px;
+            color: #b0b0b0; /* Light gray info text */
             line-height: 1.6;
             margin-bottom: 25px;
         }
 
+        /* Search input styling for dark mode */
+        .antialiased .relative {
+            background-color: rgba(35, 35, 55, 0.6);
+            border: 1px solid rgba(60, 60, 90, 0.7);
+        }
+        .antialiased .relative input {
+            color: #e0e0e0;
+            placeholder-color: #b0b0b0;
+        }
+        .antialiased .relative svg {
+            color: #b0b0b0;
+        }
+        .antialiased .relative .bg-blue-500 {
+            background-color: #4a69bd;
+        }
+        .antialiased .relative .bg-blue-500:hover {
+            background-color: #3b508f;
+        }
+
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes slideInDown {
-            from { opacity: 0; transform: translateY(-30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* Responsive Design */
@@ -430,12 +477,13 @@
 </head>
 
 <body>
-    <div class="background-animation"></div> <div class="header">
+    <div class="background-animation"></div>
+    <div class="header">
         <div class="header-container">
             <div class="header-content">
                 <div class="header-left">
-                    <svg class="header-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="header-icon" width="32" height="32" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                         <circle cx="9" cy="7" r="4" />
                         <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
@@ -447,33 +495,33 @@
         </div>
     </div>
 
-<div class="antialiased">
-    <div class="w-full max-w-2xl px-4">
-        <div class="relative bg-white bg-opacity-10 backdrop-blur-3xl flex items-center w-full rounded-full shadow-lg p-2 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-opacity-50 transition-all duration-300 ease-in-out">
-            <svg class="w-6 h-6 text-gray-700 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-            </svg>
-            <form method="POST">
-                <input
-                    name="friends_name"
-                    type="text"
-                    placeholder="Search for Friends..."
-                    class="flex-grow px-4 py-2 text-gray-700 outline-none bg-transparent placeholder-gray-700 text-lg rounded-full"
-                    aria-label="Search input"
-                />
-                <button
-                    type="submit"
-                    class="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-200 ease-in-out"
-                    aria-label="Perform search"
-                >
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
-                </button>
-            </form>
+    <div class="antialiased">
+        <div class="w-full max-w-2xl px-4">
+            <div
+                class="relative bg-white bg-opacity-10 backdrop-blur-3xl flex items-center w-full rounded-full shadow-lg p-2 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-opacity-50 transition-all duration-300 ease-in-out">
+                <svg class="w-6 h-6 text-gray-700 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <form method="POST">
+                    <input name="friends_name" type="text"
+                        placeholder="Search for Friends..."
+                        class="flex-grow px-4 py-2 text-gray-700 outline-none bg-transparent placeholder-gray-700 text-lg rounded-full"
+                        aria-label="Search input" />
+                    <button type="submit"
+                        class="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-200 ease-in-out"
+                        aria-label="Perform search">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
 
     <div class="main-container">
@@ -486,14 +534,11 @@
             {% if users %}
             {% for user in users %}
             <div class="person-card" data-user-id="{{user.id}}">
-                <div class="person-image-container"
-                    data-user-id="{{user.id}}"
-                    data-user-fullname="{{user.full_name}}"
-                    data-user-username = "{{user.username}}"
-                    data-user-email = "{{user.email}}"
-                    data-user-dob = "{{user.dob}}"
-                >
-                    <img src="{{url_for('static', filename='/profile_photos/id' + user.id + '.jpg')}}" alt="{{user.full_name}}" class="person-image">
+                <div class="person-image-container" data-user-id="{{user.id}}"
+                    data-user-fullname="{{user.full_name}}" data-user-username="{{user.username}}"
+                    data-user-email="{{user.email}}" data-user-dob="{{user.dob}}">
+                    <img src="{{url_for('static', filename='/profile_photos/id' + user.id + '.jpg')}}"
+                        alt="{{user.full_name}}" class="person-image">
                 </div>
                 <div class="person-content">
                     <h3 class="person-name">{{user.full_name}}</h3>
@@ -526,107 +571,103 @@
     </div>
 
     <script>
-    const socketio = io('/add_friend');
-    socketio.on('connect', () => {
-        console.log('Connected to add_friend namespace');
-    });
-
-    const people_grid = document.getElementById('people-grid');
-    const profilePopup = document.getElementById('profilePopup');
-    const closePopupBtn = document.getElementById('closePopupBtn');
-    const popupImage = document.getElementById('popupImage');
-    const popupName = document.getElementById('popupName');
-    const popupInfo = document.getElementById('popupInfo');
-
-    const personImages = document.querySelectorAll('.person-image');
-    personImages.forEach((image) => {   
-        image.addEventListener('error', () => {
-            image.src = "{{url_for('static', filename='/image/user.png')}}";
+        const socketio = io('/add_friend');
+        socketio.on('connect', () => {
+            console.log('Connected to add_friend namespace');
         });
-    });
 
-    people_grid.addEventListener('click', (event) => {
-        const add_friend_btn = event.target.closest('.add-friend-btn');
-        const remove_btn = event.target.closest('.remove-btn');
-        const person_image_container = event.target.closest('.person-image-container');
+        const people_grid = document.getElementById('people-grid');
+        const profilePopup = document.getElementById('profilePopup');
+        const closePopupBtn = document.getElementById('closePopupBtn');
+        const popupImage = document.getElementById('popupImage');
+        const popupName = document.getElementById('popupName');
+        const popupInfo = document.getElementById('popupInfo');
 
-        if (add_friend_btn) {
-            const receiver_id = add_friend_btn.dataset.userId;
-            socketio.emit('add_friend', { 'receiver_id': receiver_id });
+        const personImages = document.querySelectorAll('.person-image');
+        personImages.forEach((image) => {
+            image.addEventListener('error', () => {
+                image.src = "{{url_for('static', filename='/image/user.png')}}";
+            });
+        });
 
-            console.log("request sent");
+        people_grid.addEventListener('click', (event) => {
+            const add_friend_btn = event.target.closest('.add-friend-btn');
+            const remove_btn = event.target.closest('.remove-btn');
+            const person_image_container = event.target.closest('.person-image-container');
 
-            add_friend_btn.innerHTML = '<i class="fas fa-send-o"></i> Request Sent';
-            add_friend_btn.disabled = true; 
-            const card = add_friend_btn.closest('.person-card');
-            const removeBtn = card.querySelector('.remove-btn');
-            if (removeBtn) {
-                removeBtn.style.display = 'none'; 
-            }
-            card.style.opacity = '0.5';
-            card.style.pointerEvents = 'none'; 
-        }
+            if (add_friend_btn) {
+                const receiver_id = add_friend_btn.dataset.userId;
+                socketio.emit('add_friend', { 'receiver_id': receiver_id });
 
-        else if (remove_btn) {
-            const card = remove_btn.closest('.person-card');
-            card.classList.add('fade-out');
-            card.addEventListener('animationend', () => {
-                card.remove(); 
+                console.log("request sent");
 
-                if (people_grid.children.length === 0) {
-                    const noFriendsMessage = document.createElement('div');
-                    noFriendsMessage.classList.add('no-friends');
-                    noFriendsMessage.innerHTML = '<p>No People to Add</p>';
-                    people_grid.appendChild(noFriendsMessage);
+                add_friend_btn.innerHTML = '<i class="fas fa-send-o"></i> Request Sent';
+                add_friend_btn.disabled = true;
+                const card = add_friend_btn.closest('.person-card');
+                const removeBtn = card.querySelector('.remove-btn');
+                if (removeBtn) {
+                    removeBtn.style.display = 'none';
                 }
-            }, { once: true });
-        }
+                card.style.opacity = '0.5';
+                card.style.pointerEvents = 'none';
+            } else if (remove_btn) {
+                const card = remove_btn.closest('.person-card');
+                card.classList.add('fade-out');
+                card.addEventListener('animationend', () => {
+                    card.remove();
 
-        else if (person_image_container) {
-            const userId = person_image_container.dataset.userId;
-            const userFullname = person_image_container.dataset.userFullname;
-            const userName = person_image_container.dataset.userUsername;
-            const userEmail = person_image_container.dataset.userEmail;
-            const userDob = person_image_container.dataset.userDob;
+                    if (people_grid.children.length === 0) {
+                        const noFriendsMessage = document.createElement('div');
+                        noFriendsMessage.classList.add('no-friends');
+                        noFriendsMessage.innerHTML = '<p>No People to Add</p>';
+                        people_grid.appendChild(noFriendsMessage);
+                    }
+                }, { once: true });
+            } else if (person_image_container) {
+                const userId = person_image_container.dataset.userId;
+                const userFullname = person_image_container.dataset.userFullname;
+                const userName = person_image_container.dataset.userUsername;
+                const userEmail = person_image_container.dataset.userEmail;
+                const userDob = person_image_container.dataset.userDob;
 
-            popupImage.src = "/static/profile_photos/id" + userId + ".jpg";
-            popupImage.addEventListener('error', () => {
-                popupImage.src = "{{url_for('static', filename='/image/user.png')}}";
-            }, { once: true });
+                popupImage.src = "/static/profile_photos/id" + userId + ".jpg";
+                popupImage.addEventListener('error', () => {
+                    popupImage.src = "{{url_for('static', filename='/image/user.png')}}";
+                }, { once: true });
 
-            popupName.textContent = userFullname;
-            popupInfo.innerHTML = `<strong>Username:</strong> ${userName}<br>
-                                    <strong>Email:</strong> ${userEmail}<br>
-                                    <strong>Date of Birth:</strong> ${userDob || 'N/A'}`;
-            profilePopup.classList.add('show');
-        }
-    });
+                popupName.textContent = userFullname;
+                popupInfo.innerHTML = `<strong>Username:</strong> ${userName}<br>
+                                        <strong>Email:</strong> ${userEmail}<br>
+                                        <strong>Date of Birth:</strong> ${userDob || 'N/A'}`;
+                profilePopup.classList.add('show');
+            }
+        });
 
-    closePopupBtn.addEventListener('click', () => {
-        profilePopup.classList.remove('show');
-    });
-
-    profilePopup.addEventListener('click', (event) => {
-        if (event.target === profilePopup) {
+        closePopupBtn.addEventListener('click', () => {
             profilePopup.classList.remove('show');
-        }
-    });
+        });
 
-  
-    const styleSheet = document.createElement("style");
-    styleSheet.type = "text/css";
-    styleSheet.innerText = `
-        .fade-out {
-            animation: fadeOutAndShrink 0.5s ease-out forwards;
-        }
+        profilePopup.addEventListener('click', (event) => {
+            if (event.target === profilePopup) {
+                profilePopup.classList.remove('show');
+            }
+        });
 
-        @keyframes fadeOutAndShrink {
-            from { opacity: 1; transform: scale(1) translateY(0); }
-            to { opacity: 0; transform: scale(0.8) translateY(20px); height: 0; padding: 0; margin: 0;}
-        }
-    `;
-    document.head.appendChild(styleSheet);
 
+        const styleSheet = document.createElement("style");
+        styleSheet.type = "text/css";
+        styleSheet.innerText = `
+            .fade-out {
+                animation: fadeOutAndShrink 0.5s ease-out forwards;
+            }
+
+            @keyframes fadeOutAndShrink {
+                from { opacity: 1; transform: scale(1) translateY(0); }
+                to { opacity: 0; transform: scale(0.8) translateY(20px); height: 0; padding: 0; margin: 0;}
+            }
+        `;
+        document.head.appendChild(styleSheet);
     </script>
 </body>
+
 </html>
