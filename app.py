@@ -369,12 +369,6 @@ def add_friend():
             cursor.close()
             conn.close()
 
-    if request.method == 'POST':
-        friends_name = request.form['friends_name']
-        if friends_name != '':
-            return render_template('search.html', friends_name=friends_name)
-        else:
-            return render_template('add_friend.html', users=users)
     return render_template('add_friend.html', users=users)
 
 @socketio.on('add_friend', namespace='/add_friend')

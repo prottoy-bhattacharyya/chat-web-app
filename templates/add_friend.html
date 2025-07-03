@@ -443,6 +443,15 @@
             }
         }
 
+        .fade-out {
+                animation: fadeOutAndShrink 0.5s ease-out forwards;
+            }
+
+            @keyframes fadeOutAndShrink {
+                from { opacity: 1; transform: scale(1) translateY(0); }
+                to { opacity: 0; transform: scale(0.8) translateY(20px); height: 0; padding: 0; margin: 0;}
+            }
+
         /* Responsive Design */
         @media (min-width: 640px) {
             .people-grid {
@@ -504,12 +513,12 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
-                <form method="POST">
                     <input name="friends_name" type="text"
                         placeholder="Search for Friends..."
                         class="flex-grow px-4 py-2 text-gray-700 outline-none bg-transparent placeholder-gray-700 text-lg rounded-full"
-                        aria-label="Search input" />
-                    <button type="submit"
+                        aria-label="Search input" 
+                        id="search-input"/>
+                    <!-- <button
                         class="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-colors duration-200 ease-in-out"
                         aria-label="Perform search">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
@@ -517,8 +526,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
-                    </button>
-                </form>
+                    </button> -->
             </div>
         </div>
     </div>
@@ -533,7 +541,7 @@
         <div class="people-grid" id="people-grid">
             {% if users %}
             {% for user in users %}
-            <div class="person-card" data-user-id="{{user.id}}">
+            <div class="person-card" data-user-id="{{user.id}}" data-user-fullname="{{user.full_name}}" data-user-username="{{user.username}}">
                 <div class="person-image-container" data-user-id="{{user.id}}"
                     data-user-fullname="{{user.full_name}}" data-user-username="{{user.username}}"
                     data-user-email="{{user.email}}" data-user-dob="{{user.dob}}">
@@ -582,6 +590,7 @@
         const popupImage = document.getElementById('popupImage');
         const popupName = document.getElementById('popupName');
         const popupInfo = document.getElementById('popupInfo');
+        const searchInput = document.getElementById('search-input');
 
         const personImages = document.querySelectorAll('.person-image');
         personImages.forEach((image) => {
@@ -653,20 +662,22 @@
             }
         });
 
+        searchInput.addEventListener('keyup',function(){
+            const search = this.value.toLowerCase();
+            const personCards = document.querySelectorAll('.person-card');
 
-        const styleSheet = document.createElement("style");
-        styleSheet.type = "text/css";
-        styleSheet.innerText = `
-            .fade-out {
-                animation: fadeOutAndShrink 0.5s ease-out forwards;
-            }
+            personCards.forEach(person => {
+                console.log("searching...");
+                const fulname = person.dataset.userFullname.toLowerCase();
+                const username = person.dataset.userUsername.toLowerCase();
+                if(fulname.includes(search) || username.includes(search)){
+                    person.style.display = 'flex';
+                }else{
+                    person.style.display = 'none';
+                }
+            });
+        });
 
-            @keyframes fadeOutAndShrink {
-                from { opacity: 1; transform: scale(1) translateY(0); }
-                to { opacity: 0; transform: scale(0.8) translateY(20px); height: 0; padding: 0; margin: 0;}
-            }
-        `;
-        document.head.appendChild(styleSheet);
     </script>
 </body>
 
