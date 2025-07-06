@@ -12,7 +12,7 @@ body{
 
 .container {
   width: 400px;
-  background: rgba(7, 23, 51);
+  background: rgba(7, 23, 51, 0.603);
   backdrop-filter: blur(10px);
   border-radius: 10px;
   box-shadow: 0 0 10px #000000cc;
@@ -24,6 +24,10 @@ body{
   text-align: center;
   margin-bottom: 20px;
   color: white;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(100%);
 }
 
 .input-box {
@@ -62,7 +66,6 @@ body{
 
 .input-box input:focus + .floating-label,
 .input-box input:valid + .floating-label {
-  /* top: -12px; */
   transform: translate(-1px,-33px) scale(0.88);
   left: 15px;
   font-size: 17px;
@@ -72,7 +75,7 @@ body{
 .input-box input:focus,
 .input-box input:valid{
     color: azure;
-    border: 3px solid azure;
+    border: 3px solid rgb(0, 185, 124);
 }
 .input-box input:active{
     transform: translateY(4px);
@@ -107,8 +110,8 @@ button:active{
     transform: translateY(4px);
 }
 .button button:hover{
-    box-shadow: 0 0 30px rgba(0, 0, 2, 2); 
-    transition: 0.3s;
+    box-shadow: 0 0 30px rgba(196, 196, 206, 0.486); 
+    transition: 0.3s ease;
 }
 .foot {
   text-align: center;
@@ -118,6 +121,11 @@ button:active{
 .foot a {
   color: rgb(226, 114, 61);
   text-decoration: none;
+}
+
+.foot a:hover {
+  text-decoration: underline;
+  color: rgb(248, 162, 123);
 }
 
 .shape {

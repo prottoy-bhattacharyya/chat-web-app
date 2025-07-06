@@ -15,7 +15,7 @@
             --text-dark: #E5E7EB; /* Light gray for dark text (on dark background) */
             --text-light: #1F2937; /* Dark gray for light text (on light background) */
             --bg-light: #1F2937; /* Dark background for overall page */
-            --bg-dark: #374151; /* Slightly lighter dark background for elements */
+            --bg-dark: #1f2530; /* Slightly lighter dark background for elements */
             --border-color: #4B5563; /* Darker border color */
         }
 
@@ -281,10 +281,10 @@
 
         <div id="chat-area" class="flex flex-col bg-gray-900 rounded-xl shadow-xl chat-area">
             <div id="chat-header" class="text-center text-xl font-semibold text-gray-100 rounded-t-xl flex items-center justify-center min-h-[70px] relative bg-gray-800">
-                <button id="back-to-friends" class="back-button-mobile absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 hidden md:hidden">
+                <button id="back-to-friends" class="back-button-mobile absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-gray-800 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 hidden md:hidden">
                     <svg class="w-6 h-6 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
                 </button>
-                <div id="chat-header-content" class="bg-gray-800 flex items-center justify-center space-x-4 flex-grow">
+                <div id="chat-header-content" class="bg-gray-800  flex items-center justify-center space-x-4 flex-grow">
                     <div id="no-chat-selected" class="no-chat-selected">
                         <div class="no-chat-content">
                             <div class="no-chat-icon">
@@ -301,7 +301,7 @@
                 </div>
             </div>
 
-            <div id="chat-messages" class="flex-1 p-6 overflow-y-auto chat-messages-container flex flex-col space-y-3"></div>
+            <div id="chat-messages" class="flex-1 p-6 overflow-y-auto chat-messages-container flex flex-col space-y-3 bg-gray-900"></div>
 
             <div id="chat-input-area" class="bg-gray-800 p-3 py-3 border-t border-gray-700 flex items-center space-x-4 rounded-b-xl hidden">
                 <input type="text" id="message-input" autocomplete="off" placeholder="Type your message..."
@@ -346,47 +346,44 @@
 
     // Function to manage mobile view state
     function updateMobileView() {
-        if (window.innerWidth <= 768) { // Mobile view
+        if (window.innerWidth <= 768) {
             if (selectedFriendId) {
                 friendsSidebar.classList.add('hidden-mobile');
                 chatArea.classList.add('visible-mobile');
-                backToFriendsButton.classList.remove('hidden'); // Show back button
+                backToFriendsButton.classList.remove('hidden');
             } else {
                 friendsSidebar.classList.remove('hidden-mobile');
                 chatArea.classList.remove('visible-mobile');
-                backToFriendsButton.classList.add('hidden'); // Hide back button
+                backToFriendsButton.classList.add('hidden'); 
             }
-        } else { // Desktop view
-            friendsSidebar.classList.remove('hidden-mobile'); // Ensure visible
-            chatArea.classList.remove('visible-mobile'); // Ensure visible
-            backToFriendsButton.classList.add('hidden'); // Hide back button
+        } else {
+            friendsSidebar.classList.remove('hidden-mobile');
+            chatArea.classList.remove('visible-mobile');
+            backToFriendsButton.classList.add('hidden'); 
         }
     }
 
-    // Initial setup for mobile view based on window size
     updateMobileView();
 
-    // Event listener for selecting a friend
     friendsListContainer.addEventListener('click', (event) => {
-
+        chatMessages.innerHTML = '';
         let targetLi = event.target.closest('li.friend-list-item');
         if (targetLi) {
             const currentActive = document.querySelector('#friends-list li.active-chat');
             if (currentActive) {
                 currentActive.classList.remove('active-chat');
-                currentActive.classList.add('hover:bg-blue-900'); /* Adjusted for dark mode hover */
+                currentActive.classList.add('hover:bg-blue-900');
             }
 
             targetLi.classList.add('active-chat');
-            targetLi.classList.remove('hover:bg-blue-900'); /* Adjusted for dark mode hover */
+            targetLi.classList.remove('hover:bg-blue-900'); 
 
             selectedFriendId = targetLi.dataset.userId;
             selectedFriendUsername = targetLi.dataset.username;
             selectedFriendFullName = targetLi.dataset.fullName;
 
-            // Update chat header with selected friend's details
-            noChatSelectedDiv.classList.add('hidden'); // Hide the "no chat selected" message
-            selectedFriendInfoDiv.classList.remove('hidden'); // Show friend info container
+            noChatSelectedDiv.classList.add('hidden'); 
+            selectedFriendInfoDiv.classList.remove('hidden');
             selectedFriendInfoDiv.innerHTML = `
                 <img id="profile-image" src="static/profile_photos/id${selectedFriendId}.jpg" alt="Profile" class="w-14 h-14 rounded-full object-cover border-2 border-gray-700 shadow-md" />
                 <h2 class="text-2xl font-bold text-gray-100">${selectedFriendFullName}</h2>
@@ -401,28 +398,27 @@
                 });
             });
 
-            updateMobileView(); // Adjust visibility for mobile
+            updateMobileView();
 
             socket.emit('request_chat_history', { 'other_user_id': selectedFriendId });
         }
     });
 
-    // "Back" button event listener for mobile
     backToFriendsButton.addEventListener('click', () => {
-        selectedFriendId = null; // Clear selected friend
-        chatMessages.innerHTML = ''; // Clear chat messages
-        noChatSelectedDiv.classList.remove('hidden'); // Show no chat selected message
-        selectedFriendInfoDiv.classList.add('hidden'); // Hide friend info
-        chatInputArea.classList.add('hidden'); // Hide input area
+        selectedFriendId = null; 
+        chatMessages.innerHTML = ''; 
+        noChatSelectedDiv.classList.remove('hidden');
+        selectedFriendInfoDiv.classList.add('hidden');
+        chatInputArea.classList.add('hidden');
 
-        // Remove active state from any selected friend
+       
         const currentActive = document.querySelector('#friends-list li.active-chat');
         if (currentActive) {
             currentActive.classList.remove('active-chat');
-            currentActive.classList.add('hover:bg-blue-900'); /* Adjusted for dark mode hover */
+            currentActive.classList.add('hover:bg-blue-900');
         }
 
-        updateMobileView(); // Go back to friends list view on mobile
+        updateMobileView();
     });
 
 
@@ -495,7 +491,9 @@
 
     socket.on('chat_history', (data) => {
         if (data.other_user_id == selectedFriendId) {
-            chatMessages.innerHTML = '';
+            if(data.history.length == 0){
+                chatMessages.innerHTML = '<div class="text-gray-400 text-center animate-fadeIn">No messages yet.</div>';
+            }
             data.history.forEach(msg => {
                 const senderFullName = (msg.sender_id == currentUserId) ? currentFullName : selectedFriendFullName;
                 displayMessage(msg.sender_id, senderFullName, msg.message_text, msg.timestamp);

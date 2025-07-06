@@ -155,12 +155,12 @@ def admin():
                             """)
             messages = cursor.fetchall()
 
-            cursor.execute("""SELECT 
+            cursor.execute("""SELECT
                                 users.username AS sender_username,
                                 aiChat.prompt,
                                 aiChat.response,
                                 aiChat.timestamp
-                            FROM 
+                            FROM
                                 aiChat
                            JOIN
                                 users on aiChat.user_id = users.id

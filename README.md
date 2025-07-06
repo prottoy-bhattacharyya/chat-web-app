@@ -45,6 +45,17 @@ Ensure MySQL is running and accessible with the following credentials:
         'database': 'chat_app'
     }
 ```
+else use online databases
+```python
+    {
+        'host': '<server name>',
+        'user': '<Provided user>',
+        'password': '<Provided Password>',
+        'database': '<Your Database name>'
+    }
+```
+Change these configuration from `DBconfig.py` file
+
 💡 You can change these settings in your config file as needed.
 
 ### 4. Run the application
@@ -59,19 +70,64 @@ Ensure MySQL is running and accessible with the following credentials:
 ```
 ### 📂 Project Structure
 ```csharp
-|---app.py
-|---meta_llama_AI.py
-|---README.md
-|---.gitignore
-|---pyproject.toml
-|---.python-version
-|---uv.lock
-|   
-|---templates
-|    |---all html pages
-|--- static
-    |--- all static files like images .css .js or any other
-    
+│   .gitignore
+│   .python-version
+│   app.py
+│   commands.bash
+│   DBconfig.py
+│   meta_llama_AI.py
+│   pyproject.toml
+│   uv.lock
+│   README.md
+│   requirements.txt
+│   vercel.json
+│
+├───static
+│   │   front_page.css
+│   │   login.css
+│   │   showpass.js
+│   │   signup.css
+│   │
+│   ├───image
+│   │       body.webp
+│   │       hide.png
+│   │       home-page.png
+│   │       logout.png
+│   │       settings.png
+│   │       user.png
+│   │       logo2.png
+│   │       logo4.png
+│   │       eye.png
+│   │       bell.mp4
+│   │       add-user.png
+│   │       ai.png
+│   │       bell.png
+│   │       down.png
+│   │       logo3.png
+│   │       message.png
+│   │       notification.png
+│   │       up.png
+│   │       user2.png
+│   │
+│   └───profile_photos
+│           .gitkeep
+│
+├───templates
+│       admin.html
+│       aiChat.html
+│       error.html
+│       front_page.html
+│       home2.html
+│       login.html
+│       signup2.html
+│       chat.html
+│       friend_request.html
+│       add_friend.html
+│       error2.html
+│       login3.html
+│       search.html
+│       home.html
+│       signup.html
 ```
 # 🧠 AI Assistant
 The AI assistant is integrated into the chat window and can respond to a wide range of user queries.

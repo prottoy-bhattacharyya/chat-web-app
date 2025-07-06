@@ -161,7 +161,7 @@
     }
 
     /* --- Dropdowns --- */
-    .jsdiv,
+    .profile-dropdown,
     .noti-text {
         background: var(--glass-bg);
         backdrop-filter: blur(10px);
@@ -178,14 +178,14 @@
         transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
     }
 
-    .jsdiv.active,
+    .profile-dropdown.active,
     .noti-text.active {
         opacity: 1;
         visibility: visible;
         transform: translateY(0);
     }
 
-    .jsdiv {
+    .profile-dropdown {
         right:60px;
         width: 300px;
         width: auto;
@@ -195,26 +195,26 @@
         align-items: center;
     }
 
-    .jsdiv h1 {
+    .profile-dropdown h1 {
         color: var(--accent-color-1);
         font-size: 20px;
         margin-bottom: 10px;
     }
 
-    .jsdiv h3 {
+    .profile-dropdown h3 {
         color: var(--accent-color-2);
         font-size: 16px;
         letter-spacing: 1px;
         margin-bottom: 10px;
     }
 
-    .jsdiv h4 {
+    .profile-dropdown h4 {
         color: var(--accent-color-3);
         font-size: 14px;
         margin-bottom: 20px;
     }
 
-    .jsdiv button {
+    .profile-dropdown button {
         background-color: var(--logout-button-bg);
         padding: 8px 15px;
         border: none;
@@ -224,12 +224,12 @@
         margin: 7px 0 ;
     }
 
-    .jsdiv button:hover {
+    .profile-dropdown button:hover {
         background-color: darken(var(--logout-button-bg), 10%);
         transform: translateY(-2px);
     }
 
-    .jsdiv button a {
+    .profile-dropdown button a {
         text-decoration: none;
         color: var(--logout-button-text);
         font-weight: 600;
@@ -262,7 +262,7 @@
         line-height: 1;
     }
 
-    /* Styles for the new profile upload section within jsdiv */
+    /* Styles for the new profile upload section within profile-dropdown */
     .profile-upload-section {
         display: flex;
         flex-direction: column;
@@ -372,7 +372,7 @@
             gap: 15px;
         }
 
-        .jsdiv,
+        .profile-dropdown,
         .noti-text {
             top: 150px; /* Adjust dropdown position */
             width: 90%;
@@ -393,7 +393,7 @@
             <nav>
                 <div class="logo"><a href="/"><img src="{{url_for('static', filename='image/logo3.png')}}" alt="Logo"></a></div>
                 <div class="nav-icons">
-                    <div class="profile">
+                    <div class="profile" onclick="myFunction()">
                         <div class="p-img"><img src="{{ url_for('static', filename='profile_photos/id' + id + '.jpg') }}"  alt="Profile Image" id="profileImage"></div>
                         {{full_name}}
                         <button onclick="myFunction()"><img src="{{url_for('static', filename='image/up.png')}}" id="toggleIcon" alt="Toggle"></button>
@@ -406,8 +406,8 @@
             </nav>
         </div>
 
-        <div id="myDIV" class="jsdiv">
-            <h1>Nick Name: {{username}}</h1>
+        <div id="profile-dropdown" class="profile-dropdown">
+            <h1>Nick name: {{username}}</h1>
             <h3>Email: {{email}}</h3>
             <h4>Date of birth: {{dob}}</h4>
 
@@ -424,7 +424,7 @@
 
         <div id="notificationDropdown" class="noti-text">
             <ul id="notificationList">
-              
+              No Notification yet
             </ul>
         </div>
     </div>
@@ -451,10 +451,13 @@
 </body>
 <script>
     const socketio = io('/home');
-    var profileDropdown = document.getElementById("myDIV");
+    var profileDropdown = document.getElementById("profile-dropdown");
     var toggleIcon = document.getElementById("toggleIcon");
     var profileImagePreview = document.getElementById("profileImagePreview");
     var profileUploadInput = document.getElementById("profileUpload");
+    var notificationDropdown = document.getElementById("notificationDropdown");
+    var notificationIcon = document.getElementById("notificationIcon");
+    var notification_btn = document.getElementById("noti");
 
     function myFunction() {
         if (profileDropdown.classList.contains("active")) {
@@ -467,7 +470,53 @@
             notificationIcon.src = "{{url_for('static', filename='image/bell.png')}}";
         }
     }
+
+    function toggleNotification() {
+        if (notificationDropdown.classList.contains("active")) {
+            notificationDropdown.classList.remove("active");
+            notificationIcon.src = "{{url_for('static', filename='image/bell.png')}}";
+        } else {
+            notificationDropdown.classList.add("active");
+            notificationIcon.src = "{{url_for('static', filename='image/notification.png')}}";
+            profileDropdown.classList.remove("active");
+            toggleIcon.src = "{{url_for('static', filename='image/up.png')}}";
+        }
+    }
+
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.profile') && !event.target.closest('.profile-dropdown')) {
+            profileDropdown.classList.remove("active");
+            toggleIcon.src = "{{url_for('static', filename='image/up.png')}}";
+        }
+        if (!event.target.closest('.noti') && !event.target.closest('.noti-text')) {
+            notificationDropdown.classList.remove("active");
+            notificationIcon.src = "{{url_for('static', filename='image/bell.png')}}";
+        }
+    });
+
+    notification_list = document.getElementById("notificationList");
+    const addNotification = (message) => {
+        // play_promise = bell_video.play();
+        notification_list.innerHTML = ``;
+        notification_btn.innerHTML += `<div class="dot"></div>`;
+        notification_list.innerHTML += `<li>${message}</li>`;
+        console.log("notification_list.innerHTML: ", notification_list.innerHTML);
+        // setTimeout(() => {
+          
+        // }, 2000);
+      };
+
+
+
     profile_image = document.querySelectorAll('#profileImage');;
+    profile_image.forEach((image)=>{
+        image.addEventListener('error',()=>{
+            image.src = "{{url_for('static', filename='image/user.png')}}"
+        });
+    });
+    profile_image = document.querySelectorAll('#profileImagePreview');;
     profile_image.forEach((image)=>{
         image.addEventListener('error',()=>{
             image.src = "{{url_for('static', filename='image/user.png')}}"
@@ -483,51 +532,16 @@
                 profileImagePreview.src = e.target.result;
             };
             reader.readAsDataURL(file);
+
+            // const url = URL.createObjectURL(file);
+            // file.onload = (){
+            //     profileImagePreview.src = url;
+            // }
         }
     });
 
 
-    // Notification Dropdown
-    var notificationDropdown = document.getElementById("notificationDropdown");
-    var notificationIcon = document.getElementById("notificationIcon");
-    var notification_btn = document.getElementById("noti");
 
-    function toggleNotification() {
-        if (notificationDropdown.classList.contains("active")) {
-            notificationDropdown.classList.remove("active");
-            notificationIcon.src = "{{url_for('static', filename='image/bell.png')}}";
-        } else {
-            notificationDropdown.classList.add("active");
-            notificationIcon.src = "{{url_for('static', filename='image/notification.png')}}";
-            // Close profile dropdown if open
-            profileDropdown.classList.remove("active");
-            toggleIcon.src = "{{url_for('static', filename='image/up.png')}}";
-        }
-    }
-
-    
-    // Close dropdowns when clicking outside
-    document.addEventListener('click', function(event) {
-        if (!event.target.closest('.profile') && !event.target.closest('.jsdiv')) {
-            profileDropdown.classList.remove("active");
-            toggleIcon.src = "{{url_for('static', filename='image/up.png')}}";
-        }
-        if (!event.target.closest('.noti') && !event.target.closest('.noti-text')) {
-            notificationDropdown.classList.remove("active");
-            notificationIcon.src = "{{url_for('static', filename='image/bell.png')}}";
-        }
-    });
-
-    notification_list = document.getElementById("notificationList");
-    const addNotification = (message) => {
-        // play_promise = bell_video.play();
-        notification_btn.innerHTML += `<div class="dot"></div>`;
-        notification_list.innerHTML += `<li>${message}</li>`;
-        console.log("notification_list.innerHTML: ", notification_list.innerHTML);
-        // setTimeout(() => {
-          
-        // }, 2000);
-      };
 
     try{
       socketio.on('request_received', (data) => addNotification(`New friend request from ${data['sender_full_name']}`));
