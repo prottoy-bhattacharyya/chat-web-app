@@ -1,131 +1,158 @@
-body{
+body {
     margin: 0;
-    min-height: 100vh;   
+    min-height: 100vh;
     background-color: #101316;
     background-size: 400% 400%;
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     justify-content: center;
-    align-items: center; 
+    align-items: center;
     overflow: hidden;
     display: flex;
 }
 
 .container {
-  width: 400px;
-  background: rgba(7, 23, 51, 0.603);
-  backdrop-filter: blur(10px);
-  border-radius: 10px;
-  box-shadow: 0 0 10px #000000cc;
-  padding: 30px;
-  color: white;
+    margin: 5%;
+    width: 400px;
+    background: rgba(7, 23, 51, 0.603);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    box-shadow: 0 0 10px #000000cc;
+    padding: 30px;
+    color: white;
 }
 
 .container h2 {
-  text-align: center;
-  margin-bottom: 20px;
-  color: white;
+    text-align: center;
+    margin-bottom: 20px;
+    color: white;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
-  filter: invert(100%);
+    filter: invert(100%);
 }
 
 .input-box {
-  position: relative;
-  margin: 25px 0;
-  width: 100%;
+    position: relative;
+    margin: 25px 0;
+    width: 100%;
 }
 
 .input-box input {
-  width: 90%;
-  height: 40px;
-  background: transparent;
-  border: 2px solid azure;
-  outline: none;
-  color: white;
-  font-size: 16px;
-  padding: 0 12px;
-  z-index: 1;
-  transition: 0.1s ease; 
-  margin: 5px 5px;
-  border-radius: 10px;
+    width: 90%;
+    height: 40px;
+    background: transparent;
+    border: 2px solid azure;
+    outline: none;
+    color: white;
+    font-size: 16px;
+    padding: 0 12px;
+    z-index: 1;
+    transition: 0.1s ease;
+    margin: 5px 5px;
+    border-radius: 10px;
 }
 
 .floating-label {
-  position: absolute;
-  top: 50%;
-  left: 12px;
-  transform: translateY(-50%);
-  color: white;
-  pointer-events: none;
-  transition: 0.3s ease;
-  background-color: rgba(7, 23, 51);
-  padding: 0 6px;
-  z-index: 0;
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    color: white;
+    pointer-events: none;
+    transition: 0.3s ease;
+    background-color: rgba(7, 23, 51);
+    padding: 0 6px;
+    z-index: 0;
 }
 
-.input-box input:focus + .floating-label,
-.input-box input:valid + .floating-label {
-  transform: translate(-1px,-33px) scale(0.88);
-  left: 15px;
-  font-size: 17px;
-  background-color: rgb(7, 23, 51);
-  z-index: 11;
+.input-box input:focus+.floating-label,
+.input-box input:valid+.floating-label {
+    transform: translate(-1px, -33px) scale(0.88);
+    left: 15px;
+    font-size: 17px;
+    background-color: rgb(7, 23, 51);
+    z-index: 11;
 }
+
 .input-box input:focus,
-.input-box input:valid{
+.input-box input:valid {
     color: azure;
     border: 3px solid rgb(0, 185, 124);
 }
-.input-box input:active{
+
+.input-box input:active {
     transform: translateY(4px);
 }
+
 .password-box img {
-  filter: invert(100%);
-  position: absolute;
-  right: 25px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-  z-index: 3;
+    filter: invert(100%);
+    position: absolute;
+    right: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    z-index: 3;
+    background-color: rgb(248, 232, 204);
+}
+
+ul {
+    text-align: center;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.weak-password {
+    color: rgb(252, 26, 26);
+}
+
+.medium-password {
+    color: rgb(255, 255, 39);
+}
+
+.strong-password {
+    color: rgb(37, 255, 37);
 }
 
 .button {
-  text-align: center;
-  margin-top: 20px;
+    text-align: center;
+    margin-top: 20px;
 }
 
 button {
-  padding: 8px 20px;
-  background: azure;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  color: black;
-  font-weight: bold;
+    padding: 8px 20px;
+    background: azure;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: black;
+    font-weight: bold;
 }
-button:active{
+
+button:active {
     transform: translateY(4px);
 }
-.button button:hover{
-    box-shadow: 0 0 30px rgba(196, 196, 206, 0.486); 
+
+.button button:hover {
+    box-shadow: 0 0 30px rgba(196, 196, 206, 0.486);
     transition: 0.3s ease;
 }
+
 .foot {
-  text-align: center;
-  margin-top: 15px;
+    text-align: center;
+    margin-top: 15px;
 }
 
 .foot a {
-  color: rgb(226, 114, 61);
-  text-decoration: none;
+    color: rgb(226, 114, 61);
+    text-decoration: none;
 }
 
 .foot a:hover {
-  text-decoration: underline;
-  color: rgb(248, 162, 123);
+    text-decoration: underline;
+    color: rgb(248, 162, 123);
 }
 
 .shape {
@@ -159,6 +186,7 @@ button:active{
     left: 20%;
     animation-delay: 10s;
 }
+
 .shape:nth-child(4) {
     width: 80px;
     height: 80px;
@@ -166,6 +194,7 @@ button:active{
     left: 60%;
     animation-delay: 3s;
 }
+
 .shape:nth-child(5) {
     width: 120px;
     height: 120px;
@@ -179,6 +208,7 @@ button:active{
         opacity: 0;
         transform: scale(0.9);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
@@ -190,6 +220,7 @@ button:active{
         opacity: 0;
         transform: translateY(-50px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -201,6 +232,7 @@ button:active{
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -212,6 +244,7 @@ button:active{
         opacity: 0;
         transform: scale(0.9);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
@@ -222,6 +255,7 @@ button:active{
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -231,15 +265,19 @@ button:active{
     0% {
         transform: translate(0, 0) scale(1);
     }
+
     25% {
         transform: translate(20px, 30px) scale(1.05);
     }
+
     50% {
         transform: translate(0, 60px) scale(1);
     }
+
     75% {
         transform: translate(-20px, 30px) scale(0.95);
     }
+
     100% {
         transform: translate(0, 0) scale(1);
     }
