@@ -103,7 +103,7 @@
   });
 
   retype_password.addEventListener('keyup', function () {
-    if (retype_password.value !== document.getElementById('password').value) {
+    if (retype_password.value !== password.value) {
       retype_password.setCustomValidity('Password does not match');
     } else {
       retype_password.setCustomValidity('');

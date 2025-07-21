@@ -20,6 +20,7 @@ def get_db_connection():
         return conn
     except mysql.connector.Error as err:
         print(f"Error connecting to database: {err}")
+        abort(404)
         return None
 
 def init_db():
@@ -693,4 +694,5 @@ def page_not_found(e):
 
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, host='0.0.0.0', port=5000)
+    # socketio.run(app, debug=True, host='0.0.0.0', port=5000)
+    socketio.run(app, host='0.0.0.0', port=5000)

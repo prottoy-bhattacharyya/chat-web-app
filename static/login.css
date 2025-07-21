@@ -195,6 +195,7 @@ body{
     display: flex;
     justify-content: space-between;
 }
+
 .foget-show label input{
     margin-right: 5px;
     
