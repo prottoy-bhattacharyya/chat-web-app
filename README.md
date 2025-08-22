@@ -8,7 +8,6 @@
 
 - 🗂️ Chat history is saved in MySQL database
 
-- 📱 Accessible in any devices connected in the same network on `port:5000`
 
 ## Check out the live demo [here][live-demo].
 
