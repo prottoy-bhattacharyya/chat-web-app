@@ -10,6 +10,10 @@
 
 - 📱 Accessible in any devices connected in the same network on `port:5000`
 
+## Check out the live demo [here][live-demo].
+
+[live-demo]: https://chat-web-app-blue.vercel.app/
+
 ## 🛠️ Setup Instructions
 ### 📌 Prerequisites
 - Python 3.7+
