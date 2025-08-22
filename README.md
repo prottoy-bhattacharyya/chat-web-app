@@ -1,4 +1,6 @@
-# 💬 chat web App
+# 💬 chat web App [Live Demo][live-demo]
+[live-demo]: https://chat-web-app-blue.vercel.app/
+
 **chat web App** is a real-time chat application that allows users to communicate with each other and interact with an integrated AI assistant that can answer any questions. This app uses a MySQL database for user data and chat history.
 
 ## 🚀 Features
@@ -8,10 +10,6 @@
 
 - 🗂️ Chat history is saved in MySQL database
 
-
-## Check out the live demo [here][live-demo].
-
-[live-demo]: https://chat-web-app-blue.vercel.app/
 
 ## 🛠️ Setup Instructions
 ### 📌 Prerequisites
