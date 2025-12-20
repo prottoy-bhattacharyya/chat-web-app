@@ -1,6 +1,8 @@
 from openai import OpenAI, APIError, RateLimitError, APIConnectionError
 import DBconfig
 import mysql.connector
+import requests
+
 
 def metaLlama(prompt, user_id, username):
     try:
@@ -8,55 +10,19 @@ def metaLlama(prompt, user_id, username):
       sqldb = mysql.connector.connect(**DB_CONFIG)
       cursor = sqldb.cursor()
       print("Connected to database")
-
-      cursor.execute("""SELECT api_key FROM apikeys
-                        WHERE id = 1;""")
       
-      new_api_key = cursor.fetchone()[0]
-      if not new_api_key:
-        print("API key not found")
-      
-      print(f"Got API key {new_api_key}")
-    except mysql.connector.Error as err:
-      print(f"Error connecting to database: {err}")
-      return f"database error: {err}"
-      
+    test_webhook_url = "http://localhost:5678/webhook-test/test-webhook"
+    prod_webhook_url = "http://localhost:5678/webhook/test-webhook"
 
-    
-
-    html_text = ''' Please format your response using only HTML tags. 
-                          For example, use <p> for paragraphs, <strong> for bold text, 
-                          <em> for italics,  
-                          <br> for line breaks
-                          and never mention about html tags in your answer I repeat DO NOT
-                          mention about html tags in your answer I repeat DO NOT'''
     try:
-      client = OpenAI(
-          base_url="https://openrouter.ai/api/v1",
-          api_key = new_api_key
-      )
-      
-      completion = client.chat.completions.create(
-          # model="meta-llama/llama-4-maverick:free",
-          #  model = "nvidia/llama-3.1-nemotron-ultra-253b-v1:free",
-          # model = "deepseek/deepseek-r1-0528-qwen3-8b:free",
-          # model="google/gemini-2.0-flash-exp:free",
-          model="deepseek/deepseek-r1-0528:free",
-          messages=[
-              {
-                "role": "user",
-                "content": prompt + html_text
-              }
-            ]
-      )
-      response = completion.choices[0].message.content
-
-    except APIError as err:
-      return f"inside API error: {err}"
-    except RateLimitError as err:
-      return f"Rate limit error: {err}"
-    except APIConnectionError as err:
-      return f"API connection error: {err}"
+      user_id = str(user_id)
+      url = prod_webhook_url + "?prompt=" + prompt +  "&sessionID=" + user_id
+      response = requests.get(url)
+      if response.status_code == 200:
+          response = response.json()
+          response = str(response[0].get("output"))
+    except Exception as e:
+      return f"Error processing API request: {e}"
       
     try:
       cursor.execute('''INSERT INTO aiChat(user_id, username, prompt, response)
