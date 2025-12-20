@@ -10,7 +10,9 @@ def metaLlama(prompt, user_id, username):
       sqldb = mysql.connector.connect(**DB_CONFIG)
       cursor = sqldb.cursor()
       print("Connected to database")
-      
+    except mysql.connector.Error as err:
+      return f"database connection error: {err}"
+    
     test_webhook_url = "http://localhost:5678/webhook-test/test-webhook"
     prod_webhook_url = "http://localhost:5678/webhook/test-webhook"
 
